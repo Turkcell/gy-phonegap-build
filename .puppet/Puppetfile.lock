@@ -1,0 +1,23 @@
+FORGE
+  remote: http://forge.puppetlabs.com
+  specs:
+    maestrodev/android (1.1.0)
+      maestrodev/wget (>= 1.0.0)
+    maestrodev/ant (1.0.4)
+      maestrodev/wget (>= 0.0.1)
+    maestrodev/wget (1.2.0)
+    puppetlabs/apt (1.1.0)
+      puppetlabs/stdlib (>= 2.2.1)
+    puppetlabs/java (0.3.0)
+      puppetlabs/stdlib (>= 0.1.6)
+    puppetlabs/nodejs (0.2.1)
+      puppetlabs/apt (>= 0.0.3)
+      puppetlabs/stdlib (>= 2.0.0)
+    puppetlabs/stdlib (4.1.0)
+
+DEPENDENCIES
+  maestrodev/android (>= 0)
+  maestrodev/ant (>= 0)
+  puppetlabs/java (>= 0)
+  puppetlabs/nodejs (>= 0)
+
