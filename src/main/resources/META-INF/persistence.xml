@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+
+    <persistence-unit name="cordova">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <properties>
+            <property name="eclipselink.jdbc.driver" value="org.apache.deltaspike.jpa.impl.datasource.ConfigurableDataSource"/>
+        </properties>
+    </persistence-unit>
+</persistence>
