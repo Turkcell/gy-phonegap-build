@@ -1,0 +1,6 @@
+forge "http://forge.puppetlabs.com"
+
+mod "puppetlabs/java"
+mod "maestrodev/ant"
+mod "maestrodev/android"
+mod "puppetlabs/nodejs"
