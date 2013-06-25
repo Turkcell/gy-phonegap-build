@@ -16,37 +16,29 @@
 
 package com.ttech.cordovabuild.persistence;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.deltaspike.jpa.spi.entitymanager.PersistenceConfigurationProvider;
+import org.eclipse.persistence.config.PersistenceUnitProperties;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import java.util.Properties;
 
-
-@ApplicationScoped
-public class DataSourceConfig implements org.apache.deltaspike.jpa.api.datasource.DataSourceConfig {
-    private static final String CONNECTION_DRIVER = "driverClassName";
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 6/25/13
+ * Time: 10:16 PM
+ * To change this template use File | Settings | File Templates.
+ */
+@Alternative
+public class EclipselinkConfigurationProvider implements PersistenceConfigurationProvider {
     @Inject
-    @DataSource
-    Properties properties;
+    javax.sql.DataSource dataSource;
 
     @Override
-    public String getJndiResourceName(String connectionId) {
-        return null;
-    }
-
-    @Override
-    public String getConnectionClassName(String connectionId) {
-        return BasicDataSource.class.getName();
-    }
-
-    @Override
-    public Properties getConnectionProperties(String connectionId) {
-        return properties;
-    }
-
-    @Override
-    public String getJdbcConnectionUrl(String connectionId) {
-        return null;
+    public Properties getEntityManagerFactoryConfiguration(String persistenceUnitName) {
+        Properties p= new Properties();
+        p.put(PersistenceUnitProperties.NON_JTA_DATASOURCE,dataSource);
+        return p;
     }
 }

@@ -46,6 +46,7 @@ public class HazelcastProducer {
     @ApplicationScoped
     HazelcastInstance createHazelCast() {
         Config cfg = new Config();
+
         cfg.setProperty("hazelcast.logging.type", "Slf4j");
 
         NetworkConfig network = cfg.getNetworkConfig();

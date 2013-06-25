@@ -14,38 +14,29 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.persistence;
+package com.ttech.cordovabuild.asset;
 
-import org.apache.deltaspike.jpa.api.entitymanager.PersistenceUnitName;
-import org.apache.deltaspike.jpa.api.transaction.TransactionScoped;
+
+import org.apache.deltaspike.jpa.api.transaction.Transactional;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
 
 @ApplicationScoped
-public class EntityManagerProducer {
-
-
+public class AssetRepositoryImpl implements AssetRepository {
     @Inject
-    @PersistenceUnitName("cordova")
-    private EntityManagerFactory emf;
+    EntityManager entityManager;
 
-    @Produces
-    @TransactionScoped
-    protected EntityManager createEntityManager() {
-        return this.emf.createEntityManager();
+    @Override
+    public Asset findByID(Long id) {
+        return entityManager.find(Asset.class, id);
     }
 
-    protected void closeEntityManager(@Disposes EntityManager entityManager) {
-        if (entityManager.isOpen()) {
-            entityManager.close();
-        }
+    @Override
+    @Transactional
+    public Asset save(Asset asset) {
+        entityManager.persist(asset);
+        return asset;
     }
-
-
 }

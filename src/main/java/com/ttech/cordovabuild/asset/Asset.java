@@ -16,23 +16,16 @@
 
 package com.ttech.cordovabuild.asset;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+
+import javax.persistence.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-/**
- * Created with IntelliJ IDEA.
- * User: capacman
- * Date: 6/17/13
- * Time: 7:16 PM
- * To change this template use File | Settings | File Templates.
- */
+
 @Entity
 public class Asset {
     @Id
+    @GeneratedValue
     private Long id;
     @Lob
     @Column(length = 10 * 1024 * 1024)

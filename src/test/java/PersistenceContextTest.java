@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
+import com.ttech.cordovabuild.asset.Asset;
+import com.ttech.cordovabuild.asset.AssetRepository;
 import com.ttech.cordovabuild.persistence.DataSource;
+import org.apache.deltaspike.jpa.api.transaction.TransactionScoped;
+import org.apache.deltaspike.jpa.api.transaction.Transactional;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -36,23 +40,36 @@ public class PersistenceContextTest {
     @Inject
     @DataSource
     Properties properties;
+
+    @Inject
+    AssetRepository assetRepository;
+
     @Deployment
     public static WebArchive createDeployment() {
         WebArchive jar = ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addPackages(true, "com.ttech.cordovabuild.persistence")
+                .addPackages(true, "com.ttech.cordovabuild.persistence","com.ttech.cordovabuild.asset")
                 .addAsWebResource("cordova.properties")
                 .addAsWebResource("dataSource.properties")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
+                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
                 .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
         System.out.println(jar.toString(true));
         return jar;
     }
 
     @Test
-    public void testDataSourceConfig(){
+    public void testDataSourceConfig() {
         assertNotNull(properties);
         Object driverClassName = properties.get("driverClassName");
         assertNotNull(driverClassName);
         System.out.println(driverClassName);
+    }
+
+    @Test
+    public void testAssetRepository() {
+        assertNotNull(assetRepository);
+        Asset a=new Asset();
+        a.setData("test".getBytes());
+        assetRepository.save(a);
+        assertNotNull(a.getId());
     }
 }

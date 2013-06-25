@@ -17,12 +17,8 @@
 
 package com.ttech.cordovabuild.asset;
 
-import java.io.InputStream;
 
-/**
- *
- * @author capacman
- */
 public interface AssetRepository {
     Asset findByID(Long id);
+    Asset save(Asset asset);
 }

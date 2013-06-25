@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.build;
+package com.ttech.cordovabuild;
 
 import org.apache.deltaspike.core.api.config.PropertyFileConfig;
 
