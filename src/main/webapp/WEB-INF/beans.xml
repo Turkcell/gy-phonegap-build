@@ -16,6 +16,6 @@
 
 <beans>
     <alternatives>
-        <class>com.ttech.cordovabuild.persistence.EclipselinkConfigurationProvider</class>
+        <class>com.ttech.cordovabuild.infrastructure.persistence.EclipselinkConfigurationProvider</class>
     </alternatives>
 </beans>

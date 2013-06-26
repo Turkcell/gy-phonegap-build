@@ -3,7 +3,7 @@
 
     <persistence-unit name="cordova" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <class>com.ttech.cordovabuild.asset.Asset</class>
+        <class>com.ttech.cordovabuild.domain.asset.Asset</class>
         <properties>
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
