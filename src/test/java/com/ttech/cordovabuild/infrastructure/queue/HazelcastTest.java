@@ -35,7 +35,6 @@ import java.io.File;
 
 import static org.junit.Assert.assertNotNull;
 
-
 @RunWith(Arquillian.class)
 public class HazelcastTest {
 
@@ -51,6 +50,7 @@ public class HazelcastTest {
                 .addPackages(true, HazelcastTest.class.getPackage())
                 .addClass(CustomPropertyFileConfig.class)
                 .addAsWebResource("cordova.properties")
+                .addAsDirectory("src/main/resources/META-INF")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
                 .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
         System.out.println(jar.toString(true));
@@ -66,7 +66,7 @@ public class HazelcastTest {
     @Test
     public void testQueue() throws InterruptedException {
         assertNotNull(queue);
-        queue.put(new BuildInfo(null, null, null, null));
+        queue.put(new BuildInfo("http://github.com"));
         assertNotNull(queue.poll());
     }
 }

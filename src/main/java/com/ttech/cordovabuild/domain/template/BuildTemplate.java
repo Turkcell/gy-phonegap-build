@@ -14,24 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.domain.template;
 
-import com.ttech.cordovabuild.domain.ProjectType;
-
 public class BuildTemplate {
-    private ProjectType projectType;
+
     private String path;
 
-    public BuildTemplate(ProjectType projectType, String path) {
-        this.projectType = projectType;
+    public BuildTemplate(String path) {
         this.path = path;
     }
 
-    public String getPath(){
+    public String getPath() {
         return path;
-    }
-    public ProjectType getType(){
-        return projectType;
     }
 }

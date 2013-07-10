@@ -16,16 +16,15 @@
 
 package com.ttech.cordovabuild.infrastructure.persistence;
 
-import org.apache.deltaspike.jpa.api.entitymanager.PersistenceUnitName;
-import org.apache.deltaspike.jpa.api.transaction.TransactionScoped;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
+
+import org.apache.deltaspike.jpa.api.entitymanager.PersistenceUnitName;
+import org.apache.deltaspike.jpa.api.transaction.TransactionScoped;
 
 @ApplicationScoped
 public class EntityManagerProducer {

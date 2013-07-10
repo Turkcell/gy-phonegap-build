@@ -19,9 +19,13 @@ package com.ttech.cordovabuild.infrastructure.git;
 import com.ttech.cordovabuild.domain.CordovaException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
-
 public class GitException extends CordovaException {
-    public GitException(GitAPIException e) {
-        super(e);
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3818296203582504384L;
+
+	public GitException(GitAPIException e) {
+		super(e);
+	}
 }

@@ -22,31 +22,35 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.Properties;
 
-
 @ApplicationScoped
-public class DataSourceConfig implements org.apache.deltaspike.jpa.api.datasource.DataSourceConfig {
-    private static final String CONNECTION_DRIVER = "driverClassName";
-    @Inject
-    @DataSource
-    Properties properties;
+public class DataSourceConfig implements
+		org.apache.deltaspike.jpa.api.datasource.DataSourceConfig {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 851797451322202840L;
 
-    @Override
-    public String getJndiResourceName(String connectionId) {
-        return null;
-    }
+	@Inject
+	@DataSource
+	Properties properties;
 
-    @Override
-    public String getConnectionClassName(String connectionId) {
-        return BasicDataSource.class.getName();
-    }
+	@Override
+	public String getJndiResourceName(String connectionId) {
+		return null;
+	}
 
-    @Override
-    public Properties getConnectionProperties(String connectionId) {
-        return properties;
-    }
+	@Override
+	public String getConnectionClassName(String connectionId) {
+		return BasicDataSource.class.getName();
+	}
 
-    @Override
-    public String getJdbcConnectionUrl(String connectionId) {
-        return null;
-    }
+	@Override
+	public Properties getConnectionProperties(String connectionId) {
+		return properties;
+	}
+
+	@Override
+	public String getJdbcConnectionUrl(String connectionId) {
+		return null;
+	}
 }

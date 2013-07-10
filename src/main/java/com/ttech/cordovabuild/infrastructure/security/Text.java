@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.template;
+package com.ttech.cordovabuild.infrastructure.security;
 
-import com.ttech.cordovabuild.domain.Application;
-import com.ttech.cordovabuild.domain.BuildInfo;
+import javax.inject.Qualifier;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-public interface BuildTemplateGenerator {
-	public BuildTemplate generateTemplate(Application app, BuildInfo info);
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+@Qualifier
+@Retention(RUNTIME)
+@Target({TYPE, METHOD, FIELD, PARAMETER})
+public @interface Text {
 }

@@ -13,12 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ttech.cordovabuild.domain;
 
-package com.ttech.cordovabuild.domain.template;
+import com.ttech.cordovabuild.domain.asset.Asset;
+import java.io.Serializable;
+import javax.persistence.Embeddable;
 
-import com.ttech.cordovabuild.domain.Application;
-import com.ttech.cordovabuild.domain.BuildInfo;
+/**
+ *
+ * @author capacman
+ */
+@Embeddable
+public class BuilTarget implements Serializable {
 
-public interface BuildTemplateGenerator {
-	public BuildTemplate generateTemplate(Application app, BuildInfo info);
+    private ProjectType type;
+    private Asset asset;
+
+    public ProjectType getType() {
+        return type;
+    }
+
+    public void setType(ProjectType type) {
+        this.type = type;
+    }
+
+    public Asset getAsset() {
+        return asset;
+    }
+
+    public void setAsset(Asset asset) {
+        this.asset = asset;
+    }
+
+    public BuilTarget() {
+    }
+
+    public BuilTarget(ProjectType type, Asset asset) {
+        this.type = type;
+        this.asset = asset;
+    }
 }

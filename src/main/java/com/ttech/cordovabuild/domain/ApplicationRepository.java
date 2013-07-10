@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ttech.cordovabuild.domain;
 
-package com.ttech.cordovabuild.domain.template;
+import java.util.List;
 
-import com.ttech.cordovabuild.domain.Application;
-import com.ttech.cordovabuild.domain.BuildInfo;
+/**
+ *
+ * @author capacman
+ */
+public interface ApplicationRepository {
 
-public interface BuildTemplateGenerator {
-	public BuildTemplate generateTemplate(Application app, BuildInfo info);
+    List<Application> getApplications(Owner owner);
+
+    Application findById(Long id);
 }

@@ -18,15 +18,13 @@ package com.ttech.cordovabuild.infrastructure.archive;
 
 import com.ttech.cordovabuild.domain.CordovaException;
 
-/**
- * Created with IntelliJ IDEA.
- * User: capacman
- * Date: 6/16/13
- * Time: 8:16 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ArchiveExtractionException extends CordovaException {
-    public ArchiveExtractionException(Exception e) {
-        super(e);
-    }
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5369208478879064648L;
+
+	public ArchiveExtractionException(Exception e) {
+		super(e);
+	}
 }

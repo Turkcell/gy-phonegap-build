@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-
 package com.ttech.cordovabuild.domain.template;
 
+import com.ttech.cordovabuild.domain.Application;
 import com.ttech.cordovabuild.domain.BuildInfo;
 import com.ttech.cordovabuild.domain.Owner;
 import com.ttech.cordovabuild.infrastructure.CustomPropertyFileConfig;
@@ -33,23 +32,30 @@ import org.junit.runner.RunWith;
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(Arquillian.class)
 public class BuildTemplateGeneratorTest {
+
     @Inject
-    @ConfigProperty(name="build.path")
+    @ConfigProperty(name = "build.path")
     private String buildPath;
+    @Inject
+    @ConfigProperty(name = "create.path")
+    private String createPath;
+    
     @Inject
     BuildTemplateGenerator generator;
 
     @Deployment
     public static WebArchive createDeployment() {
         WebArchive jar = ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addPackages(true,BuildTemplateGeneratorTest.class.getPackage())
+                .addPackages(true, BuildTemplateGeneratorTest.class.getPackage())
                 .addClass(CustomPropertyFileConfig.class)
                 .addAsWebResource("cordova.properties")
                 .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
@@ -64,10 +70,18 @@ public class BuildTemplateGeneratorTest {
     }
 
     @Test
-    public void testTemplateCreation(){
-        BuildInfo buildInfo = new BuildInfo(null, new Owner("anil"), "deneme", null);
-        BuildTemplate template = generator.generateTemplate(buildInfo);
-        File path = new File(new File(buildPath, buildInfo.getOwner().getName()), buildInfo.getName());
-        assertEquals(path.getAbsolutePath(),template.getPath());
+    public void checkCreateExistence() throws IOException, InterruptedException {
+        File file=new File(createPath);
+        assertTrue(file.exists());
+        assertTrue(file.canExecute());
+    }
+
+    @Test
+    public void testTemplateCreation() {
+        BuildInfo buildInfo = new BuildInfo("http://github.com");
+        final Application application = new Application("myapp", new Owner("Anil"));
+        BuildTemplate template = generator.generateTemplate(application, buildInfo);
+        File path = new File(new File(buildPath, application.getOwner().getName()), application.getName());
+        assertEquals(path.getAbsolutePath(), template.getPath());
     }
 }

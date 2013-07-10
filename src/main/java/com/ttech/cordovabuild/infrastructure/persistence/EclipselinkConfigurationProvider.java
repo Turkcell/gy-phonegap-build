@@ -16,29 +16,33 @@
 
 package com.ttech.cordovabuild.infrastructure.persistence;
 
+import java.util.Properties;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
+
 import org.apache.deltaspike.jpa.spi.entitymanager.PersistenceConfigurationProvider;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 
-import javax.enterprise.inject.Alternative;
-import javax.inject.Inject;
-import java.util.Properties;
-
 /**
- * Created with IntelliJ IDEA.
- * User: capacman
- * Date: 6/25/13
- * Time: 10:16 PM
- * To change this template use File | Settings | File Templates.
+ * Created with IntelliJ IDEA. User: capacman Date: 6/25/13 Time: 10:16 PM To
+ * change this template use File | Settings | File Templates.
  */
+@ApplicationScoped
 @Alternative
-public class EclipselinkConfigurationProvider implements PersistenceConfigurationProvider {
-    @Inject
-    javax.sql.DataSource dataSource;
+public class EclipselinkConfigurationProvider implements
+		PersistenceConfigurationProvider {
+	@Inject
+	javax.sql.DataSource dataSource;
 
-    @Override
-    public Properties getEntityManagerFactoryConfiguration(String persistenceUnitName) {
-        Properties p= new Properties();
-        p.put(PersistenceUnitProperties.NON_JTA_DATASOURCE,dataSource);
-        return p;
-    }
+	@Override
+	public Properties getEntityManagerFactoryConfiguration(
+			String persistenceUnitName) {
+		new Throwable().printStackTrace();
+		Properties p = new Properties();
+		p.put(PersistenceUnitProperties.NON_JTA_DATASOURCE, dataSource);
+		return p;
+	}
 }

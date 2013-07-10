@@ -13,34 +13,94 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.domain;
 
-
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+@Entity
+public class BuildInfo implements Serializable {
 
-public class BuildInfo implements Serializable{
-    private String id;
-    private Owner owner;
-    private String name;
-    private List<ProjectType> buildTypes;
-    private String uri;
+    public enum Status {
 
+        INPROGRESS, STARTED, WAITING, FAILED, SUCCESS;
+    }
+    @Id
+    private Long id;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date finishDate;
+    @Basic
+    private String sourceURI;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    @ElementCollection
+    private List<BuilTarget> buildTargets;
 
-    public BuildInfo(String id, Owner owner, String name, List<ProjectType> buildTypes) {
+    public BuildInfo() {
+    }
+
+    public BuildInfo(String sourceURI) {
+        this.sourceURI = sourceURI;
+        this.startDate = new Date();
+        status = Status.STARTED;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
         this.id = id;
-        this.owner = owner;
-        this.name = name;
-        this.buildTypes = buildTypes;
     }
 
-    public Owner getOwner() {
-        return owner;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public String getName() {
-        return name;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getFinishDate() {
+        return finishDate;
+    }
+
+    public void setFinishDate(Date finishDate) {
+        this.finishDate = finishDate;
+    }
+
+    public String getSourceURI() {
+        return sourceURI;
+    }
+
+    public void setSourceURI(String sourceURI) {
+        this.sourceURI = sourceURI;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public List<BuilTarget> getBuildTargets() {
+        return buildTargets;
+    }
+
+    public void setBuildTargets(List<BuilTarget> buildTargets) {
+        this.buildTargets = buildTargets;
     }
 }

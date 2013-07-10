@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.domain;
 
-import java.io.IOException;
+public class CordovaException extends RuntimeException {
 
-
-public class CordovaException extends RuntimeException{
     public CordovaException(Exception e) {
         super(e);
     }
