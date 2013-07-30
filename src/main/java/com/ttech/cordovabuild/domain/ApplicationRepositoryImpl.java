@@ -13,35 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain.asset;
+package com.ttech.cordovabuild.domain;
 
+import com.ttech.cordovabuild.domain.user.User;
 import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class AssetRepositoryImpl implements AssetRepository {
+public class ApplicationRepositoryImpl implements ApplicationRepository {
 
     @Autowired
-    EntityManager entityManager;
+    EntityManager em;
 
     @Override
-    public Asset findByID(Long id) {
-        return entityManager.find(Asset.class, id);
-    }
-
-    @Override
-    public Asset save(Asset asset) {
-        entityManager.persist(asset);
-        return asset;
-    }
-
-    @Override
-    public List<Asset> getAll() {
-        TypedQuery<Asset> query = entityManager.createQuery("select a from Asset a", Asset.class);
+    public List<Application> getApplications(User owner) {
+        TypedQuery<Application> query = em.createQuery("select a from Application a where a.owner.id:=ownerID", Application.class);
+        query.setParameter("ownerID", owner.getId());
         return query.getResultList();
+    }
+
+    @Override
+    public Application findById(Long id) {
+        return em.find(Application.class, id);
+    }
+
+    @Override
+    public Application saveApplication(Application application) {
+        em.persist(application);
+        return application;
     }
 }

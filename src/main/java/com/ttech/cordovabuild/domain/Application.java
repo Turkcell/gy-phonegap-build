@@ -15,10 +15,12 @@
  */
 package com.ttech.cordovabuild.domain;
 
+import com.ttech.cordovabuild.domain.user.User;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -35,24 +37,24 @@ public class Application implements Serializable {
     private String name;
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-    @OneToMany
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<BuildInfo> builds;
     @ManyToOne
-    private Owner owner;
+    private User owner;
 
     public Application() {
     }
 
-    public Application(String name, Owner owner) {
+    public Application(String name, User owner) {
         this.name = name;
         this.owner = owner;
     }
 
-    public Owner getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(Owner owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
     }
 

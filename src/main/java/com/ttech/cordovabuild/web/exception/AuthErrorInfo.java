@@ -1,6 +1,7 @@
 package com.ttech.cordovabuild.web.exception;
 
-import org.apache.shiro.authz.UnauthenticatedException;
+import org.springframework.security.core.AuthenticationException;
+
 
 public enum AuthErrorInfo {
 
@@ -23,7 +24,7 @@ public enum AuthErrorInfo {
 	}
 
 	public static AuthErrorInfo getForException(Throwable e) {
-		if (e instanceof UnauthenticatedException) {
+		if (e instanceof AuthenticationException) {
 			return INVALID_AUTH_ERROR;
 		}
 		return null;

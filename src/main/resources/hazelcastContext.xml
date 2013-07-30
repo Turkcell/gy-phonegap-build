@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+">
+    <bean id="instance" class="com.hazelcast.core.Hazelcast" factory-method="newHazelcastInstance">
+        <constructor-arg>
+            <bean class="com.hazelcast.config.Config">
+                <property name="networkConfig">
+                    <bean class="com.hazelcast.config.NetworkConfig">
+                        <property name="port" value="5901"/>
+                        <property name="portAutoIncrement" value="false"/>
+                        <property name="reuseAddress" value="true"/>
+                        <property name="join">
+                            <bean class="com.hazelcast.config.Join">
+                                <property name="multicastConfig">
+                                    <bean class="com.hazelcast.config.MulticastConfig">
+                                        <property name="enabled" value="true"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </property>
+                    </bean>
+                </property>
+                
+                <property name="mapConfigs">
+                    <util:map>
+                        <entry key="${build.queue.mapname}">
+                            <bean class="com.hazelcast.config.MapConfig">
+                                <property name="backupCount" value="1"/>
+                                <property name="timeToLiveSeconds" value="300"/>
+                                <property name="maxSizeConfig">
+                                    <bean class="com.hazelcast.config.MaxSizeConfig">
+                                        <property name="size" value="1000"/>
+                                        <property name="maxSizePolicy" value="POLICY_CLUSTER_WIDE_MAP_SIZE"/>
+                                    </bean>
+                                </property>
+                            </bean>
+                        </entry>
+                    </util:map>
+                </property>
+                
+                <property name="qConfigs">
+                    <util:map>
+                        <entry key="${build.queue.name}">
+                            <bean class="com.hazelcast.config.QueueConfig">
+                                <property name="backingMapRef" value="${build.queue.mapname}"/>
+                            </bean>
+                        </entry>
+                    </util:map>
+                </property>
+            </bean>
+        </constructor-arg>
+    </bean>
+    <bean id="buildQueue" factory-bean="instance" factory-method="getQueue">
+        <constructor-arg value="${build.queue.name}"/>
+    </bean>
+</beans>

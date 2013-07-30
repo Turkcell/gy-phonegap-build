@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.infrastructure.archive;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -23,26 +22,28 @@ import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.FileUtils;
 
-import javax.enterprise.context.ApplicationScoped;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import org.springframework.stereotype.Service;
 
-@ApplicationScoped
+@Service
 public class ArchiveExtractorImpl implements ArchiveExtractor {
 
-    ArchiveStreamFactory factory=new ArchiveStreamFactory();
+    ArchiveStreamFactory factory = new ArchiveStreamFactory();
 
     @Override
-    public void extractArchive(InputStream is, File location) {
-        try(ArchiveInputStream ais = factory.createArchiveInputStream(is);) {
+    public void extractArchive(InputStream is, Path location) {
+        try (ArchiveInputStream ais = factory.createArchiveInputStream(is);) {
             ArchiveEntry ae;
-            while((ae=ais.getNextEntry()) != null){
-                if(ae.isDirectory())
+            while ((ae = ais.getNextEntry()) != null) {
+                if (ae.isDirectory()) {
                     continue;
-                try(FileOutputStream outputStream = FileUtils.openOutputStream(new File(location, ae.getName()))){
-                    IOUtils.copy(ais,outputStream);
+                }
+                try (FileOutputStream outputStream = FileUtils.openOutputStream(Paths.get(location.toString(), ae.getName()).toFile())) {
+                    IOUtils.copy(ais, outputStream);
                 }
             }
         } catch (ArchiveException e) {

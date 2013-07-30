@@ -19,7 +19,7 @@ package com.ttech.cordovabuild.domain.source;
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.infrastructure.archive.ArchiveExtractor;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class ArchiveSource implements Source {
 
@@ -32,7 +32,7 @@ public class ArchiveSource implements Source {
     }
 
     @Override
-    public void copy(File location) {
+    public void copy(Path location) {
         archiveExtractor.extractArchive(asset.asInputStream(), location);
     }
 

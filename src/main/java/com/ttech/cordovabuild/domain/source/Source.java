@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.domain.source;
 
-import java.io.File;
-
+import java.nio.file.Path;
 
 public interface Source {
-    public void copy(File location);
+
+    public void copy(Path location);
+
     public String getURI();
 }

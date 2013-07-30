@@ -19,27 +19,26 @@ import com.ttech.cordovabuild.domain.Application;
 import com.ttech.cordovabuild.domain.BuildInfo;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
-@ApplicationScoped
+@Service
 public class BuildTemplateGeneratorImpl implements BuildTemplateGenerator {
 
     private static Logger LOGGER = LoggerFactory
             .getLogger(BuildTemplateGeneratorImpl.class);
-    @Inject
-    @ConfigProperty(name = "build.path")
+
+    @Value("${build.path}")
     private String buildPath;
-    @Inject
-    @ConfigProperty(name = "create.path")
+
+    @Value("${create.path}")
     private String createPath;
 
     @Override

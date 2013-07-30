@@ -14,47 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.infrastructure.archive;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.junit.Assert.assertNotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
-@RunWith(Arquillian.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:hazelcastContext.xml", "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
 public class ArchiveExtractorTest {
 
-    @Inject
+    @Autowired
     ArchiveExtractor ae;
-
-    @Deployment
-    public static WebArchive createDeployment() {
-        WebArchive jar = ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addPackage(ArchiveExtractor.class.getPackage())
-                .addAsWebResource("cordova.properties")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
-        System.out.println(jar.toString(true));
-        return jar;
-    }
 
     @Test
     public void checkBuildPath() throws IOException, InterruptedException {
         assertNotNull(ae);
-        ae.extractArchive(new BufferedInputStream(new FileInputStream("/home/capacman/Data/Downloads/easyXDM-2.4.17.1.zip")), new File("/home/capacman/tmp/extract1"));
+
+        ae.extractArchive(new BufferedInputStream(new FileInputStream("/home/capacman/Data/Downloads/easyXDM-2.4.17.1.zip")), Files.createTempDirectory("anil"));
     }
 }

@@ -19,48 +19,33 @@ package com.ttech.cordovabuild.infrastructure.queue;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
 import com.ttech.cordovabuild.domain.BuildInfo;
-import com.ttech.cordovabuild.infrastructure.CustomPropertyFileConfig;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
+import java.nio.file.Paths;
+import javax.annotation.Resource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.io.File;
-
 import static org.junit.Assert.assertNotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-@RunWith(Arquillian.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:hazelcastContext.xml", "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
 public class HazelcastTest {
 
-    @Inject
+    @Autowired
     private HazelcastInstance hi;
-    @Inject
-    @BuildQueue
-    private IQueue<BuildInfo> queue;
+    //could not autowire queue with @Autowire
+    @Resource(name = "buildQueue")
+    IQueue<BuildInfo> queue;
 
-    @Deployment
-    public static WebArchive createDeployment() {
-        WebArchive jar = ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addPackages(true, HazelcastTest.class.getPackage())
-                .addClass(CustomPropertyFileConfig.class)
-                .addAsWebResource("cordova.properties")
-                .addAsDirectory("src/main/resources/META-INF")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
-        System.out.println(jar.toString(true));
-        return jar;
-    }
+    @Autowired
+    ApplicationContext context;
 
     @Test
     public void testHazelcastInstance() {
         assertNotNull(hi);
-        System.out.println(BasicDataSource.class.getName());
     }
 
     @Test
@@ -68,5 +53,6 @@ public class HazelcastTest {
         assertNotNull(queue);
         queue.put(new BuildInfo("http://github.com"));
         assertNotNull(queue.poll());
+        System.out.println(Paths.get("").toAbsolutePath());
     }
 }

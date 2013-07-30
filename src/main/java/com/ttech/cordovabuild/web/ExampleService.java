@@ -1,10 +1,11 @@
 package com.ttech.cordovabuild.web;
 
-import javax.enterprise.context.ApplicationScoped;
+import org.springframework.stereotype.Service;
 
-@ApplicationScoped
+@Service
 public class ExampleService {
-	public String getHello() {
-		return "Hello World!";
-	}
+
+    public String getHello() {
+        return "Hello World!";
+    }
 }

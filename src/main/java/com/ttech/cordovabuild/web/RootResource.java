@@ -2,15 +2,15 @@ package com.ttech.cordovabuild.web;
 
 import com.ttech.cordovabuild.domain.Application;
 import com.ttech.cordovabuild.domain.ApplicationRepository;
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("/")
 public class RootResource {
 
-    @Inject
+    @Autowired
     ApplicationRepository applicationRepository;
 
     @GET

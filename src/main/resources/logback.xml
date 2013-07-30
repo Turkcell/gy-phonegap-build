@@ -21,7 +21,8 @@
 		<appender-ref ref="stdout" />
 	</root>
 	<logger name="org.eclipse.jetty" level="INFO" />
-	<logger name="org.jboss.weld" level="INFO" />
+	<logger name="org.springframework" level="INFO" />
 	<logger name="jndi" level="INFO" />
-	<logger name="org.jboss.resteasy" level="INFO" />
+	<logger name="org.jboss.resteasy" level="DEBUG" />
+        <logger name="bitronix" level="INFO" />
 </configuration>

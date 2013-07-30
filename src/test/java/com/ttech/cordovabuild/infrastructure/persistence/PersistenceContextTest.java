@@ -17,55 +17,50 @@ package com.ttech.cordovabuild.infrastructure.persistence;
 
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.asset.AssetRepository;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.io.File;
-import java.util.Properties;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import static junit.framework.Assert.assertEquals;
 
 import static junit.framework.Assert.assertNotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-
-@RunWith(Arquillian.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:datasourceContext.xml","classpath:applicationContext.xml"})
+@TransactionConfiguration(transactionManager = "tx")
 public class PersistenceContextTest {
-    @Inject
-    @DataSource
-    Properties properties;
 
-    @Inject
+    @Autowired
     AssetRepository assetRepository;
+    @Autowired
+    DataSource datasource;
 
-    @Deployment
-    public static WebArchive createDeployment() {
-        WebArchive jar = ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addPackages(true, PersistenceContextTest.class.getPackage(), Asset.class.getPackage())
-                .addAsWebResource("cordova.properties")
-                .addAsWebResource("dataSource.properties")
-                .addAsWebInfResource(new File("src/main/webapp/WEB-INF/beans.xml"))
-                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
-        System.out.println(jar.toString(true));
-        return jar;
+    @Test
+    public void testDataSource() throws NamingException {
+        assertNotNull(datasource);
     }
 
     @Test
-    public void testDataSourceConfig() {
-        assertNotNull(properties);
-        Object driverClassName = properties.get("driverClassName");
-        assertNotNull(driverClassName);
-        System.out.println(driverClassName);
-    }
-
-    @Test
+    @Transactional
     public void testAssetRepository() {
         assertNotNull(assetRepository);
         Asset a = new Asset();
         a.setData("test".getBytes());
         assetRepository.save(a);
         assertNotNull(a.getId());
+        assertNotNull(assetRepository.findByID(a.getId()));
+    }
+
+    @Test
+    @Transactional
+    public void testPrevious() {
+        assertNotNull(assetRepository);
+        assertEquals(0, assetRepository.getAll().size());
     }
 }

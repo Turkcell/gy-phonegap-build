@@ -18,16 +18,9 @@ package com.ttech.cordovabuild.infrastructure.git;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ArchivePaths;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,25 +29,18 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-
-@RunWith(Arquillian.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"classpath:hazelcastContext.xml", "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
 public class GitRepositoryTest {
 
     public static final String PROJECT = "base";
-    @Inject
+    @Autowired
     GitRepository repository;
 
-    @Deployment
-    public static WebArchive createDeployment() {
-        WebArchive jar = ShrinkWrap.create(WebArchive.class, "ROOT.war")
-                .addPackage(GitRepositoryTest.class.getPackage())
-                .addAsWebResource("cordova.properties")
-                .addAsWebInfResource(EmptyAsset.INSTANCE, ArchivePaths.create("beans.xml"))
-                .setWebXML(new File("src/main/webapp/WEB-INF/web.xml"));
-        System.out.println(jar.toString(true));
-        return jar;
-    }
     @Test
     public void testGitPurge() throws IOException {
         File tempDirectory = FileUtils.getTempDirectory();
@@ -62,45 +48,47 @@ public class GitRepositoryTest {
         FileUtils.forceMkdir(new File(project + File.separator + "a" + File.separator + ".git"));
         FileUtils.forceMkdir(new File(project + File.separator + "b" + File.separator + ".git"));
         Collection<File> aFiles = FileUtils.listFilesAndDirs(new File(project + File.separator + "a"), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-        assertEquals(2,aFiles.size());
+        assertEquals(2, aFiles.size());
         Collection<File> files = FileUtils.listFilesAndDirs(new File(project), new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return false;
-                    }
+            @Override
+            public boolean accept(File file) {
+                return false;
+            }
 
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }, new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory();
-                    }
+            @Override
+            public boolean accept(File dir, String name) {
+                return false;
+            }
+        }, new IOFileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory();
+            }
 
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }
-        );
-        assertEquals(5,files.size());
-        List<File> filtered=new ArrayList<>();
-        for (File file : files) {
-            if(file.getName().equals(".git"))
-                filtered.add(file);
+            @Override
+            public boolean accept(File dir, String name) {
+                return false;
+            }
         }
-        assertEquals(2,filtered.size());
+                );
+        assertEquals(5, files.size());
+        List<File> filtered = new ArrayList<>();
+        for (File file : files) {
+            if (file.getName().equals(".git")) {
+                filtered.add(file);
+            }
+        }
+        assertEquals(2, filtered.size());
     }
 
     @Test
     public void testCloneRepository() throws IOException {
         File restaurantviewsclone = new File(FileUtils.getTempDirectoryPath(), "restaurantviewsclone");
-        if(restaurantviewsclone.exists())
+        if (restaurantviewsclone.exists()) {
             FileUtils.deleteDirectory(restaurantviewsclone);
+        }
         repository.clone("https://github.com/Turkcell/RestaurantReviews.git", restaurantviewsclone
-        );
+                );
         assertTrue(restaurantviewsclone.exists());
     }
 }

@@ -17,8 +17,11 @@
 
 package com.ttech.cordovabuild.domain.asset;
 
+import java.util.List;
+
 
 public interface AssetRepository {
     Asset findByID(Long id);
     Asset save(Asset asset);
+    List<Asset> getAll();
 }

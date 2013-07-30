@@ -15,6 +15,7 @@
  */
 package com.ttech.cordovabuild.domain;
 
+import com.ttech.cordovabuild.domain.user.User;
 import java.util.List;
 
 /**
@@ -23,7 +24,9 @@ import java.util.List;
  */
 public interface ApplicationRepository {
 
-    List<Application> getApplications(Owner owner);
+    List<Application> getApplications(User owner);
 
     Application findById(Long id);
+    
+    Application saveApplication(Application application);
 }

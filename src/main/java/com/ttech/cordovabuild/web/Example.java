@@ -1,19 +1,22 @@
 package com.ttech.cordovabuild.web;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import org.apache.shiro.authz.annotation.RequiresUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.stereotype.Component;
 
+@Component
 @Path("/example")
 public class Example {
-	@Inject
-	ExampleService exampleService;
 
-	@GET
-	@RequiresUser
-	public String getName() {
-		return exampleService.getHello();
-	}
+    @Autowired
+    ExampleService exampleService;
+
+    @GET
+    @Secured(value = "USER")
+    public String getName() {
+        return exampleService.getHello();
+    }
 }

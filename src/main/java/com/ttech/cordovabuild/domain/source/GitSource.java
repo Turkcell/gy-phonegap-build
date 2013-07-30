@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.domain.source;
 
 import com.ttech.cordovabuild.infrastructure.git.GitRepository;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public class GitSource implements Source {
+
     private final String gitUri;
     private final GitRepository repository;
 
@@ -30,8 +30,8 @@ public class GitSource implements Source {
     }
 
     @Override
-    public void copy(File location) {
-        repository.clone(gitUri,location);
+    public void copy(Path location) {
+        repository.clone(gitUri, location.toFile());
     }
 
     @Override

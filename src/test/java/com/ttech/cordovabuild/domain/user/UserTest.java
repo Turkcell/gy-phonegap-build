@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.ttech.cordovabuild.domain.user;
 
-package com.ttech.cordovabuild.infrastructure.persistence;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.inject.Qualifier;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+/**
+ *
+ * @author capacman
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+public class UserTest {
 
-import static java.lang.annotation.ElementType.*;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-
-@Qualifier
-@Retention(RUNTIME)
-@Target({TYPE, METHOD, FIELD, PARAMETER})
-public @interface DataSource {
+    @Autowired
+    UserRepository userRepository;
 }

@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.ttech.cordovabuild.infrastructure.git;
 
 import org.apache.commons.io.FileUtils;
@@ -24,13 +23,14 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import org.springframework.stereotype.Service;
 
-@ApplicationScoped
+@Service
 public class GitRepositoryImpl implements GitRepository {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GitRepositoryImpl.class);
 
     @Override
@@ -50,31 +50,32 @@ public class GitRepositoryImpl implements GitRepository {
 
     private void removePattern(File path, final String s) {
         Collection<File> files = FileUtils.listFilesAndDirs(path, new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return false;
-                    }
+            @Override
+            public boolean accept(File file) {
+                return false;
+            }
 
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }, new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory();
-                    }
+            @Override
+            public boolean accept(File dir, String name) {
+                return false;
+            }
+        }, new IOFileFilter() {
+            @Override
+            public boolean accept(File file) {
+                return file.isDirectory();
+            }
 
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }
-        );
+            @Override
+            public boolean accept(File dir, String name) {
+                return false;
+            }
+        }
+                );
         try {
             for (File file : files) {
-                if (file.getName().equals(".git"))
+                if (file.getName().equals(".git")) {
                     FileUtils.deleteDirectory(file);
+                }
             }
         } catch (IOException e) {
             LOGGER.warn("git directory purge failed", e);

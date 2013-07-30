@@ -16,10 +16,10 @@
 
 package com.ttech.cordovabuild.infrastructure.archive;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 
 public interface ArchiveExtractor {
-    public void extractArchive(InputStream is, File location);
+    public void extractArchive(InputStream is, Path location);
 }
