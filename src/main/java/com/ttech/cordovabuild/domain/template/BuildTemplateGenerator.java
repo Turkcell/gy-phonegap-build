@@ -16,8 +16,8 @@
 
 package com.ttech.cordovabuild.domain.template;
 
-import com.ttech.cordovabuild.domain.Application;
 import com.ttech.cordovabuild.domain.BuildInfo;
+import com.ttech.cordovabuild.domain.application.Application;
 
 public interface BuildTemplateGenerator {
 	public BuildTemplate generateTemplate(Application app, BuildInfo info);

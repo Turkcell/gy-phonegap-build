@@ -13,29 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain.source;
+package com.ttech.cordovabuild.domain.application.source;
 
 import com.ttech.cordovabuild.infrastructure.git.GitRepository;
 
 import java.nio.file.Path;
 
-public class GitSource implements Source {
+public class GitSource extends SourceBase {
 
-    private final String gitUri;
-    private final GitRepository repository;
+	private final String gitUri;
 
-    public GitSource(String gitUri, GitRepository repository) {
-        this.gitUri = gitUri;
-        this.repository = repository;
-    }
+	public GitSource(String gitUri, GitRepository repository, Path localPath) {
+		super(localPath);
+		this.gitUri = gitUri;
+		repository.clone(gitUri, localPath.toFile());
+	}
 
-    @Override
-    public void copy(Path location) {
-        repository.clone(gitUri, location.toFile());
-    }
-
-    @Override
-    public String getURI() {
-        return gitUri;
-    }
+	@Override
+	public String getURI() {
+		return gitUri;
+	}
 }

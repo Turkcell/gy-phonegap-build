@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain;
+package com.ttech.cordovabuild.domain.application.source;
 
-import com.ttech.cordovabuild.domain.user.User;
-import java.util.List;
+import java.nio.file.Path;
 
-/**
- *
- * @author capacman
- */
-public interface ApplicationRepository {
+import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 
-    List<Application> getApplications(User owner);
+public interface ApplicationSource {
 
-    Application findById(Long id);
-    
-    Application saveApplication(Application application);
+	public Path getLocalPath();
+
+	public String getURI();
+
+	ApplicationConfig getApplicationData();
 }

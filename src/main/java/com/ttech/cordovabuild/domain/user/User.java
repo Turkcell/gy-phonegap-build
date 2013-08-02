@@ -18,24 +18,31 @@ package com.ttech.cordovabuild.domain.user;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import org.springframework.security.core.GrantedAuthority;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "APP_USERS")
 public class User implements Serializable, UserDetails {
 
-    @Id
-    private Long id;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -54880463471029518L;
+	@Id
+    @GeneratedValue
+	private Long id;
     @Basic
     @Column(length = 1024)
     private String name;
@@ -65,12 +72,18 @@ public class User implements Serializable, UserDetails {
 
     public User() {
     }
+    
+    public User(String name, String surname, String email, String username,
+			Set<Role> roles, String password) {
+		this.name = name;
+		this.surname = surname;
+		this.email = email;
+		this.username = username;
+		this.roles = roles;
+		this.password = password;
+	}
 
-    public User(String name) {
-        this.name = name;
-    }
-
-    public void setName(String name) {
+	public void setName(String name) {
         this.name = name;
     }
 

@@ -23,7 +23,12 @@ import java.text.MessageFormat;
 
 
 public class TemplateCreationException extends CordovaException {
-    public TemplateCreationException(IOException e) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6492066447596321028L;
+
+	public TemplateCreationException(IOException e) {
         super(e);
     }
 

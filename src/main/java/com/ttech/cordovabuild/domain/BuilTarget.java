@@ -21,12 +21,16 @@ import javax.persistence.Embeddable;
 
 /**
  *
- * @author capacman
+ * @author Anıl Halil
  */
 @Embeddable
 public class BuilTarget implements Serializable {
 
-    private ProjectType type;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3100288908130355062L;
+	private ProjectType type;
     private Asset asset;
 
     public ProjectType getType() {

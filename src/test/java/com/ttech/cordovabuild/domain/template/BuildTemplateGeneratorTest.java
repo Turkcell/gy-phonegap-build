@@ -15,9 +15,12 @@
  */
 package com.ttech.cordovabuild.domain.template;
 
-import com.ttech.cordovabuild.domain.Application;
+import com.google.common.collect.ImmutableSet;
 import com.ttech.cordovabuild.domain.BuildInfo;
+import com.ttech.cordovabuild.domain.application.Application;
+import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
+
 import org.junit.Test;
 
 import java.io.File;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,36 +37,42 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:hazelcastContext.xml", "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
+@ContextConfiguration({ "classpath:hazelcastContext.xml",
+		"classpath:datasourceContext.xml", "classpath:applicationContext.xml" })
 public class BuildTemplateGeneratorTest {
 
-    @Value("${build.path}")
-    private String buildPath;
-    @Value("${create.path}")
-    private String createPath;
+	@Value("${build.path}")
+	private String buildPath;
+	@Value("${create.path}")
+	private String createPath;
 
-    @Autowired
-    BuildTemplateGenerator generator;
+	@Autowired
+	BuildTemplateGenerator generator;
 
-    @Test
-    public void checkBuildPath() throws IOException, InterruptedException {
-        assertNotNull(buildPath);
-        assertTrue(!"build.path".equals(buildPath));
-    }
+	@Test
+	public void checkBuildPath() throws IOException, InterruptedException {
+		assertNotNull(buildPath);
+		assertTrue(!"build.path".equals(buildPath));
+	}
 
-    @Test
-    public void checkCreateExistence() throws IOException, InterruptedException {
-        File file = new File(createPath);
-        assertTrue(file.exists());
-        assertTrue(file.canExecute());
-    }
+	@Test
+	public void checkCreateExistence() throws IOException, InterruptedException {
+		File file = new File(createPath);
+		assertTrue(file.exists());
+		assertTrue(file.canExecute());
+	}
 
-    @Test
-    public void testTemplateCreation() {
-        BuildInfo buildInfo = new BuildInfo("http://github.com");
-        final Application application = new Application("myapp", new User("Anil"));
-        BuildTemplate template = generator.generateTemplate(application, buildInfo);
-        File path = new File(new File(buildPath, application.getOwner().getName()), application.getName());
-        assertEquals(path.getAbsolutePath(), template.getPath());
-    }
+	@Test
+	public void testTemplateCreation() {
+		BuildInfo buildInfo = new BuildInfo("http://github.com");
+		final Application application = new Application("myapp", new User(
+				"anil", "halil", "achalil@gmail.com", "capacman",
+				new ImmutableSet.Builder<Role>().add(Role.USER).build(),
+				"passowrd"));
+		BuildTemplate template = generator.generateTemplate(application,
+				buildInfo);
+		File path = new File(new File(buildPath, application.getOwner()
+				.getName()), application.getName());
+		assertEquals(path.getAbsolutePath(), template.getPath());
+	}
 }

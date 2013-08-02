@@ -15,62 +15,54 @@
  */
 package com.ttech.cordovabuild.domain.user;
 
-import java.util.List;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    @Autowired
-    EntityManager em;
+	@Autowired
+	EntityManager em;
 
-    @Override
-    public User findUserByID(Long id) {
-        return em.find(User.class, id);
-    }
+	@Override
+	public User findUserByID(Long id) {
+		return em.find(User.class, id);
+	}
 
-    @Override
-    public User findUserByUserName(String username) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> root = cq.from(User.class);
-        return em.createQuery(cq.where(cb.equal(root.get("username"), username))).getSingleResult();
-    }
+	@Override
+	public User findUserByUserName(String username) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> root = cq.from(User.class);
+		return em.createQuery(
+				cq.select(root).where(
+						cb.equal(root.get(User_.username), username)))
+				.getSingleResult();
+	}
 
-    @Override
-    public User findUserByEmail(String email) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> root = cq.from(User.class);
-        return em.createQuery(cq.where(cb.equal(root.get("email"), email))).getSingleResult();
-    }
+	@Override
+	public User findUserByEmail(String email) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<User> cq = cb.createQuery(User.class);
+		Root<User> root = cq.from(User.class);
+		return em.createQuery(
+				cq.select(root).where(cb.equal(root.get(User_.email), email)))
+				.getSingleResult();
+	}
 
-    @Override
-    public Role saveRole(Role role) {
-        em.persist(role);
-        return role;
-    }
-
-    @Override
-    public User saveOrUpdateUser(User user) {
-        try {
-            em.persist(user);
-            return user;
-        } catch (EntityExistsException e) {
-            return em.merge(user);
-        }
-    }
-
-    @Override
-    public List<Role> getActiveRoles() {
-        TypedQuery<Role> query = em.createQuery("select r from Role r", Role.class);
-        return query.getResultList();
-    }
+	@Override
+	public User saveOrUpdateUser(User user) {
+		try {
+			em.persist(user);
+			return user;
+		} catch (EntityExistsException e) {
+			return em.merge(user);
+		}
+	}
 }

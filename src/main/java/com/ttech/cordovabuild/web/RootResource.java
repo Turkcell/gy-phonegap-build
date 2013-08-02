@@ -1,7 +1,7 @@
 package com.ttech.cordovabuild.web;
 
-import com.ttech.cordovabuild.domain.Application;
-import com.ttech.cordovabuild.domain.ApplicationRepository;
+import com.ttech.cordovabuild.domain.application.Application;
+import com.ttech.cordovabuild.domain.application.ApplicationRepository;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;

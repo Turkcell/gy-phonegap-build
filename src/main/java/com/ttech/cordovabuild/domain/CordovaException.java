@@ -17,7 +17,12 @@ package com.ttech.cordovabuild.domain;
 
 public class CordovaException extends RuntimeException {
 
-    public CordovaException(Exception e) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 5049618127021607243L;
+
+	public CordovaException(Exception e) {
         super(e);
     }
 

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain;
+package com.ttech.cordovabuild.domain.application;
 
+import com.ttech.cordovabuild.domain.application.ApplicationRepository;
 import com.ttech.cordovabuild.domain.user.User;
 import java.util.List;
 import javax.persistence.EntityManager;

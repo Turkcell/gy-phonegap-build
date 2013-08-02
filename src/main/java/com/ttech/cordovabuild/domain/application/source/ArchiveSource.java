@@ -14,30 +14,26 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.source;
+package com.ttech.cordovabuild.domain.application.source;
 
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.infrastructure.archive.ArchiveExtractor;
 
 import java.nio.file.Path;
 
-public class ArchiveSource implements Source {
+public class ArchiveSource extends SourceBase {
 
-    private Asset asset;
-    private ArchiveExtractor archiveExtractor;
+	private Asset asset;
 
-    public ArchiveSource(Asset asset, ArchiveExtractor archiveExtractor) {
-        this.asset = asset;
-        this.archiveExtractor = archiveExtractor;
-    }
+	public ArchiveSource(Asset asset, ArchiveExtractor archiveExtractor,
+			Path localPath) {
+		super(localPath);
+		this.asset = asset;
+		archiveExtractor.extractArchive(asset.asInputStream(), localPath);
+	}
 
-    @Override
-    public void copy(Path location) {
-        archiveExtractor.extractArchive(asset.asInputStream(), location);
-    }
-
-    @Override
-    public String getURI() {
-        return asset.toString();
-    }
+	@Override
+	public String getURI() {
+		return asset.toString();
+	}
 }

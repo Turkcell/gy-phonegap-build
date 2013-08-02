@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.source;
+package com.ttech.cordovabuild.domain.application.source;
 
-public interface SourceFactory {
-    Source createSource(String uri);
+import java.nio.file.Path;
+
+public interface ApplicationSourceFactory {
+    ApplicationSource createSource(String uri,Path localPath);
 }

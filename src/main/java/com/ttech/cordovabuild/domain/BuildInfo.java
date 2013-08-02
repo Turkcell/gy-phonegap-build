@@ -30,7 +30,12 @@ import javax.persistence.TemporalType;
 @Entity
 public class BuildInfo implements Serializable {
 
-    public enum Status {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7425285261159480420L;
+
+	public enum Status {
 
         INPROGRESS, STARTED, WAITING, FAILED, SUCCESS;
     }

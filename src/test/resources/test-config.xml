@@ -1,0 +1,12 @@
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.turkcell.restaurantee" version="1.0.0">  
+    <name>RestaurantReviews</name>  
+    <description>Application for location based reviewing restaurants.</description>  
+    <author href="http://www.turkcell.com.tr" email="support@turkcelltech.com">Turkcell OpenLab</author>  
+    <preference name="phonegap-version" value="2.5.0"/>  
+    <feature name="http://api.phonegap.com/1.0/network"/>  
+    <feature name="http://api.phonegap.com/1.0/geolocation"/>  
+    <feature name="http://api.phonegap.com/1.0/notification"/>  
+    <icon src="icons/rest_icon_57.png" width="57" height="57"/>  
+    <icon src="icons/rest_icon_72.png" width="72" height="72"/>  
+    <access origin="*"/> 
+</widget>

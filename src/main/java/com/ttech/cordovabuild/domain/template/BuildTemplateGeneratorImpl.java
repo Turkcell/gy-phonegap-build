@@ -15,13 +15,12 @@
  */
 package com.ttech.cordovabuild.domain.template;
 
-import com.ttech.cordovabuild.domain.Application;
 import com.ttech.cordovabuild.domain.BuildInfo;
+import com.ttech.cordovabuild.domain.application.Application;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 import java.io.File;
 import java.io.IOException;
