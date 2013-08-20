@@ -16,12 +16,16 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
+import static com.ttech.cordovabuild.infrastructure.git.GitUtils.clone;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import java.io.File;
+import java.nio.file.Path;
 
-import org.junit.Assert;
+import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.infrastructure.git.GitUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -33,7 +37,6 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Files;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.user.Role;
@@ -41,52 +44,65 @@ import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
 
 /**
- * 
  * @author capacman
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:hazelcastContext.xml",
-		"classpath:datasourceContext.xml", "classpath:applicationContext.xml" })
+@ContextConfiguration({"classpath:hazelcastContext.xml",
+        "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
 @TransactionConfiguration(transactionManager = "tx")
 public class ApplicationServiceTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceTest.class);
     public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";
 
     @Autowired
-	ApplicationRepository repository;
-	@Autowired
-	ApplicationService applicationService;
-	@Autowired
-	UserRepository userRepository;
-	
-	@Autowired
-	ApplicationSourceFactory sourceFactory;
+    ApplicationService applicationService;
+    @Autowired
+    UserRepository userRepository;
 
-	@Test
-	public void testRepository() {
-		Assert.assertNotNull(repository);
-	}
+    @Autowired
+    ApplicationSourceFactory sourceFactory;
 
-	@Test
-	@Transactional
-	public void testCreateApplicationWithRepo() {
-		User user = new User("anil", "halil", "achalil@gmail.com", "capacman",
-				new ImmutableSet.Builder<Role>().add(Role.USER).build(),
-				"passowrd");
-		user=userRepository.saveOrUpdateUser(user);
-		Application application = applicationService.createApplication(user,GIT_REPO);
-		assertNotNull(application.getId());
-		assertNotNull(applicationService.findApplication(application.getId()).getOwner());
-	}
-	/*
-	@Test
-	public void testCreateApplicationWithAsset(){
-		File tempDir = Files.createTempDir();
-		LOGGER.info("{} is temp dir ",tempDir.getAbsolutePath());
-		ApplicationSource source = sourceFactory.createSource(GIT_REPO, tempDir.toPath());
-		assertNotNull(source);
-		ApplicationConfig applicationData = source.getApplicationConfig();
-		LOGGER.info(applicationData.toString());
-	}
-*/
+    @Test
+    public void testAssetCreate() {
+        Asset asset = createAsset();
+        assertNotNull(asset);
+        assertNotNull(asset.getData());
+        assertTrue(asset.getData().length>0);
+        ApplicationSource source = sourceFactory.createSource(asset);
+        assertNotNull(source);
+        assertTrue(source.getLocalPath().toFile().exists());
+        assertTrue(source.getLocalPath().resolve("config.xml").toFile().exists());
+    }
+
+    private Asset createAsset() {
+        Path localPath = GitUtils.clone(GIT_REPO);
+        ApplicationSource source = sourceFactory.createSource(localPath);
+        return sourceFactory.toAsset(source);
+    }
+
+    @Test
+    @Transactional
+    public void testCreateApplicationWithRepo() {
+        User user = createUser();
+        user = userRepository.saveOrUpdateUser(user);
+        Application application = applicationService.createApplication(user, GIT_REPO);
+        assertNotNull(application.getId());
+        assertNotNull(applicationService.findApplication(application.getId()).getOwner());
+    }
+
+    private User createUser() {
+        return new User("anil", "halil", "achalil@gmail.com", "capacman",
+                    new ImmutableSet.Builder<Role>().add(Role.USER).build(),
+                    "passowrd");
+    }
+
+    @Test
+    public void testCreateApplicationWithAsset() {
+        Asset asset = createAsset();
+        User user = createUser();
+        userRepository.saveOrUpdateUser(user);
+        Application application = applicationService.createApplication(user, asset);
+        assertNotNull(application);
+    }
+
 }

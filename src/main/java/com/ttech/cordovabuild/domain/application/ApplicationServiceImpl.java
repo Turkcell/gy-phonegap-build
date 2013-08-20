@@ -20,7 +20,7 @@ import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.user.User;
-import com.ttech.cordovabuild.infrastructure.git.GitRepository;
+import com.ttech.cordovabuild.infrastructure.git.GitUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +42,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     ApplicationRepository repository;
     @Autowired
-    GitRepository gitRepository;
-    @Autowired
     ApplicationSourceFactory sourceFactory;
 
     @Override
@@ -51,7 +49,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         LOGGER.info(
                 "new application will be created for {} with repository {}",
                 owner, repositoryURI);
-        Path localPath = gitRepository.clone(repositoryURI);
+        Path localPath = GitUtils.clone(repositoryURI);
         LOGGER.info("clone finished");
         ApplicationSource applicationSource = sourceFactory.createSource(localPath);
         return repository.saveApplication(new Application(sourceFactory.toAsset(applicationSource), applicationSource.getApplicationConfig(), repositoryURI, owner));

@@ -16,16 +16,12 @@
 
 package com.ttech.cordovabuild.domain.application.source;
 
-import com.google.common.io.Files;
+
 import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
 import com.ttech.cordovabuild.domain.asset.Asset;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
-import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.*;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,10 +35,13 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.compressDirectory;
+import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.extractFiles;
 
 @Service
 public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
@@ -70,23 +69,13 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 
     @Override
     public ApplicationSource createSource(Asset asset) {
-        ArchiveStreamFactory factory = new ArchiveStreamFactory();
-        Path localPath = Files.createTempDir().toPath();
-        try (ArchiveInputStream ais = factory.createArchiveInputStream(asset.asInputStream());) {
-            ArchiveEntry ae;
-            while ((ae = ais.getNextEntry()) != null) {
-                if (ae.isDirectory()) {
-                    continue;
-                }
-                try (FileOutputStream outputStream = FileUtils.openOutputStream(Paths.get(localPath.toString(), ae.getName()).toFile())) {
-                    IOUtils.copy(ais, outputStream);
-                }
-            }
-        } catch (ArchiveException e) {
-            throw new ArchiveExtractionException(e);
+        Path localPath = null;
+        try {
+            localPath = Files.createTempDirectory(null);
         } catch (IOException e) {
-            throw new ArchiveExtractionException(e);
+            throw new ApplicationSourceException(e);
         }
+        extractFiles(asset.asInputStream(), localPath);
         return new ApplicationSourceImpl(localPath);
 
     }
@@ -98,16 +87,19 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 
     @Override
     public Asset toAsset(ApplicationSource applicationSource) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        ByteArrayOutputStream output = new ByteArrayOutputStream(10 * 1024 * 1024);
+        compressDirectory(applicationSource.getLocalPath(), output);
+        return new Asset(output.toByteArray());
     }
+
+
 
     private ApplicationConfig getApplicationConfigInner(Path sourcePath) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory
                     .newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(Paths.get(sourcePath.toString(),
-                    "config.xml").toFile());
+            Document doc = builder.parse(sourcePath.resolve("config.xml").toFile());
             XPath xpath = XPathFactory.newInstance().newXPath();
             XPathExpression idExpr = xpath.compile("/*/@id");
             XPathExpression versionExpr = xpath.compile("/*/@version");

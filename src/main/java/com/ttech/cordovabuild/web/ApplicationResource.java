@@ -20,6 +20,7 @@ public class ApplicationResource {
 
     @POST
     public Application createApplication(Application app) {
-        return repository.saveApplication(app);
+        //return service.saveApplication(app);
+        return null;
     }
 }

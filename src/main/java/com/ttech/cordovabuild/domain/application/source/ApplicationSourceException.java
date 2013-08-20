@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.infrastructure.git;
+package com.ttech.cordovabuild.domain.application.source;
 
-import java.io.File;
-import java.nio.file.Path;
+import com.ttech.cordovabuild.domain.CordovaException;
 
-public interface GitRepository {
-	public Path clone(String uri);
+import java.io.IOException;
 
-	public Path clone(String uri, String username, String password);
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 8/20/13
+ * Time: 10:43 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class ApplicationSourceException extends CordovaException {
+    public ApplicationSourceException(IOException e) {
+        super(e);
+    }
 }

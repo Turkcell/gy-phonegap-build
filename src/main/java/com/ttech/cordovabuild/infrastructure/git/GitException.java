@@ -19,6 +19,8 @@ package com.ttech.cordovabuild.infrastructure.git;
 import com.ttech.cordovabuild.domain.CordovaException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import java.io.IOException;
+
 public class GitException extends CordovaException {
 	/**
 	 * 
@@ -28,4 +30,8 @@ public class GitException extends CordovaException {
 	public GitException(GitAPIException e) {
 		super(e);
 	}
+
+    public GitException(IOException e){
+        super(e);
+    }
 }

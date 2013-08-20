@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.application.source;
+package com.ttech.cordovabuild.infrastructure.archive;
 
 import com.ttech.cordovabuild.domain.CordovaException;
 
