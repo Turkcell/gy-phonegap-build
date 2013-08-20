@@ -4,7 +4,7 @@
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.ttech.cordovabuild.domain.asset.Asset</class>
     <class>com.ttech.cordovabuild.domain.application.Application</class>
-    <class>com.ttech.cordovabuild.domain.BuildInfo</class>
+    <class>com.ttech.cordovabuild.domain.ApplicationBuild</class>
     <class>com.ttech.cordovabuild.domain.user.User</class>
     <properties>
       <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>

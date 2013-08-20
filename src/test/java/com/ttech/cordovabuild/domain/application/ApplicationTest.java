@@ -19,9 +19,15 @@ package com.ttech.cordovabuild.domain.application;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.File;
+import java.nio.file.Paths;
+
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +36,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.Files;
+import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
+import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
@@ -43,6 +52,7 @@ import com.ttech.cordovabuild.domain.user.UserRepository;
 		"classpath:datasourceContext.xml", "classpath:applicationContext.xml" })
 @TransactionConfiguration(transactionManager = "tx")
 public class ApplicationTest {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationTest.class);
 
 	@Autowired
 	ApplicationRepository repository;
@@ -50,6 +60,9 @@ public class ApplicationTest {
 	ApplicationService applicationService;
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	ApplicationSourceFactory sourceFactory;
 
 	@Test
 	public void testRepository() {
@@ -59,6 +72,7 @@ public class ApplicationTest {
 	@Test
 	@Transactional
 	@Rollback(false)
+	@Ignore
 	public void testCreateApplication() {
 		User user = new User("anil", "halil", "achalil@gmail.com", "capacman",
 				new ImmutableSet.Builder<Role>().add(Role.USER).build(),
@@ -71,7 +85,12 @@ public class ApplicationTest {
 	
 	@Test
 	public void testUpdateApplication(){
-		
+		File tempDir = Files.createTempDir();
+		LOGGER.info("{} is temp dir ",tempDir.getAbsolutePath());
+		ApplicationSource source = sourceFactory.createSource("https://github.com/Turkcell/RestaurantReviews.git", tempDir.toPath());
+		assertNotNull(source);
+		ApplicationConfig applicationData = source.getApplicationConfig();
+		LOGGER.info(applicationData.toString());
 	}
 
 }

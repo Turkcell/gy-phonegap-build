@@ -15,6 +15,7 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
@@ -24,16 +25,19 @@ import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ttech.cordovabuild.domain.BuildInfo;
+import com.ttech.cordovabuild.domain.ApplicationBuild;
+import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.user.User;
 
 @Entity
@@ -43,114 +47,121 @@ public class Application implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -735262415872708429L;
-	@SequenceGenerator(allocationSize=50,name="APP_SEQ")
+	@SequenceGenerator(allocationSize = 50, name = "APP_SEQ")
 	@Id
-    @GeneratedValue(strategy = SEQUENCE,generator="APP_SEQ")
+	@GeneratedValue(strategy = SEQUENCE, generator = "APP_SEQ")
 	private Long id;
-    @Basic
-    @Column(length = 1024, nullable = false)
-    private String name;
+	@Basic
+	@Column(length = 1024, nullable = false)
+	private String name;
+
+	@Basic
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created;
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH })
+	private List<ApplicationBuild> builds;
+	@ManyToOne(optional = false)
+	private User owner;
+	@Basic
+	private boolean deleted;
+
+
 
     @Basic
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    private List<BuildInfo> builds;
-    @ManyToOne(optional = false)
-    private User owner;
-    @Basic
-    private boolean deleted;
-    @Basic
-    @Column(length = 1024, nullable = false)
-    String sourceURI;
-    private ApplicationConfig applicationConfig = new ApplicationConfig();
+	@Column(length = 1024, nullable = true)
+	private String repositoryURI;
 
-	public String getPhoneGapversion() {
-        return applicationConfig.phoneGapversion;
-    }
+	@OneToOne(fetch = LAZY, cascade = { CascadeType.PERSIST,
+			CascadeType.REFRESH })
+	private Asset sourceAsset;
 
-    public void setPhoneGapversion(String phoneGapversion) {
-        this.applicationConfig.phoneGapversion = phoneGapversion;
-    }
-    
+	@Embedded
+	private ApplicationConfig applicationConfig = new ApplicationConfig();
 
-    public Application() {
-    }
+	public Application() {
+	}
 
-    public Application(String uri, User owner) {
-        this.sourceURI = uri;
+	public Application(Asset sourceAsset, User owner) {
+		this.sourceAsset = sourceAsset;
+		this.owner = owner;
+	}
+
+    public Application(Asset sourceAsset, ApplicationConfig applicationConfig, String repositoryURI, User owner) {
+        this.sourceAsset = sourceAsset;
+        this.applicationConfig = applicationConfig;
+        this.repositoryURI = repositoryURI;
         this.owner = owner;
     }
+	public String getRepositoryURI() {
+		return repositoryURI;
+	}
 
-    public String getSourceURI() {
-        return sourceURI;
-    }
+	public void setRepositoryURI(String sourceURI) {
+		this.repositoryURI = sourceURI;
+	}
 
-    public void setSourceURI(String sourceURI) {
-        this.sourceURI = sourceURI;
-    }
+	public boolean isDeleted() {
+		return deleted;
+	}
 
-    public String getAppPackage() {
-        return applicationConfig.appPackage;
-    }
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 
-    public void setAppPackage(String appPackage) {
-        this.applicationConfig.appPackage = appPackage;
-    }
+	public User getOwner() {
+		return owner;
+	}
 
-    public String getVersion() {
-        return applicationConfig.version;
-    }
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
 
-    public void setVersion(String version) {
-        this.applicationConfig.version = version;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public boolean isDeleted() {
-        return deleted;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public User getOwner() {
-        return owner;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
+	public Date getCreated() {
+		return created;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setCreated(Date created) {
+		this.created = created;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public List<ApplicationBuild> getBuilds() {
+		return builds;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setBuilds(List<ApplicationBuild> builds) {
+		this.builds = builds;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public ApplicationConfig getApplicationConfig() {
+		return applicationConfig;
+	}
 
-    public Date getCreated() {
-        return created;
-    }
+	public void setApplicationConfig(ApplicationConfig applicationConfig) {
+		this.applicationConfig = applicationConfig;
+	}
 
-    public void setCreated(Date created) {
-        this.created = created;
-    }
+	public Asset getSourceAsset() {
+		return sourceAsset;
+	}
 
-    public List<BuildInfo> getBuilds() {
-        return builds;
-    }
-
-    public void setBuilds(List<BuildInfo> builds) {
-        this.builds = builds;
-    }
+	public void setSourceAsset(Asset sourceAsset) {
+		this.sourceAsset = sourceAsset;
+	}
 }

@@ -18,7 +18,7 @@ package com.ttech.cordovabuild.infrastructure.queue;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
-import com.ttech.cordovabuild.domain.BuildInfo;
+import com.ttech.cordovabuild.domain.ApplicationBuild;
 import java.nio.file.Paths;
 import javax.annotation.Resource;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class HazelcastTest {
     private HazelcastInstance hi;
     //could not autowire queue with @Autowire
     @Resource(name = "buildQueue")
-    IQueue<BuildInfo> queue;
+    IQueue<ApplicationBuild> queue;
 
     @Autowired
     ApplicationContext context;
@@ -51,7 +51,7 @@ public class HazelcastTest {
     @Test
     public void testQueue() throws InterruptedException {
         assertNotNull(queue);
-        queue.put(new BuildInfo("http://github.com"));
+        queue.put(new ApplicationBuild("http://github.com"));
         assertNotNull(queue.poll());
         System.out.println(Paths.get("").toAbsolutePath());
     }

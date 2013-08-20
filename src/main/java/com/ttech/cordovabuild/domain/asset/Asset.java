@@ -31,6 +31,9 @@ public class Asset {
     @Column(length = 10 * 1024 * 1024)
     private byte[] data;
 
+    public Asset(byte[] data) {
+        this.data = data;
+    }
 
     public Asset() {
     }

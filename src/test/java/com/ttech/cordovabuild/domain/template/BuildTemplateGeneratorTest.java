@@ -16,7 +16,7 @@
 package com.ttech.cordovabuild.domain.template;
 
 import com.google.common.collect.ImmutableSet;
-import com.ttech.cordovabuild.domain.BuildInfo;
+import com.ttech.cordovabuild.domain.ApplicationBuild;
 import com.ttech.cordovabuild.domain.application.Application;
 import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
@@ -64,7 +64,7 @@ public class BuildTemplateGeneratorTest {
 
 	@Test
 	public void testTemplateCreation() {
-		BuildInfo buildInfo = new BuildInfo("http://github.com");
+		ApplicationBuild buildInfo = new ApplicationBuild("http://github.com");
 		final Application application = new Application("myapp", new User(
 				"anil", "halil", "achalil@gmail.com", "capacman",
 				new ImmutableSet.Builder<Role>().add(Role.USER).build(),

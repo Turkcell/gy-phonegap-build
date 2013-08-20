@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.ttech.cordovabuild.domain.application.source;
 
 import java.nio.file.Path;
@@ -21,9 +22,8 @@ import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 
 public interface ApplicationSource {
 
-	public Path getLocalPath();
+	public abstract ApplicationConfig getApplicationConfig();
 
-	public String getURI();
+	public abstract Path getLocalPath();
 
-	ApplicationConfig getApplicationData();
 }

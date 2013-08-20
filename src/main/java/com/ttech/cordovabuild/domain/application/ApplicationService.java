@@ -16,16 +16,18 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
+import java.util.concurrent.Future;
+
+import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.user.User;
-import java.nio.file.Path;
 
 public interface ApplicationService {
 
-    Application createApplication(String sourceURI, User owner);
+	Application createApplication(User owner, String repositoryURI);
 
-    Application updateApplication(Application application);
-    
-    Application updateApplicationFromSource(Application application,Path configPath);
-    
-    Application findApplication(Long id);
+	Application createApplication(User owner, Asset asset);
+
+	Future<Application> buildApplication(Application application);
+
+	Application findApplication(Long id);
 }

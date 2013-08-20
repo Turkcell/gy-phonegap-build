@@ -15,7 +15,7 @@
  */
 package com.ttech.cordovabuild.domain.template;
 
-import com.ttech.cordovabuild.domain.BuildInfo;
+import com.ttech.cordovabuild.domain.ApplicationBuild;
 import com.ttech.cordovabuild.domain.application.Application;
 
 import org.apache.commons.io.FileUtils;
@@ -42,7 +42,7 @@ public class BuildTemplateGeneratorImpl implements BuildTemplateGenerator {
 
     @Override
     public BuildTemplate generateTemplate(Application application,
-            BuildInfo info) {
+            ApplicationBuild info) {
         File ownerPath = checkOwnerPath(info, application.getOwner().getName());
         ProcessBuilder pb = new ProcessBuilder(createPath, application.getName());
         File templateDirectory = checkTemplateDirectory(application.getName(), info, ownerPath);
@@ -64,7 +64,7 @@ public class BuildTemplateGeneratorImpl implements BuildTemplateGenerator {
 
     }
 
-    private File checkTemplateDirectory(String appName, BuildInfo info, File ownerPath) {
+    private File checkTemplateDirectory(String appName, ApplicationBuild info, File ownerPath) {
         File templateDirectory = new File(ownerPath, appName);
         if (templateDirectory.exists()) {
             LOGGER.info("template directory {} exists",
@@ -80,7 +80,7 @@ public class BuildTemplateGeneratorImpl implements BuildTemplateGenerator {
         return templateDirectory;
     }
 
-    private File checkOwnerPath(BuildInfo info, String ownerName) {
+    private File checkOwnerPath(ApplicationBuild info, String ownerName) {
         File ownerPath = new File(buildPath, ownerName);
         if (!ownerPath.exists() || !ownerPath.isDirectory()) {
             LOGGER.info("build path {} cannot be found creating",

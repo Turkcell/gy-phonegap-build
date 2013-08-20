@@ -16,9 +16,13 @@ public class ApplicationConfig {
 	@Column(length = 200)
 	@Basic
 	public String phoneGapversion;
+	@Column(length = 1024)
+	@Basic
+	private String name;
 
-	public ApplicationConfig(String appPackage, String version,
+	public ApplicationConfig(String name, String appPackage, String version,
 			String phoneGapversion) {
+		this.name = name;
 		this.appPackage = appPackage;
 		this.version = version;
 		this.phoneGapversion = phoneGapversion;
@@ -49,5 +53,20 @@ public class ApplicationConfig {
 
 	public void setPhoneGapversion(String phoneGapversion) {
 		this.phoneGapversion = phoneGapversion;
+	}
+
+	@Override
+	public String toString() {
+		return "ApplicationConfig [appPackage=" + appPackage + ", version="
+				+ version + ", phoneGapversion=" + phoneGapversion + ", name="
+				+ name + "]";
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

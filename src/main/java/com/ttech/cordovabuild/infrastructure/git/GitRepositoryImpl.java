@@ -25,77 +25,86 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
+
 import org.springframework.stereotype.Service;
+
+import com.google.common.io.Files;
 
 @Service
 public class GitRepositoryImpl implements GitRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GitRepositoryImpl.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(GitRepositoryImpl.class);
 
-    @Override
-    public void clone(String uri, File path) {
-        try {
-            Git.cloneRepository()
-                    .setURI(uri)
-                    .setDirectory(path)
-                    .call();
+	@Override
+	public Path clone(String uri) {
+		File file = getClonePath();
+		try {
+			Git.cloneRepository().setURI(uri).setDirectory(file).call();
+			removePattern(file, ".git");
+		} catch (GitAPIException e) {
+			throw new GitException(e);
+		}
+		return file.toPath();
+	}
 
-            removePattern(path, ".git");
+	private File getClonePath() {
+		File file = Files.createTempDir();
+		return file;
+	}
 
-        } catch (GitAPIException e) {
-            throw new GitException(e);
-        }
-    }
+	private void removePattern(File path, final String s) {
+		Collection<File> files = FileUtils.listFilesAndDirs(path,
+				new IOFileFilter() {
+					@Override
+					public boolean accept(File file) {
+						return false;
+					}
 
-    private void removePattern(File path, final String s) {
-        Collection<File> files = FileUtils.listFilesAndDirs(path, new IOFileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return false;
-            }
+					@Override
+					public boolean accept(File dir, String name) {
+						return false;
+					}
+				}, new IOFileFilter() {
+					@Override
+					public boolean accept(File file) {
+						return file.isDirectory();
+					}
 
-            @Override
-            public boolean accept(File dir, String name) {
-                return false;
-            }
-        }, new IOFileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.isDirectory();
-            }
+					@Override
+					public boolean accept(File dir, String name) {
+						return false;
+					}
+				});
+		try {
+			for (File file : files) {
+				if (file.getName().equals(".git")) {
+					FileUtils.deleteDirectory(file);
+				}
+			}
+		} catch (IOException e) {
+			LOGGER.warn("git directory purge failed", e);
+		}
 
-            @Override
-            public boolean accept(File dir, String name) {
-                return false;
-            }
-        }
-                );
-        try {
-            for (File file : files) {
-                if (file.getName().equals(".git")) {
-                    FileUtils.deleteDirectory(file);
-                }
-            }
-        } catch (IOException e) {
-            LOGGER.warn("git directory purge failed", e);
-        }
+	}
 
-    }
+	@Override
+	public Path clone(String uri, String username, String password) {
+		File file = getClonePath();
+		try {
+			Git.cloneRepository()
+					.setURI(uri)
+					.setDirectory(file)
+					.setCredentialsProvider(
+							new UsernamePasswordCredentialsProvider(username,
+									password)).call();
 
-    @Override
-    public void clone(String uri, File localPath, String username, String password) {
-        try {
-            Git.cloneRepository()
-                    .setURI(uri)
-                    .setDirectory(localPath)
-                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
-                    .call();
-
-            removePattern(localPath, ".git");
-
-        } catch (GitAPIException e) {
-            throw new GitException(e);
-        }
-    }
+			removePattern(file, ".git");
+		} catch (GitAPIException e) {
+			throw new GitException(e);
+		}
+		return file.toPath();
+	}
 }

@@ -2,3 +2,7 @@
 .vagrant
 target
 *.iml
+.classpath
+.project
+nb-configuration.xml
+.settings

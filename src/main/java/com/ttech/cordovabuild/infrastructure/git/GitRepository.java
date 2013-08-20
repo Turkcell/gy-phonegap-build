@@ -17,9 +17,10 @@
 package com.ttech.cordovabuild.infrastructure.git;
 
 import java.io.File;
-
+import java.nio.file.Path;
 
 public interface GitRepository {
-    public void clone(String uri,File localPath);
-    public void clone(String uri,File localPath,String username,String password);
+	public Path clone(String uri);
+
+	public Path clone(String uri, String username, String password);
 }

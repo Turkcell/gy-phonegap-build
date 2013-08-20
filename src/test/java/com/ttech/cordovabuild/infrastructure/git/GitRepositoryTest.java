@@ -23,72 +23,75 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({"classpath:hazelcastContext.xml", "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
+@ContextConfiguration({ "classpath:hazelcastContext.xml",
+		"classpath:datasourceContext.xml", "classpath:applicationContext.xml" })
 public class GitRepositoryTest {
 
-    public static final String PROJECT = "base";
-    @Autowired
-    GitRepository repository;
+	public static final String PROJECT = "base";
+	@Autowired
+	GitRepository repository;
 
-    @Test
-    public void testGitPurge() throws IOException {
-        File tempDirectory = FileUtils.getTempDirectory();
-        String project = tempDirectory + File.separator + PROJECT;
-        FileUtils.forceMkdir(new File(project + File.separator + "a" + File.separator + ".git"));
-        FileUtils.forceMkdir(new File(project + File.separator + "b" + File.separator + ".git"));
-        Collection<File> aFiles = FileUtils.listFilesAndDirs(new File(project + File.separator + "a"), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
-        assertEquals(2, aFiles.size());
-        Collection<File> files = FileUtils.listFilesAndDirs(new File(project), new IOFileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return false;
-            }
+	@Test
+	public void testGitPurge() throws IOException {
+		File tempDirectory = FileUtils.getTempDirectory();
+		String project = tempDirectory + File.separator + PROJECT;
+		FileUtils.forceMkdir(new File(project + File.separator + "a"
+				+ File.separator + ".git"));
+		FileUtils.forceMkdir(new File(project + File.separator + "b"
+				+ File.separator + ".git"));
+		Collection<File> aFiles = FileUtils.listFilesAndDirs(new File(project
+				+ File.separator + "a"), TrueFileFilter.INSTANCE,
+				TrueFileFilter.INSTANCE);
+		assertEquals(2, aFiles.size());
+		Collection<File> files = FileUtils.listFilesAndDirs(new File(project),
+				new IOFileFilter() {
+					@Override
+					public boolean accept(File file) {
+						return false;
+					}
 
-            @Override
-            public boolean accept(File dir, String name) {
-                return false;
-            }
-        }, new IOFileFilter() {
-            @Override
-            public boolean accept(File file) {
-                return file.isDirectory();
-            }
+					@Override
+					public boolean accept(File dir, String name) {
+						return false;
+					}
+				}, new IOFileFilter() {
+					@Override
+					public boolean accept(File file) {
+						return file.isDirectory();
+					}
 
-            @Override
-            public boolean accept(File dir, String name) {
-                return false;
-            }
-        }
-                );
-        assertEquals(5, files.size());
-        List<File> filtered = new ArrayList<>();
-        for (File file : files) {
-            if (file.getName().equals(".git")) {
-                filtered.add(file);
-            }
-        }
-        assertEquals(2, filtered.size());
-    }
+					@Override
+					public boolean accept(File dir, String name) {
+						return false;
+					}
+				});
+		assertEquals(5, files.size());
+		List<File> filtered = new ArrayList<>();
+		for (File file : files) {
+			if (file.getName().equals(".git")) {
+				filtered.add(file);
+			}
+		}
+		assertEquals(2, filtered.size());
+	}
 
-    @Test
-    public void testCloneRepository() throws IOException {
-        File restaurantviewsclone = new File(FileUtils.getTempDirectoryPath(), "restaurantviewsclone");
-        if (restaurantviewsclone.exists()) {
-            FileUtils.deleteDirectory(restaurantviewsclone);
-        }
-        repository.clone("https://github.com/Turkcell/RestaurantReviews.git", restaurantviewsclone
-                );
-        assertTrue(restaurantviewsclone.exists());
-    }
+	@Test
+	public void testCloneRepository() throws IOException {
+		Path restaurantviewsclone = repository
+				.clone("https://github.com/Turkcell/RestaurantReviews.git");
+		assertTrue(restaurantviewsclone.toFile().exists());
+	}
 }

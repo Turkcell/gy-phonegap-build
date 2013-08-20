@@ -4,17 +4,19 @@
  */
 package com.ttech.cordovabuild.web;
 
-import com.ttech.cordovabuild.domain.application.Application;
-import com.ttech.cordovabuild.domain.application.ApplicationRepository;
 import javax.ws.rs.POST;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.ttech.cordovabuild.domain.application.Application;
+import com.ttech.cordovabuild.domain.application.ApplicationService;
 
 @Component
 public class ApplicationResource {
 
     @Autowired
-    ApplicationRepository repository;
+    ApplicationService service;
 
     @POST
     public Application createApplication(Application app) {
