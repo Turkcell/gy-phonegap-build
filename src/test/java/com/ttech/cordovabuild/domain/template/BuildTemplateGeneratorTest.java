@@ -18,9 +18,11 @@ package com.ttech.cordovabuild.domain.template;
 import com.google.common.collect.ImmutableSet;
 import com.ttech.cordovabuild.domain.ApplicationBuild;
 import com.ttech.cordovabuild.domain.application.Application;
+import com.ttech.cordovabuild.domain.application.ApplicationService;
 import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
 
+import com.ttech.cordovabuild.domain.user.UserRepository;
 import org.junit.Test;
 
 import java.io.File;
@@ -45,7 +47,11 @@ public class BuildTemplateGeneratorTest {
 	private String buildPath;
 	@Value("${create.path}")
 	private String createPath;
-
+    @Autowired
+    ApplicationService applicationService;
+    @Autowired
+    UserRepository userRepository;
+    public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";
 	@Autowired
 	BuildTemplateGenerator generator;
 
@@ -65,11 +71,12 @@ public class BuildTemplateGeneratorTest {
 	@Test
 	public void testTemplateCreation() {
 		ApplicationBuild buildInfo = new ApplicationBuild("http://github.com");
-		final Application application = new Application("myapp", new User(
-				"anil", "halil", "achalil@gmail.com", "capacman",
-				new ImmutableSet.Builder<Role>().add(Role.USER).build(),
-				"passowrd"));
-		BuildTemplate template = generator.generateTemplate(application,
+        User user = new User("anil", "halil", "achalil@gmail.com", "capacman",
+                new ImmutableSet.Builder<Role>().add(Role.USER).build(),
+                "passowrd");
+        user=userRepository.saveOrUpdateUser(user);
+        Application application = applicationService.createApplication(user, GIT_REPO);
+        BuildTemplate template = generator.generateTemplate(application,
 				buildInfo);
 		File path = new File(new File(buildPath, application.getOwner()
 				.getName()), application.getName());

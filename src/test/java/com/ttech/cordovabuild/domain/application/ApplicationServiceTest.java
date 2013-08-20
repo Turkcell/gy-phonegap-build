@@ -20,16 +20,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.File;
-import java.nio.file.Paths;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -51,10 +48,11 @@ import com.ttech.cordovabuild.domain.user.UserRepository;
 @ContextConfiguration({ "classpath:hazelcastContext.xml",
 		"classpath:datasourceContext.xml", "classpath:applicationContext.xml" })
 @TransactionConfiguration(transactionManager = "tx")
-public class ApplicationTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationTest.class);
+public class ApplicationServiceTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceTest.class);
+    public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";
 
-	@Autowired
+    @Autowired
 	ApplicationRepository repository;
 	@Autowired
 	ApplicationService applicationService;
@@ -71,26 +69,24 @@ public class ApplicationTest {
 
 	@Test
 	@Transactional
-	@Rollback(false)
-	@Ignore
-	public void testCreateApplication() {
+	public void testCreateApplicationWithRepo() {
 		User user = new User("anil", "halil", "achalil@gmail.com", "capacman",
 				new ImmutableSet.Builder<Role>().add(Role.USER).build(),
 				"passowrd");
 		user=userRepository.saveOrUpdateUser(user);
-		Application application = applicationService.createApplication("sourceURI", user);
+		Application application = applicationService.createApplication(user,GIT_REPO);
 		assertNotNull(application.getId());
 		assertNotNull(applicationService.findApplication(application.getId()).getOwner());
 	}
-	
+	/*
 	@Test
-	public void testUpdateApplication(){
+	public void testCreateApplicationWithAsset(){
 		File tempDir = Files.createTempDir();
 		LOGGER.info("{} is temp dir ",tempDir.getAbsolutePath());
-		ApplicationSource source = sourceFactory.createSource("https://github.com/Turkcell/RestaurantReviews.git", tempDir.toPath());
+		ApplicationSource source = sourceFactory.createSource(GIT_REPO, tempDir.toPath());
 		assertNotNull(source);
 		ApplicationConfig applicationData = source.getApplicationConfig();
 		LOGGER.info(applicationData.toString());
 	}
-
+*/
 }
