@@ -16,33 +16,39 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.CordovaException;
 import java.io.IOException;
+
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
+
 import org.xml.sax.SAXException;
 
+import com.ttech.cordovabuild.domain.CordovaException;
+
 /**
- *
+ * 
  * @author capacman
  */
 public class ApplicationConfigurationException extends CordovaException {
 
-    /**
+	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 944278372985832460L;
+
 	public ApplicationConfigurationException(ParserConfigurationException ex) {
-        super(ex);
-    }
-    public ApplicationConfigurationException(IOException ex) {
-        super(ex);
-    }
-    public ApplicationConfigurationException(SAXException ex){
-        super(ex);
-    }
-    public ApplicationConfigurationException(XPathExpressionException ex){
-        super(ex);
-    }
+		super(ex);
+	}
+
+	public ApplicationConfigurationException(IOException ex) {
+		super(ex);
+	}
+
+	public ApplicationConfigurationException(SAXException ex) {
+		super(ex);
+	}
+
+	public ApplicationConfigurationException(XPathExpressionException ex) {
+		super(ex);
+	}
 }

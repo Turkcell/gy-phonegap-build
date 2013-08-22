@@ -28,7 +28,12 @@ import java.io.IOException;
  * To change this template use File | Settings | File Templates.
  */
 public class ApplicationSourceException extends CordovaException {
-    public ApplicationSourceException(IOException e) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 4361936924993422256L;
+
+	public ApplicationSourceException(IOException e) {
         super(e);
     }
 }

@@ -26,4 +26,6 @@ public interface ApplicationSource {
 
 	public abstract Path getLocalPath();
 
+    public void setApplicationConfig(ApplicationConfig applicationConfig);
+
 }
