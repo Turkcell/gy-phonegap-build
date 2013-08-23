@@ -39,47 +39,47 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:hazelcastContext.xml",
-		"classpath:datasourceContext.xml", "classpath:applicationContext.xml" })
+@ContextConfiguration({"classpath:hazelcastContext.xml",
+        "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
 public class BuildTemplateGeneratorTest {
 
-	@Value("${build.path}")
-	private String buildPath;
-	@Value("${create.path}")
-	private String createPath;
+    @Value("${build.path}")
+    private String buildPath;
+    @Value("${create.path}")
+    private String createPath;
     @Autowired
     ApplicationService applicationService;
     @Autowired
     UserRepository userRepository;
     public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";
-	@Autowired
-	BuildTemplateGenerator generator;
+    @Autowired
+    BuildTemplateGenerator generator;
 
-	@Test
-	public void checkBuildPath() throws IOException, InterruptedException {
-		assertNotNull(buildPath);
-		assertTrue(!"build.path".equals(buildPath));
-	}
+    @Test
+    public void checkBuildPath() throws IOException, InterruptedException {
+        assertNotNull(buildPath);
+        assertTrue(!"build.path".equals(buildPath));
+    }
 
-	@Test
-	public void checkCreateExistence() throws IOException, InterruptedException {
-		File file = new File(createPath);
-		assertTrue(file.exists());
-		assertTrue(file.canExecute());
-	}
+    @Test
+    public void checkCreateExistence() throws IOException, InterruptedException {
+        File file = new File(createPath);
+        assertTrue(file.exists());
+        assertTrue(file.canExecute());
+    }
 
-	@Test
-	public void testTemplateCreation() {
-		ApplicationBuild buildInfo = new ApplicationBuild("http://github.com");
+    @Test
+    public void testTemplateCreation() {
+        ApplicationBuild buildInfo = new ApplicationBuild("http://github.com");
         User user = new User("anil", "halil", "achalil@gmail.com", "capacman",
                 new ImmutableSet.Builder<Role>().add(Role.USER).build(),
                 "passowrd");
-        user=userRepository.saveOrUpdateUser(user);
+        user = userRepository.saveOrUpdateUser(user);
         Application application = applicationService.createApplication(user, GIT_REPO);
         BuildTemplate template = generator.generateTemplate(application,
-				buildInfo);
-		File path = new File(new File(buildPath, application.getOwner()
-				.getName()), application.getName());
-		assertEquals(path.getAbsolutePath(), template.getPath());
-	}
+                buildInfo);
+        File path = new File(new File(buildPath, application.getOwner()
+                .getName()), application.getApplicationConfig().getName());
+        assertEquals(path.getAbsolutePath(), template.getPath());
+    }
 }

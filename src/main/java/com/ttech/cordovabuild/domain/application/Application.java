@@ -51,9 +51,6 @@ public class Application implements Serializable {
 	@Id
 	@GeneratedValue(strategy = SEQUENCE, generator = "APP_SEQ")
 	private Long id;
-	@Basic
-	@Column(length = 1024, nullable = false)
-	private String name;
 
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
@@ -123,14 +120,6 @@ public class Application implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Date getCreated() {

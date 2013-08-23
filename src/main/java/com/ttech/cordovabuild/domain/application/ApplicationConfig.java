@@ -1,8 +1,7 @@
 package com.ttech.cordovabuild.domain.application;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
+import java.util.Set;
 
 @Embeddable
 public class ApplicationConfig {
@@ -19,6 +18,9 @@ public class ApplicationConfig {
 	@Column(length = 1024)
 	@Basic
 	private String name;
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private Set<ApplicationFeature> features;
 
 	public ApplicationConfig(String name, String appPackage, String version,
 			String phoneGapversion) {
@@ -69,4 +71,12 @@ public class ApplicationConfig {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    public Set<ApplicationFeature> getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(Set<ApplicationFeature> features) {
+        this.features = features;
+    }
 }

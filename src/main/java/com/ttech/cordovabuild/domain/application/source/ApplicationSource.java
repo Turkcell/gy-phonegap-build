@@ -17,15 +17,15 @@
 package com.ttech.cordovabuild.domain.application.source;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import com.ttech.cordovabuild.domain.application.ApplicationConfig;
+import com.ttech.cordovabuild.domain.application.ApplicationFeature;
 
 public interface ApplicationSource {
 
 	public abstract ApplicationConfig getApplicationConfig();
 
 	public abstract Path getLocalPath();
-
-    public void setApplicationConfig(ApplicationConfig applicationConfig);
 
 }

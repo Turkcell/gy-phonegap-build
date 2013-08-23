@@ -18,6 +18,7 @@ package com.ttech.cordovabuild.domain.application.source;
 
 import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
+import com.ttech.cordovabuild.domain.application.ApplicationFeature;
 import com.ttech.cordovabuild.domain.asset.Asset;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -32,6 +33,7 @@ import javax.xml.xpath.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.compressDirectory;
 import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.extractFiles;
@@ -54,15 +56,14 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 			return localPath;
 		}
 
-		@Override
+        @Override
+        public List<ApplicationFeature> getFeatures() {
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        @Override
 		public ApplicationConfig getApplicationConfig() {
 			return getApplicationConfigInner(localPath);
-		}
-
-		@Override
-		public void setApplicationConfig(ApplicationConfig applicationConfig) {
-			// TODO Auto-generated method stub
-
 		}
 	}
 

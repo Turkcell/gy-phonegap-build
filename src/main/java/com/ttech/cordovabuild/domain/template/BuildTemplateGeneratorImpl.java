@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -42,10 +43,10 @@ public class BuildTemplateGeneratorImpl implements BuildTemplateGenerator {
 
     @Override
     public BuildTemplate generateTemplate(Application application,
-            ApplicationBuild info) {
+                                          ApplicationBuild info) {
         File ownerPath = checkOwnerPath(info, application.getOwner().getName());
-        ProcessBuilder pb = new ProcessBuilder(createPath, application.getName());
-        File templateDirectory = checkTemplateDirectory(application.getName(), info, ownerPath);
+        ProcessBuilder pb = new ProcessBuilder(createPath, application.getApplicationConfig().getName());
+        File templateDirectory = checkTemplateDirectory(application.getApplicationConfig().getName(), info, ownerPath);
         pb.directory(ownerPath);
         try {
             pb.inheritIO();
