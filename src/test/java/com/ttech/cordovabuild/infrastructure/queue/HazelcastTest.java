@@ -18,14 +18,16 @@ package com.ttech.cordovabuild.infrastructure.queue;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
-import com.ttech.cordovabuild.domain.ApplicationBuild;
+import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import java.nio.file.Paths;
 import javax.annotation.Resource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,12 +38,12 @@ public class HazelcastTest {
 
     @Autowired
     private HazelcastInstance hi;
-    //could not autowire queue with @Autowire
-    @Resource(name = "buildQueue")
-    IQueue<ApplicationBuild> queue;
 
     @Autowired
     ApplicationContext context;
+
+    @Value("${build.queue.prefix}")
+    String queuePrefix;
 
     @Test
     public void testHazelcastInstance() {
@@ -50,8 +52,9 @@ public class HazelcastTest {
 
     @Test
     public void testQueue() throws InterruptedException {
+        IQueue<Object> queue = hi.getQueue(queuePrefix + ".android");
         assertNotNull(queue);
-        queue.put(new ApplicationBuild("http://github.com"));
+        queue.put(new ApplicationBuilt());
         assertNotNull(queue.poll());
         System.out.println(Paths.get("").toAbsolutePath());
     }

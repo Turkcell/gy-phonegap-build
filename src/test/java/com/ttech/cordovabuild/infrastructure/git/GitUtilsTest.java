@@ -22,12 +22,14 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class GitUtilsTest {
@@ -36,47 +38,14 @@ public class GitUtilsTest {
 
     @Test
     public void testGitPurge() throws IOException {
-        File tempDirectory = FileUtils.getTempDirectory();
-        String project = tempDirectory + File.separator + PROJECT;
-        FileUtils.forceMkdir(new File(project + File.separator + "a"
-                + File.separator + ".git"));
-        FileUtils.forceMkdir(new File(project + File.separator + "b"
-                + File.separator + ".git"));
-        Collection<File> aFiles = FileUtils.listFilesAndDirs(new File(project
-                + File.separator + "a"), TrueFileFilter.INSTANCE,
-                TrueFileFilter.INSTANCE);
-        assertEquals(2, aFiles.size());
-        Collection<File> files = FileUtils.listFilesAndDirs(new File(project),
-                new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }, new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory();
-                    }
-
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }
-        );
-        assertEquals(5, files.size());
-        List<File> filtered = new ArrayList<>();
-        for (File file : files) {
-            if (file.getName().equals(".git")) {
-                filtered.add(file);
+        Path restaurantviewsclone = GitUtils.clone("https://github.com/Turkcell/RestaurantReviews.git");
+        Files.walkFileTree(restaurantviewsclone,new SimpleFileVisitor<Path>(){
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                assertFalse(dir.endsWith(".git"));
+                return FileVisitResult.CONTINUE;
             }
-        }
-        assertEquals(2, filtered.size());
+        });
     }
 
     @Test

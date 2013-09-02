@@ -14,11 +14,23 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.template;
+package com.ttech.cordovabuild.domain.built;
 
-import com.ttech.cordovabuild.domain.ApplicationBuild;
-import com.ttech.cordovabuild.domain.application.Application;
+import com.ttech.cordovabuild.domain.CordovaException;
 
-public interface BuildTemplateGenerator {
-	public BuildTemplate generateTemplate(Application app, ApplicationBuild info);
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/2/13
+ * Time: 5:56 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class PlatformConfigurationException extends CordovaException {
+    public PlatformConfigurationException(int result) {
+        super("platform config failed with result " + result);
+    }
+
+    public PlatformConfigurationException(Exception e) {
+        super(e);
+    }
 }

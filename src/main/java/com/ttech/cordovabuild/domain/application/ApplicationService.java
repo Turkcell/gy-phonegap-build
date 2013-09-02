@@ -30,4 +30,8 @@ public interface ApplicationService {
 	Future<Application> buildApplication(Application application);
 
 	Application findApplication(Long id);
+
+    ApplicationBuilt findApplicationBuild(Long id);
+
+    Application findByApplicationBuild(ApplicationBuilt applicationBuilt);
 }

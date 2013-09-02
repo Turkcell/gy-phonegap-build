@@ -14,9 +14,33 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain;
+package com.ttech.cordovabuild.domain.built;
+
+import com.ttech.cordovabuild.domain.CordovaException;
+
+import java.io.IOException;
+import java.text.MessageFormat;
 
 
-public enum ProjectType {
-    ANDROID;
+public class TemplateCreationException extends CordovaException {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -6492066447596321028L;
+
+	public TemplateCreationException(IOException e) {
+        super(e);
+    }
+
+    public TemplateCreationException(int result) {
+        super(MessageFormat.format("built creation returns {0,number,integer}",result));
+    }
+
+    public TemplateCreationException(InterruptedException e) {
+        super(e);
+    }
+
+    public TemplateCreationException(String message) {
+        super(message);
+    }
 }

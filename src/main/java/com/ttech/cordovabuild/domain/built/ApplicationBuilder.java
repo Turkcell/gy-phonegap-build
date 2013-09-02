@@ -1,4 +1,3 @@
-
 /*
  * Copyright © 2013 Turkcell Teknoloji Inc. and individual contributors
  * by the @authors tag. See the copyright.txt in the distribution for a
@@ -14,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain.template;
 
-public class BuildTemplate {
+package com.ttech.cordovabuild.domain.built;
 
-    private String path;
+import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
+import com.ttech.cordovabuild.domain.application.BuiltType;
+import com.ttech.cordovabuild.domain.application.Application;
 
-    public BuildTemplate(String path) {
-        this.path = path;
-    }
-
-    public String getPath() {
-        return path;
-    }
+public interface ApplicationBuilder {
+	public BuildInfo buildApplication(Application app, ApplicationBuilt applicationBuilt, BuiltType builtType);
 }

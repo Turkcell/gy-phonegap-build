@@ -15,11 +15,14 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.application.ApplicationRepository;
 import com.ttech.cordovabuild.domain.user.User;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
+import com.ttech.cordovabuild.domain.user.User_;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -31,9 +34,10 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
 
     @Override
     public List<Application> getApplications(User owner) {
-        TypedQuery<Application> query = em.createQuery("select a from Application a where a.owner.id:=ownerID", Application.class);
-        query.setParameter("ownerID", owner.getId());
-        return query.getResultList();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Application> cq = cb.createQuery(Application.class);
+        Root<Application> from = cq.from(Application.class);
+        return em.createQuery(cq.select(from).where(cb.equal(from.get(Application_.owner).get(User_.id),owner.getId()))).getResultList();
     }
 
     @Override
@@ -45,5 +49,18 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
     public Application saveApplication(Application application) {
         em.persist(application);
         return application;
+    }
+
+    @Override
+    public Application findByApplicationBuild(ApplicationBuilt applicationBuilt) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Application> cq = cb.createQuery(Application.class);
+        Root<Application> from = cq.from(Application.class);
+        return em.createQuery(cq.select(from).where(cb.isMember(applicationBuilt,from.get(Application_.builds)))).getSingleResult();
+    }
+
+    @Override
+    public ApplicationBuilt findApplicationBuild(Long id) {
+        return em.find(ApplicationBuilt.class, id);
     }
 }

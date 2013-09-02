@@ -13,31 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain;
+package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.built.BuildInfo;
+
 import java.io.Serializable;
-import javax.persistence.Embeddable;
+import java.util.Date;
+import javax.persistence.*;
 
 /**
  *
  * @author Anıl Halil
  */
 @Embeddable
-public class BuilTarget implements Serializable {
+public class BuiltTarget implements Serializable {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = -3100288908130355062L;
-	private ProjectType type;
+    private long duration;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startDate;
+    @Enumerated(EnumType.STRING)
+    private BuiltType type;
+    @OneToOne
     private Asset asset;
 
-    public ProjectType getType() {
+    public BuiltType getType() {
         return type;
     }
 
-    public void setType(ProjectType type) {
+    public void setType(BuiltType type) {
         this.type = type;
     }
 
@@ -49,11 +57,13 @@ public class BuilTarget implements Serializable {
         this.asset = asset;
     }
 
-    public BuilTarget() {
+    public BuiltTarget() {
     }
 
-    public BuilTarget(ProjectType type, Asset asset) {
+    public BuiltTarget(BuiltType type, Asset asset,BuildInfo builtInfo) {
         this.type = type;
-        this.asset = asset;
+        this.asset = builtInfo.getAsset();
+        this.startDate=builtInfo.getStartDate();
+        this.duration=builtInfo.getDuration();
     }
 }

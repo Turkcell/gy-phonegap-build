@@ -18,6 +18,9 @@ package com.ttech.cordovabuild.domain.application.source;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,84 +30,104 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.google.common.collect.ImmutableSet;
+import com.ttech.cordovabuild.domain.application.ApplicationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
 
 /**
  * Created with IntelliJ IDEA. User: capacman Date: 8/21/13 Time: 7:29 PM To
- * change this template use File | Settings | File Templates.
+ * change this built use File | Settings | File Templates.
  */
 public class DomEditor {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(DomEditor.class);
-	private final XPathExpression idExpr;
-	private final XPathExpression versionExpr;
-	private final XPathExpression nameExpr;
-	private final XPathExpression pgExpr;
-	private final Document doc;
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(DomEditor.class);
+    private final XPathExpression idExpr;
+    private final XPathExpression versionExpr;
+    private final XPathExpression nameExpr;
+    private final XPathExpression pgExpr;
+    private final XPathExpression featureExpr;
+    private final Document doc;
 
-	public DomEditor(Document doc) {
-		try {
-			this.doc = doc;
-			XPath xpath = XPathFactory.newInstance().newXPath();
-			idExpr = xpath.compile("/*/@id");
-			versionExpr = xpath.compile("/*/@version");
-			nameExpr = xpath.compile("/widget/name");
-			pgExpr = xpath.compile("/widget/preference/@value");
-		} catch (XPathExpressionException ex) {
-			LOGGER.info("could not parse config.xml", ex);
-			throw new ApplicationConfigurationException(ex);
-		}
-	}
+    public DomEditor(Document doc) {
+        try {
+            this.doc = doc;
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            idExpr = xpath.compile("/*/@id");
+            versionExpr = xpath.compile("/*/@version");
+            nameExpr = xpath.compile("/widget/name");
+            pgExpr = xpath.compile("/widget/preference/@value");
+            featureExpr = xpath.compile("/widget/feature/@name");
+        } catch (XPathExpressionException ex) {
+            LOGGER.info("could not parse config.xml", ex);
+            throw new ApplicationConfigurationException(ex);
+        }
+    }
 
-	public DomEditor(Path sourcePath) throws SAXException, IOException,
-			ParserConfigurationException {
-		this(DocumentBuilderFactory.newInstance().newDocumentBuilder()
-				.parse(sourcePath.resolve("config.xml").toFile()));
-	}
+    public DomEditor(Path sourcePath) throws SAXException, IOException,
+            ParserConfigurationException {
+        this(DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                .parse(sourcePath.resolve("config.xml").toFile()));
+    }
 
-	public String getPhoneGapVersion() throws XPathExpressionException {
-		return pgExpr.evaluate(doc);
-	}
+    public String getPhoneGapVersion() throws XPathExpressionException {
+        return pgExpr.evaluate(doc);
+    }
 
-	public void setPhoneGapVersion(String version)
-			throws XPathExpressionException {
-		setNodeValue(pgExpr, version);
-	}
+    public void setPhoneGapVersion(String version)
+            throws XPathExpressionException {
+        setNodeValue(pgExpr, version);
+    }
 
-	private void setNodeValue(XPathExpression expr, String version)
-			throws XPathExpressionException {
-		Node node = (Node) expr.evaluate(doc, XPathConstants.NODE);
-		node.setNodeValue(version);
-	}
+    private void setNodeValue(XPathExpression expr, String version)
+            throws XPathExpressionException {
+        Node node = (Node) expr.evaluate(doc, XPathConstants.NODE);
+        node.setNodeValue(version);
+    }
 
-	public String getVersion() throws XPathExpressionException {
-		return versionExpr.evaluate(doc);
-	}
+    public String getVersion() throws XPathExpressionException {
+        return versionExpr.evaluate(doc);
+    }
 
-	public void setVersion(String version) throws XPathExpressionException {
-		setNodeValue(versionExpr, version);
-	}
+    public void setVersion(String version) throws XPathExpressionException {
+        setNodeValue(versionExpr, version);
+    }
 
-	public String getPackage() throws XPathExpressionException {
-		return idExpr.evaluate(doc);
-	}
+    public String getPackage() throws XPathExpressionException {
+        return idExpr.evaluate(doc);
+    }
 
-	public void setPackage(String packageVal) throws XPathExpressionException {
-		setNodeValue(idExpr, packageVal);
-	}
+    public void setPackage(String packageVal) throws XPathExpressionException {
+        setNodeValue(idExpr, packageVal);
+    }
 
-	public String getName() throws XPathExpressionException {
-		return nameExpr.evaluate(doc);
-	}
+    public String getName() throws XPathExpressionException {
+        return nameExpr.evaluate(doc);
+    }
 
-	public void setName(String name) throws XPathExpressionException {
-		Node node = (Node) nameExpr.evaluate(doc, XPathConstants.NODE);
-		node.setTextContent(name);
-	}
+    public void setName(String name) throws XPathExpressionException {
+        Node node = (Node) nameExpr.evaluate(doc, XPathConstants.NODE);
+        node.setTextContent(name);
+    }
+
+    public Set<ApplicationFeature> getFeatures() throws XPathExpressionException {
+        NodeList features = (NodeList) featureExpr.evaluate(doc, XPathConstants.NODESET);
+        List<String> values=new ArrayList<>(features.getLength());
+        for(int i=0;i<features.getLength();i++)
+            values.add(features.item(i).getNodeValue());
+        ImmutableSet.Builder<ApplicationFeature> builder = ImmutableSet.builder();
+        for (String featureValue : values)
+            try {
+                builder.add(ApplicationFeature.fromValue(featureValue));
+            } catch (IllegalArgumentException e) {
+                LOGGER.info("ignore unknown feature {}",featureValue);
+            }
+        return builder.build();
+    }
 }

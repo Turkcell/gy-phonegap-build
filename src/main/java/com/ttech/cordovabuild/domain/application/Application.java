@@ -36,7 +36,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.ttech.cordovabuild.domain.ApplicationBuild;
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.user.User;
 
@@ -57,7 +56,7 @@ public class Application implements Serializable {
 	private Date created;
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REFRESH })
-	private List<ApplicationBuild> builds;
+	private List<ApplicationBuilt> builds;
 	@ManyToOne(optional = false)
 	private User owner;
 	@Basic
@@ -130,11 +129,11 @@ public class Application implements Serializable {
 		this.created = created;
 	}
 
-	public List<ApplicationBuild> getBuilds() {
+	public List<ApplicationBuilt> getBuilds() {
 		return builds;
 	}
 
-	public void setBuilds(List<ApplicationBuild> builds) {
+	public void setBuilds(List<ApplicationBuilt> builds) {
 		this.builds = builds;
 	}
 

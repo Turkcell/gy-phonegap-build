@@ -29,4 +29,8 @@ public interface ApplicationRepository {
     Application findById(Long id);
     
     Application saveApplication(Application application);
+
+    Application findByApplicationBuild(ApplicationBuilt applicationBuilt);
+
+    ApplicationBuilt findApplicationBuild(Long id);
 }

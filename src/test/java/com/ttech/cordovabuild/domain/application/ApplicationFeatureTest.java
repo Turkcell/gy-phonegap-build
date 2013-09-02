@@ -14,26 +14,23 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.application.source;
+package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.CordovaException;
+import org.junit.Test;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created with IntelliJ IDEA.
  * User: capacman
- * Date: 8/20/13
- * Time: 10:43 PM
- * To change this built use File | Settings | File Templates.
+ * Date: 9/2/13
+ * Time: 9:22 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class ApplicationSourceException extends CordovaException {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4361936924993422256L;
-
-	public ApplicationSourceException(IOException e) {
-        super(e);
+public class ApplicationFeatureTest {
+    @Test
+    public void testFromValue() throws Exception {
+        assertEquals(ApplicationFeature.ACCELEROMETER, ApplicationFeature.fromValue("ACCELEROMETER"));
+        assertEquals(ApplicationFeature.ACCELEROMETER, ApplicationFeature.fromValue("Accelerometer"));
     }
 }

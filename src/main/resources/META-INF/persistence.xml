@@ -3,9 +3,9 @@
   <persistence-unit name="cordova" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>com.ttech.cordovabuild.domain.asset.Asset</class>
-    <class>com.ttech.cordovabuild.domain.ApplicationBuild</class>
+    <class>com.ttech.cordovabuild.domain.application.ApplicationBuilt</class>
     <class>com.ttech.cordovabuild.domain.user.User</class>
-    <class>com.ttech.cordovabuild.domain.BuilTarget</class>
+    <class>com.ttech.cordovabuild.domain.application.BuiltTarget</class>
     <class>com.ttech.cordovabuild.domain.application.ApplicationConfig</class>
     <class>com.ttech.cordovabuild.domain.application.Application</class>
     <properties>

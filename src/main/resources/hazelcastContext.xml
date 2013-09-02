@@ -10,11 +10,11 @@
             <bean class="com.hazelcast.config.Config">
                 <property name="networkConfig">
                     <bean class="com.hazelcast.config.NetworkConfig">
-                        <property name="port" value="5901"/>
+                        <property name="port" value="6000"/>
                         <property name="portAutoIncrement" value="false"/>
                         <property name="reuseAddress" value="true"/>
                         <property name="join">
-                            <bean class="com.hazelcast.config.Join">
+                            <bean class="com.hazelcast.config.JoinConfig">
                                 <property name="multicastConfig">
                                     <bean class="com.hazelcast.config.MulticastConfig">
                                         <property name="enabled" value="true"/>
@@ -24,37 +24,18 @@
                         </property>
                     </bean>
                 </property>
-                
-                <property name="mapConfigs">
+                <property name="queueConfigs">
                     <util:map>
-                        <entry key="${build.queue.mapname}">
-                            <bean class="com.hazelcast.config.MapConfig">
-                                <property name="backupCount" value="1"/>
-                                <property name="timeToLiveSeconds" value="300"/>
-                                <property name="maxSizeConfig">
-                                    <bean class="com.hazelcast.config.MaxSizeConfig">
-                                        <property name="size" value="1000"/>
-                                        <property name="maxSizePolicy" value="POLICY_CLUSTER_WIDE_MAP_SIZE"/>
-                                    </bean>
-                                </property>
-                            </bean>
-                        </entry>
-                    </util:map>
-                </property>
-                
-                <property name="qConfigs">
-                    <util:map>
-                        <entry key="${build.queue.name}">
+                        <entry key="${build.queue.prefix}.*">
                             <bean class="com.hazelcast.config.QueueConfig">
-                                <property name="backingMapRef" value="${build.queue.mapname}"/>
+                                <property name="maxSize" value="200"/>
+                                <property name="statisticsEnabled" value="true"/>
+                                <property name="backupCount" value="1"/>
                             </bean>
                         </entry>
                     </util:map>
                 </property>
             </bean>
         </constructor-arg>
-    </bean>
-    <bean id="buildQueue" factory-bean="instance" factory-method="getQueue">
-        <constructor-arg value="${build.queue.name}"/>
     </bean>
 </beans>

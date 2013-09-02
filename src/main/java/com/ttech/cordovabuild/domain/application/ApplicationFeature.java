@@ -21,7 +21,7 @@ package com.ttech.cordovabuild.domain.application;
  * User: capacman
  * Date: 8/23/13
  * Time: 3:38 PM
- * To change this template use File | Settings | File Templates.
+ * To change this built use File | Settings | File Templates.
  */
 public enum ApplicationFeature {
     ACCELEROMETER(new String[]{"org.apache.cordova.core.device-motion"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git"}),
@@ -48,11 +48,15 @@ public enum ApplicationFeature {
         this.cordovaURIs = cordovaURIs;
     }
 
-    private String[] getCordovaPlugins() {
+    public String[] getCordovaPlugins() {
         return cordovaPlugins;
     }
 
-    private String[] getCordovaURIs() {
+    public String[] getCordovaURIs() {
         return cordovaURIs;
+    }
+
+    public static ApplicationFeature fromValue(String featureValue) {
+        return ApplicationFeature.valueOf(featureValue.toUpperCase());
     }
 }

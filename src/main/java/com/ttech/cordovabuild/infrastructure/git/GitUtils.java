@@ -25,9 +25,13 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collection;
+import java.util.Objects;
 
 public class GitUtils {
 
@@ -56,40 +60,54 @@ public class GitUtils {
     }
 
     private static void removePattern(Path path, final String s) {
-        Collection<File> files = FileUtils.listFilesAndDirs(path.toFile(),
-                new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return false;
-                    }
 
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }, new IOFileFilter() {
-                    @Override
-                    public boolean accept(File file) {
-                        return file.isDirectory();
-                    }
-
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return false;
-                    }
-                }
-        );
         try {
-            for (File file : files) {
-                if (file.getName().equals(".git")) {
-                    FileUtils.deleteDirectory(file);
+            Files.walkFileTree(path, new FileVisitor<Path>() {
+                private Path git = null;
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    if (dir.endsWith(s) && git == null) {
+                        git = dir;
+                    }
+                    return FileVisitResult.CONTINUE;
                 }
-            }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    if (git != null) {
+                        Files.delete(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                    if (git != null) {
+                        Files.deleteIfExists(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    if (exc == null) {
+                        if (git != null) {
+                            Files.delete(dir);
+                            if(git.equals(dir))
+                                git = null;
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                    throw exc;
+                }
+            });
         } catch (IOException e) {
-            LOGGER.warn("git directory purge failed", e);
+            LOGGER.warn("git director purge failed", e);
         }
 
     }
+
 
     public static Path clone(String uri, String username, String password) {
         Path path = null;
@@ -98,6 +116,7 @@ public class GitUtils {
         } catch (IOException e) {
             throw new GitException(e);
         }
+        LOGGER.info("starting to clone git repo {} to {}", uri, path);
         try {
             Git.cloneRepository()
                     .setURI(uri)
@@ -105,8 +124,9 @@ public class GitUtils {
                     .setCredentialsProvider(
                             new UsernamePasswordCredentialsProvider(username,
                                     password)).call();
-
+            LOGGER.info("purging .git files");
             removePattern(path, ".git");
+            LOGGER.info("purging .git files finished");
         } catch (GitAPIException e) {
             throw new GitException(e);
         }

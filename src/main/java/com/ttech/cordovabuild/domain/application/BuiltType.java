@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.application.source;
+package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.CordovaException;
 
-import java.io.IOException;
+public enum BuiltType {
+    ANDROID("android","apk");
 
-/**
- * Created with IntelliJ IDEA.
- * User: capacman
- * Date: 8/20/13
- * Time: 10:43 PM
- * To change this built use File | Settings | File Templates.
- */
-public class ApplicationSourceException extends CordovaException {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4361936924993422256L;
+    private final String platformString;
+    private final String platformSuffix;
 
-	public ApplicationSourceException(IOException e) {
-        super(e);
+    private BuiltType(String val, String platformSuffix) {
+        this.platformString = val;
+        this.platformSuffix = platformSuffix;
+    }
+
+    public String getPlatformString() {
+        return platformString;
+    }
+
+    private String getPlatformSuffix() {
+        return platformSuffix;
     }
 }

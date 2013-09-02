@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.application.source;
-
-import com.ttech.cordovabuild.domain.CordovaException;
-
-import java.io.IOException;
+package com.ttech.cordovabuild.infrastructure.queue;
 
 /**
  * Created with IntelliJ IDEA.
  * User: capacman
- * Date: 8/20/13
- * Time: 10:43 PM
- * To change this built use File | Settings | File Templates.
+ * Date: 9/1/13
+ * Time: 4:48 PM
+ * To change this template use File | Settings | File Templates.
  */
-public class ApplicationSourceException extends CordovaException {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 4361936924993422256L;
+public interface QueueListener<E> {
 
-	public ApplicationSourceException(IOException e) {
-        super(e);
-    }
+    void onItem(E item);
 }

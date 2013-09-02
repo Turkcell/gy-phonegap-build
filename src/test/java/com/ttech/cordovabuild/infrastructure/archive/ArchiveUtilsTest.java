@@ -30,7 +30,7 @@ import java.nio.file.Paths;
  * User: capacman
  * Date: 8/20/13
  * Time: 11:55 PM
- * To change this template use File | Settings | File Templates.
+ * To change this built use File | Settings | File Templates.
  */
 public class ArchiveUtilsTest {
     public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";

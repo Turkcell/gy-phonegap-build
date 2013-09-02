@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
  * User: capacman
  * Date: 8/22/13
  * Time: 11:24 PM
- * To change this template use File | Settings | File Templates.
+ * To change this built use File | Settings | File Templates.
  */
 public class DomEditorTest {
 
@@ -43,6 +43,7 @@ public class DomEditorTest {
         assertEquals(domEditor.getPackage(), "com.turkcell.restaurantee");
         assertEquals(domEditor.getVersion(), "1.0.0");
         assertEquals(domEditor.getPhoneGapVersion(), "2.5.0");
+        assertEquals(domEditor.getFeatures().size(),3);
 
         domEditor.setName("name");
         domEditor.setPackage("package");

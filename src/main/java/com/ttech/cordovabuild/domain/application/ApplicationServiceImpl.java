@@ -71,4 +71,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         return repository.findById(id);
     }
 
+    @Override
+    public ApplicationBuilt findApplicationBuild(Long id) {
+        return repository.findApplicationBuild(id);
+    }
+
+    @Override
+    public Application findByApplicationBuild(ApplicationBuilt applicationBuilt) {
+        return repository.findByApplicationBuild(applicationBuilt);
+    }
+
 }

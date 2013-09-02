@@ -57,11 +57,6 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 		}
 
         @Override
-        public List<ApplicationFeature> getFeatures() {
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
-        }
-
-        @Override
 		public ApplicationConfig getApplicationConfig() {
 			return getApplicationConfigInner(localPath);
 		}
@@ -69,12 +64,14 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 
 	@Override
 	public ApplicationSource createSource(Asset asset) {
+        LOGGER.info("creating source for asset{}",asset.getId());
 		Path localPath = null;
 		try {
 			localPath = Files.createTempDirectory(null);
 		} catch (IOException e) {
 			throw new ApplicationSourceException(e);
 		}
+        LOGGER.info("asset will be extracted to {}",localPath);
 		extractFiles(asset.asInputStream(), localPath);
 		return new ApplicationSourceImpl(localPath);
 
@@ -95,10 +92,11 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 
 	private ApplicationConfig getApplicationConfigInner(Path sourcePath) {
 		try {
+            LOGGER.info("extracting appConfig");
 			DomEditor configEditor = new DomEditor(sourcePath);
 			return new ApplicationConfig(configEditor.getName(),
 					configEditor.getPackage(), configEditor.getVersion(),
-					configEditor.getPhoneGapVersion());
+					configEditor.getPhoneGapVersion(),configEditor.getFeatures());
 		} catch (XPathExpressionException ex) {
 			LOGGER.info("could not parse config.xml", ex);
 			throw new ApplicationConfigurationException(ex);

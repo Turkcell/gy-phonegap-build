@@ -19,6 +19,10 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -41,7 +45,8 @@ public class AssetRepositoryImpl implements AssetRepository {
 
     @Override
     public List<Asset> getAll() {
-        TypedQuery<Asset> query = entityManager.createQuery("select a from Asset a", Asset.class);
-        return query.getResultList();
+        CriteriaQuery<Asset> cq = entityManager.getCriteriaBuilder().createQuery(Asset.class);
+        Root<Asset> from = cq.from(Asset.class);
+        return entityManager.createQuery(cq.select(from)).getResultList();
     }
 }

@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.template;
+package com.ttech.cordovabuild.domain.built;
 
 import com.ttech.cordovabuild.domain.CordovaException;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 
-
-public class TemplateCreationException extends CordovaException {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = -6492066447596321028L;
-
-	public TemplateCreationException(IOException e) {
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/2/13
+ * Time: 6:17 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class PlatformBuiltException extends CordovaException {
+    public PlatformBuiltException(InterruptedException e) {
         super(e);
     }
 
-    public TemplateCreationException(int result) {
-        super(MessageFormat.format("template creation returns {0,number,integer}",result));
-    }
-
-    public TemplateCreationException(InterruptedException e) {
+    public PlatformBuiltException(IOException e) {
         super(e);
-    }
-
-    public TemplateCreationException(String message) {
-        super(message);
     }
 }

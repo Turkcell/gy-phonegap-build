@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain.template;
+package com.ttech.cordovabuild.domain.built;
 
 import com.google.common.collect.ImmutableSet;
-import com.ttech.cordovabuild.domain.ApplicationBuild;
+import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.Application;
 import com.ttech.cordovabuild.domain.application.ApplicationService;
+import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
 
@@ -41,7 +42,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:hazelcastContext.xml",
         "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
-public class BuildTemplateGeneratorTest {
+public class ApplicationBuilderTest {
 
     @Value("${build.path}")
     private String buildPath;
@@ -53,7 +54,7 @@ public class BuildTemplateGeneratorTest {
     UserRepository userRepository;
     public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";
     @Autowired
-    BuildTemplateGenerator generator;
+    ApplicationBuilder generator;
 
     @Test
     public void checkBuildPath() throws IOException, InterruptedException {
@@ -70,16 +71,16 @@ public class BuildTemplateGeneratorTest {
 
     @Test
     public void testTemplateCreation() {
-        ApplicationBuild buildInfo = new ApplicationBuild("http://github.com");
+        ApplicationBuilt buildInfo = new ApplicationBuilt();
         User user = new User("anil", "halil", "achalil@gmail.com", "capacman",
                 new ImmutableSet.Builder<Role>().add(Role.USER).build(),
                 "passowrd");
         user = userRepository.saveOrUpdateUser(user);
         Application application = applicationService.createApplication(user, GIT_REPO);
-        BuildTemplate template = generator.generateTemplate(application,
-                buildInfo);
+        BuildInfo template = generator.buildApplication(application,
+                buildInfo, BuiltType.ANDROID);
         File path = new File(new File(buildPath, application.getOwner()
                 .getName()), application.getApplicationConfig().getName());
-        assertEquals(path.getAbsolutePath(), template.getPath());
+        assertEquals(path.getAbsolutePath(), template.getPath().toString());
     }
 }
