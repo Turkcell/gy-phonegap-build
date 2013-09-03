@@ -16,12 +16,9 @@
  */
 package com.ttech.cordovabuild.domain.built;
 
-import com.google.common.io.Files;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.asset.Asset;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Date;
 
@@ -32,14 +29,15 @@ public class BuildInfo {
     private final long duration;
     private final BuiltType builtType;
     private final String applicationName;
-    private Asset asset;
+    private final Asset asset;
 
-    public BuildInfo(Path path, Date started, long duration, BuiltType builtType, String applicationName) {
+    public BuildInfo(Path path, Date started, long duration, BuiltType builtType, String applicationName, Asset asset) {
         this.path = path;
         this.startDate = started;
         this.duration = duration;
         this.builtType = builtType;
         this.applicationName = applicationName;
+        this.asset = asset;
     }
 
     public Path getPath() {
@@ -55,14 +53,7 @@ public class BuildInfo {
     }
 
     public Asset getAsset() {
-        Path assetPath = path.resolve("platforms").resolve(builtType.getPlatformString()).resolve("bin").resolve(applicationName.concat(".apk"));
-        try {
-            return new Asset(Files.toByteArray(assetPath.toFile()));
-        } catch (FileNotFoundException e) {
-            throw new PlatformBuiltException(e);
-        } catch (IOException e) {
-            throw new PlatformBuiltException(e);
-        }
+        return asset;
     }
 
     public BuiltType getBuiltType() {

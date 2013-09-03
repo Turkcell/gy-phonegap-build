@@ -31,7 +31,9 @@ public interface ApplicationService {
 
 	Application findApplication(Long id);
 
-    ApplicationBuilt findApplicationBuild(Long id);
+    ApplicationBuilt findApplicationBuilt(Long id);
 
-    Application findByApplicationBuild(ApplicationBuilt applicationBuilt);
+    Application findByApplicationBuilt(ApplicationBuilt applicationBuilt);
+
+    ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt,BuiltTarget builtTarget);
 }

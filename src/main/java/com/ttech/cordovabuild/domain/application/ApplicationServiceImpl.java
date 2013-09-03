@@ -52,7 +52,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         Path localPath = GitUtils.clone(repositoryURI);
         LOGGER.info("clone finished");
         ApplicationSource applicationSource = sourceFactory.createSource(localPath);
-        return repository.saveApplication(new Application(sourceFactory.toAsset(applicationSource), applicationSource.getApplicationConfig(), repositoryURI, owner));
+        return repository.saveApplication(new Application(applicationSource.toAsset(), applicationSource.getApplicationConfig(), repositoryURI, owner));
     }
 
     @Override
@@ -72,13 +72,18 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationBuilt findApplicationBuild(Long id) {
+    public ApplicationBuilt findApplicationBuilt(Long id) {
         return repository.findApplicationBuild(id);
     }
 
     @Override
-    public Application findByApplicationBuild(ApplicationBuilt applicationBuilt) {
+    public Application findByApplicationBuilt(ApplicationBuilt applicationBuilt) {
         return repository.findByApplicationBuild(applicationBuilt);
+    }
+
+    @Override
+    public ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt, BuiltTarget builtTarget) {
+        return repository.addBuiltTarget(applicationBuilt,builtTarget);
     }
 
 }

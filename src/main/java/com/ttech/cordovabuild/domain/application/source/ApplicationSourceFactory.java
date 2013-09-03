@@ -22,8 +22,6 @@ import com.ttech.cordovabuild.domain.asset.Asset;
 
 public interface ApplicationSourceFactory {
 	ApplicationSource createSource(Asset asset);
-
+    ApplicationSource createSource(Asset asset,Path path);
     ApplicationSource createSource(Path localPath);
-
-	Asset toAsset(ApplicationSource applicationSource);
 }

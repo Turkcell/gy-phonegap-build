@@ -15,8 +15,11 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
+import com.ttech.cordovabuild.domain.asset.Asset;
+
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,8 +34,17 @@ public class ApplicationBuilt implements Serializable {
     private Long id;
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn
+    private ApplicationConfig builtConfig;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn
+    private Asset builtAsset;
     @ElementCollection
-    private List<BuiltTarget> builtTargets;
+    private List<BuiltTarget> builtTargets=new ArrayList<>();
+
+    @Version
+    private long version;
 
     public ApplicationBuilt() {
         this.startDate = new Date();
@@ -60,5 +72,21 @@ public class ApplicationBuilt implements Serializable {
 
     public void setBuiltTargets(List<BuiltTarget> builtTargets) {
         this.builtTargets = builtTargets;
+    }
+
+    public ApplicationConfig getBuiltConfig() {
+        return builtConfig;
+    }
+
+    public void setBuiltConfig(ApplicationConfig builtConfig) {
+        this.builtConfig = builtConfig;
+    }
+
+    public Asset getBuiltAsset() {
+        return builtAsset;
+    }
+
+    public void setBuiltAsset(Asset builtAsset) {
+        this.builtAsset = builtAsset;
     }
 }

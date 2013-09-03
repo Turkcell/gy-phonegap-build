@@ -60,6 +60,14 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 		public ApplicationConfig getApplicationConfig() {
 			return getApplicationConfigInner(localPath);
 		}
+
+        @Override
+        public Asset toAsset() {
+            ByteArrayOutputStream output = new ByteArrayOutputStream(
+                    10 * 1024 * 1024);
+            compressDirectory(localPath, output);
+            return new Asset(output.toByteArray());
+        }
 	}
 
 	@Override
@@ -77,17 +85,16 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 
 	}
 
-	@Override
+    @Override
+    public ApplicationSource createSource(Asset asset, Path path) {
+        LOGGER.info("asset {} will be extracted to {}",asset.getId(),path);
+        extractFiles(asset.asInputStream(),path);
+        return new ApplicationSourceImpl(path);
+    }
+
+    @Override
 	public ApplicationSource createSource(Path localPath) {
 		return new ApplicationSourceImpl(localPath);
-	}
-
-	@Override
-	public Asset toAsset(ApplicationSource applicationSource) {
-		ByteArrayOutputStream output = new ByteArrayOutputStream(
-				10 * 1024 * 1024);
-		compressDirectory(applicationSource.getLocalPath(), output);
-		return new Asset(output.toByteArray());
 	}
 
 	private ApplicationConfig getApplicationConfigInner(Path sourcePath) {

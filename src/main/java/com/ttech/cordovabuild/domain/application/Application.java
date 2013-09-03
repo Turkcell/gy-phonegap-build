@@ -22,19 +22,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.user.User;
@@ -72,7 +60,8 @@ public class Application implements Serializable {
 			CascadeType.REFRESH })
 	private Asset sourceAsset;
 
-	@Embedded
+	@OneToOne
+    @JoinColumn
 	private ApplicationConfig applicationConfig = new ApplicationConfig();
 
 	public Application() {

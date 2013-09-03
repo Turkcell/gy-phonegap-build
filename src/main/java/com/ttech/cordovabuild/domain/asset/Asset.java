@@ -28,6 +28,7 @@ public class Asset {
     @GeneratedValue
     private Long id;
     @Lob
+    @Basic(fetch = FetchType.EAGER)
     @Column(length = 10 * 1024 * 1024)
     private byte[] data;
 

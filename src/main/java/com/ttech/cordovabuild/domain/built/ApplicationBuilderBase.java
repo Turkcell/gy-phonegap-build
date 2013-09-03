@@ -20,7 +20,9 @@ import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.application.Application;
 
 import com.ttech.cordovabuild.domain.application.ApplicationFeature;
-import org.apache.commons.io.FileUtils;
+import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
+import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.infrastructure.FilesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,32 +35,46 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-@Service
-public class ApplicationBuilderImpl implements ApplicationBuilder {
+public abstract class ApplicationBuilderBase implements ApplicationBuilder {
 
     private static Logger LOGGER = LoggerFactory
-            .getLogger(ApplicationBuilderImpl.class);
+            .getLogger(ApplicationBuilderBase.class);
 
-    @Value("${build.path}")
-    private String buildPath;
+    private final Path buildPath;
+    private final String createPath;
+    private final ApplicationSourceFactory sourceFactory;
+    protected final BuiltType builtType;
+    protected final ApplicationBuilt applicationBuilt;
 
-    @Value("${create.path}")
-    private String createPath;
+
+    protected ApplicationBuilderBase(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory, BuiltType builtType, ApplicationBuilt applicationBuilt) {
+        this.buildPath = buildPath;
+        this.createPath = createPath;
+        this.sourceFactory = sourceFactory;
+        this.builtType = builtType;
+        this.applicationBuilt = applicationBuilt;
+    }
 
     @Override
-    public BuildInfo buildApplication(Application application,
-                                      ApplicationBuilt applicationBuilt, BuiltType builtType) {
+    public BuildInfo buildApplication() {
         Date startDate = new Date();
-        Path buildPath = createBuild(application, applicationBuilt);
+        Path buildPath = createBuild(applicationBuilt);
         File buildPathFile = buildPath.toFile();
+        Path webAssetPath = buildPath.resolve("www");
+        try {
+            LOGGER.info("removing web asset director {}",webAssetPath);
+            FilesUtils.removeDirectory(webAssetPath);
+        } catch (IOException e) {
+            throw new PlatformBuiltException(e);
+        }
+        sourceFactory.createSource(applicationBuilt.getBuiltAsset(), webAssetPath);
         addPlatformSupport(builtType, buildPathFile);
-        addFeatures(application.getApplicationConfig().getFeatures(), buildPathFile);
+        addFeatures(applicationBuilt.getBuiltConfig().getFeatures(), buildPathFile);
         buildPlatform(builtType, buildPathFile);
-        return new BuildInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, application.getApplicationConfig().getName());
+        return new BuildInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getName(), buildAsset(buildPath));
     }
+
+    protected abstract Asset buildAsset(Path buildPath);
 
     private void buildPlatform(BuiltType builtType, File buildPath) {
         try {
@@ -102,12 +118,11 @@ public class ApplicationBuilderImpl implements ApplicationBuilder {
         }
     }
 
-    private Path createBuild(Application application, ApplicationBuilt applicationBuilt) {
-        LOGGER.info("starting to create application built path for {}/{}", application.getId(), application.getOwner().getId());
-        Path ownerPath = checkOwnerPath(applicationBuilt, application.getOwner().getName());
-        Path templateDirectory = checkTemplateDirectory(application.getApplicationConfig().getName(), applicationBuilt, ownerPath);
+    private Path createBuild(ApplicationBuilt applicationBuilt) {
+        LOGGER.info("starting to create application built path for {}", applicationBuilt.getId());
+        Path templateDirectory = checkTemplateDirectory(applicationBuilt);
         try {
-            int result = runProcess(ownerPath.toFile(), createPath, "create", application.getApplicationConfig().getName(), application.getApplicationConfig().getAppPackage(), application.getApplicationConfig().getName());
+            int result = runProcess(buildPath.toFile(), createPath, "create", templateDirectory.getFileName().toString(), applicationBuilt.getBuiltConfig().getAppPackage(), applicationBuilt.getBuiltConfig().getName());
             if (result == 0) {
                 return templateDirectory;
             }
@@ -127,37 +142,17 @@ public class ApplicationBuilderImpl implements ApplicationBuilder {
         return p.waitFor();
     }
 
-    private Path checkTemplateDirectory(String appName, ApplicationBuilt info, Path ownerPath) {
-        Path templateDirectory = ownerPath.resolve(appName);
+    private Path checkTemplateDirectory(ApplicationBuilt info) {
+        Path templateDirectory = buildPath.resolve(info.getId().toString());
         if (Files.exists(templateDirectory)) {
-            LOGGER.info("built directory {} exists",templateDirectory);
+            LOGGER.info("built directory {} exists", templateDirectory);
             try {
-                Files.deleteIfExists(templateDirectory);
+                FilesUtils.removeDirectory(templateDirectory);
             } catch (IOException e) {
-                LOGGER.error("delete operation of {} filed",templateDirectory, e);
+                LOGGER.error("delete operation of {} filed", templateDirectory, e);
                 throw new TemplateCreationException(e);
             }
         }
         return templateDirectory;
-    }
-
-    private Path checkOwnerPath(ApplicationBuilt info, String ownerName) {
-
-        Path ownerPath = Paths.get(buildPath, ownerName);
-        if (!Files.exists(ownerPath) || !Files.isDirectory(ownerPath)) {
-            LOGGER.info("built path {} cannot be found creating",
-                    ownerPath);
-            try {
-                Files.createDirectory(ownerPath);
-                LOGGER.info("built path {} created", ownerPath);
-                return ownerPath;
-
-            } catch (IOException e) {
-                throw new TemplateCreationException(MessageFormat.format(
-                        "owner path creation failed for {0}",
-                        ownerPath.toString()));
-            }
-        }
-        return ownerPath;
     }
 }

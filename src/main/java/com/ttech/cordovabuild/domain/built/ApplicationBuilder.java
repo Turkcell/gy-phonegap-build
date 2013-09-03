@@ -21,5 +21,5 @@ import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.application.Application;
 
 public interface ApplicationBuilder {
-	public BuildInfo buildApplication(Application app, ApplicationBuilt applicationBuilt, BuiltType builtType);
+	public BuildInfo buildApplication();
 }

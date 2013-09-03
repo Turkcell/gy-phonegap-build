@@ -6,9 +6,13 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.*;
 import java.util.Set;
 
-@Embeddable
+@Entity
 public class ApplicationConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
+    @SequenceGenerator(allocationSize = 50, name = "APP_CONFIG_SEQ")
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "APP_CONFIG_SEQ")
+    private long id;
     @Column(length = 1024)
     @Basic
     private String appPackage;
@@ -31,7 +35,7 @@ public class ApplicationConfig {
         this.appPackage = appPackage;
         this.version = version;
         this.phoneGapversion = phoneGapversion;
-        this.features= features;
+        this.features = features;
     }
 
     public ApplicationConfig() {
@@ -82,5 +86,13 @@ public class ApplicationConfig {
 
     public void setFeatures(Set<ApplicationFeature> features) {
         this.features = features;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

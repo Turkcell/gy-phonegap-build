@@ -16,18 +16,20 @@
 package com.ttech.cordovabuild.domain.built;
 
 import com.google.common.collect.ImmutableSet;
-import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
-import com.ttech.cordovabuild.domain.application.Application;
-import com.ttech.cordovabuild.domain.application.ApplicationService;
-import com.ttech.cordovabuild.domain.application.BuiltType;
+import com.ttech.cordovabuild.domain.application.*;
+import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
+import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
+import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
 
 import com.ttech.cordovabuild.domain.user.UserRepository;
+import com.ttech.cordovabuild.infrastructure.git.GitUtils;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -48,13 +50,11 @@ public class ApplicationBuilderTest {
     private String buildPath;
     @Value("${create.path}")
     private String createPath;
-    @Autowired
-    ApplicationService applicationService;
-    @Autowired
-    UserRepository userRepository;
     public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";
     @Autowired
-    ApplicationBuilder generator;
+    ApplicationBuilderFactory builderFactory;
+    @Autowired
+    ApplicationSourceFactory sourceFactory;
 
     @Test
     public void checkBuildPath() throws IOException, InterruptedException {
@@ -71,16 +71,15 @@ public class ApplicationBuilderTest {
 
     @Test
     public void testTemplateCreation() {
-        ApplicationBuilt buildInfo = new ApplicationBuilt();
-        User user = new User("anil", "halil", "achalil@gmail.com", "capacman",
-                new ImmutableSet.Builder<Role>().add(Role.USER).build(),
-                "passowrd");
-        user = userRepository.saveOrUpdateUser(user);
-        Application application = applicationService.createApplication(user, GIT_REPO);
-        BuildInfo template = generator.buildApplication(application,
-                buildInfo, BuiltType.ANDROID);
-        File path = new File(new File(buildPath, application.getOwner()
-                .getName()), application.getApplicationConfig().getName());
-        assertEquals(path.getAbsolutePath(), template.getPath().toString());
+        Path sourcePath = GitUtils.clone(GIT_REPO);
+        ApplicationSource source = sourceFactory.createSource(sourcePath);
+        ApplicationConfig applicationConfig = source.getApplicationConfig();
+        ApplicationBuilt applicationBuilt = new ApplicationBuilt();
+        applicationBuilt.setId(1L);
+        applicationBuilt.setBuiltAsset(source.toAsset());
+        applicationBuilt.setBuiltConfig(applicationConfig);
+        ApplicationBuilder builder = builderFactory.getApplicationBuilder(BuiltType.ANDROID, applicationBuilt);
+        BuildInfo buildInfo = builder.buildApplication();
+        assertNotNull(buildInfo.getAsset());
     }
 }

@@ -18,6 +18,7 @@ package com.ttech.cordovabuild.domain.application;
 import com.ttech.cordovabuild.domain.user.User;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -62,5 +63,12 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
     @Override
     public ApplicationBuilt findApplicationBuild(Long id) {
         return em.find(ApplicationBuilt.class, id);
+    }
+
+    @Override
+    public ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt, BuiltTarget builtTarget) {
+        ApplicationBuilt built = em.find(ApplicationBuilt.class, applicationBuilt.getId(), LockModeType.OPTIMISTIC);
+        built.getBuiltTargets().add(builtTarget);
+        return built;
     }
 }

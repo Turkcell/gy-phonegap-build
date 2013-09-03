@@ -60,7 +60,7 @@ public class BuiltTarget implements Serializable {
     public BuiltTarget() {
     }
 
-    public BuiltTarget(BuiltType type, Asset asset,BuildInfo builtInfo) {
+    public BuiltTarget(BuiltType type,BuildInfo builtInfo) {
         this.type = type;
         this.asset = builtInfo.getAsset();
         this.startDate=builtInfo.getStartDate();

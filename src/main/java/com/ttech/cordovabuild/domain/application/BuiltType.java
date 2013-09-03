@@ -35,4 +35,9 @@ public enum BuiltType {
     private String getPlatformSuffix() {
         return platformSuffix;
     }
+
+    @Override
+    public String toString() {
+        return platformString;
+    }
 }

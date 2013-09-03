@@ -13,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.user.User;
-import java.util.List;
+package com.ttech.cordovabuild.domain.built;
+
+import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
+import com.ttech.cordovabuild.domain.application.BuiltTarget;
+import com.ttech.cordovabuild.domain.application.BuiltType;
 
 /**
- *
- * @author capacman
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/3/13
+ * Time: 8:50 PM
+ * To change this template use File | Settings | File Templates.
  */
-public interface ApplicationRepository {
-
-    List<Application> getApplications(User owner);
-
-    Application findById(Long id);
-    
-    Application saveApplication(Application application);
-
-    Application findByApplicationBuild(ApplicationBuilt applicationBuilt);
-
-    ApplicationBuilt findApplicationBuild(Long id);
-
-    ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt, BuiltTarget builtTarget);
+public interface ApplicationBuilderFactory {
+    ApplicationBuilder getApplicationBuilder(BuiltType builtType,ApplicationBuilt applicationBuilt);
 }

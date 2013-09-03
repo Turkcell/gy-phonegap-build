@@ -76,8 +76,7 @@ public class ApplicationServiceTest {
 
     private Asset createAsset() {
         Path localPath = GitUtils.clone(GIT_REPO);
-        ApplicationSource source = sourceFactory.createSource(localPath);
-        return sourceFactory.toAsset(source);
+        return sourceFactory.createSource(localPath).toAsset();
     }
 
     @Test

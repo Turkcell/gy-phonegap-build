@@ -16,4 +16,5 @@
     <context:property-placeholder location="classpath:cordova.properties,classpath:dataSource.properties"/>
     
     <context:component-scan base-package="com.ttech.cordovabuild"/>
+
 </beans>

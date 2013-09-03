@@ -16,10 +16,7 @@
 
 package com.ttech.cordovabuild.domain.built;
 
-import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
-import com.ttech.cordovabuild.domain.application.BuiltType;
-import com.ttech.cordovabuild.domain.application.Application;
-import com.ttech.cordovabuild.domain.application.ApplicationService;
+import com.ttech.cordovabuild.domain.application.*;
 import com.ttech.cordovabuild.infrastructure.queue.QueueListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,18 +27,21 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Time: 4:46 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BuildService implements QueueListener<Long>{
-    private BuiltType builtType;
+public class BuildService implements QueueListener<Long> {
+    private final BuiltType builtType;
+    private final ApplicationBuilder applicationBuilder;
+    private final ApplicationService applicationService;
 
-    @Autowired
-    ApplicationBuilder templateGenerator;
-    @Autowired
-    ApplicationService applicationService;
+    public BuildService(BuiltType builtType, ApplicationBuilder applicationBuilder, ApplicationService applicationService) {
+        this.builtType = builtType;
+        this.applicationBuilder = applicationBuilder;
+        this.applicationService = applicationService;
+    }
+
     @Override
     public void onItem(Long itemId) {
-        ApplicationBuilt applicationBuilt = applicationService.findApplicationBuild(itemId);
-        Application application = applicationService.findByApplicationBuild(applicationBuilt);
-        BuildInfo buildInfo = templateGenerator.buildApplication(application, applicationBuilt,builtType);
-
+        ApplicationBuilt applicationBuilt = applicationService.findApplicationBuilt(itemId);
+        BuildInfo buildInfo = applicationBuilder.buildApplication();
+        applicationService.addBuiltTarget(applicationBuilt, new BuiltTarget(builtType, buildInfo));
     }
 }

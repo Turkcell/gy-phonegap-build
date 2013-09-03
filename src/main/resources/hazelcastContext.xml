@@ -10,7 +10,7 @@
             <bean class="com.hazelcast.config.Config">
                 <property name="networkConfig">
                     <bean class="com.hazelcast.config.NetworkConfig">
-                        <property name="port" value="6000"/>
+                        <property name="port" value="5000"/>
                         <property name="portAutoIncrement" value="false"/>
                         <property name="reuseAddress" value="true"/>
                         <property name="join">

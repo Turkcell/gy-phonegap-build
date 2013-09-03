@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 import com.ttech.cordovabuild.domain.application.ApplicationFeature;
+import com.ttech.cordovabuild.domain.asset.Asset;
 
 public interface ApplicationSource {
 
@@ -28,4 +29,5 @@ public interface ApplicationSource {
 
 	public abstract Path getLocalPath();
 
+    public Asset toAsset();
 }
