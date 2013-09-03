@@ -17,15 +17,10 @@
 package com.ttech.cordovabuild.domain.built;
 
 import com.google.common.io.Files;
-import com.ttech.cordovabuild.domain.application.Application;
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.Asset;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -46,7 +41,7 @@ public class AndroidApplicationBuilder extends ApplicationBuilderBase {
 
     @Override
     protected Asset buildAsset(Path path) {
-        Path assetPath = path.resolve("platforms").resolve(builtType.getPlatformString()).resolve("bin").resolve(applicationBuilt.getBuiltConfig().getName().concat("-debug.apk"));
+        Path assetPath = path.resolve("platforms").resolve(builtType.getPlatformString()).resolve("bin").resolve(applicationBuilt.getBuiltConfig().getApplicationName().concat("-debug.apk"));
         try {
             return new Asset(Files.toByteArray(assetPath.toFile()));
         } catch (FileNotFoundException e) {

@@ -16,21 +16,7 @@
 
 package com.ttech.cordovabuild.domain.application.source;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import com.google.common.collect.ImmutableSet;
+import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
 import com.ttech.cordovabuild.domain.application.ApplicationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +25,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA. User: capacman Date: 8/21/13 Time: 7:29 PM To
@@ -118,16 +109,18 @@ public class DomEditor {
 
     public Set<ApplicationFeature> getFeatures() throws XPathExpressionException {
         NodeList features = (NodeList) featureExpr.evaluate(doc, XPathConstants.NODESET);
+        if(features.getLength()<1)
+            return Collections.EMPTY_SET;
         List<String> values=new ArrayList<>(features.getLength());
         for(int i=0;i<features.getLength();i++)
             values.add(features.item(i).getNodeValue());
-        ImmutableSet.Builder<ApplicationFeature> builder = ImmutableSet.builder();
+        Set<ApplicationFeature> applicationFeatures=new HashSet<>();
         for (String featureValue : values)
             try {
-                builder.add(ApplicationFeature.fromValue(featureValue));
+                applicationFeatures.add(ApplicationFeature.fromValue(featureValue));
             } catch (IllegalArgumentException e) {
                 LOGGER.info("ignore unknown feature {}",featureValue);
             }
-        return builder.build();
+        return applicationFeatures;
     }
 }

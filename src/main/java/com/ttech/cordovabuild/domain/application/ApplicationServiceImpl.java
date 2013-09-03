@@ -62,8 +62,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Future<Application> buildApplication(Application application) {
-        return null;
+    public ApplicationBuilt buildApplication(Application application) {
+        ApplicationBuilt built=new ApplicationBuilt(application);
+        application.getBuilds().add(built);
+        repository.saveApplication(application);
+        return application.getBuilds().get(0);
     }
 
     @Override

@@ -17,7 +17,6 @@ package com.ttech.cordovabuild.domain.built;
 
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.BuiltType;
-import com.ttech.cordovabuild.domain.application.Application;
 
 import com.ttech.cordovabuild.domain.application.ApplicationFeature;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
@@ -30,8 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -71,7 +68,7 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
         addPlatformSupport(builtType, buildPathFile);
         addFeatures(applicationBuilt.getBuiltConfig().getFeatures(), buildPathFile);
         buildPlatform(builtType, buildPathFile);
-        return new BuildInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getName(), buildAsset(buildPath));
+        return new BuildInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getApplicationName(), buildAsset(buildPath));
     }
 
     protected abstract Asset buildAsset(Path buildPath);
@@ -122,7 +119,7 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
         LOGGER.info("starting to create application built path for {}", applicationBuilt.getId());
         Path templateDirectory = checkTemplateDirectory(applicationBuilt);
         try {
-            int result = runProcess(buildPath.toFile(), createPath, "create", templateDirectory.getFileName().toString(), applicationBuilt.getBuiltConfig().getAppPackage(), applicationBuilt.getBuiltConfig().getName());
+            int result = runProcess(buildPath.toFile(), createPath, "create", templateDirectory.getFileName().toString(), applicationBuilt.getBuiltConfig().getApplicationPackage(), applicationBuilt.getBuiltConfig().getApplicationName());
             if (result == 0) {
                 return templateDirectory;
             }

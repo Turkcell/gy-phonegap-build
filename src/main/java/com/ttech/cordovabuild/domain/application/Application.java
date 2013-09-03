@@ -30,47 +30,46 @@ import com.ttech.cordovabuild.domain.user.User;
 @Entity
 public class Application implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -735262415872708429L;
-	@SequenceGenerator(allocationSize = 50, name = "APP_SEQ")
-	@Id
-	@GeneratedValue(strategy = SEQUENCE, generator = "APP_SEQ")
-	private Long id;
+    /**
+     *
+     */
+    private static final long serialVersionUID = -735262415872708429L;
+    @SequenceGenerator(allocationSize = 50, name = "APP_SEQ")
+    @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "APP_SEQ")
+    private Long id;
 
-	@Basic
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REFRESH })
-	private List<ApplicationBuilt> builds;
-	@ManyToOne(optional = false)
-	private User owner;
-	@Basic
-	private boolean deleted;
-
+    @Basic
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.REFRESH})
+    @OrderBy("startDate ASC")
+    private List<ApplicationBuilt> builds;
+    @ManyToOne(optional = false)
+    private User owner;
+    @Basic
+    private boolean deleted;
 
 
     @Basic
-	@Column(length = 1024, nullable = true)
-	private String repositoryURI;
+    @Column(length = 1024, nullable = true)
+    private String repositoryURI;
 
-	@OneToOne(fetch = LAZY, cascade = { CascadeType.PERSIST,
-			CascadeType.REFRESH })
-	private Asset sourceAsset;
+    @OneToOne(fetch = LAZY, cascade = {CascadeType.PERSIST,
+            CascadeType.REFRESH})
+    private Asset sourceAsset;
 
-	@OneToOne
-    @JoinColumn
-	private ApplicationConfig applicationConfig = new ApplicationConfig();
+    @Embedded
+    private ApplicationConfig applicationConfig = new ApplicationConfig();
 
-	public Application() {
-	}
+    public Application() {
+    }
 
-	public Application(Asset sourceAsset, User owner) {
-		this.sourceAsset = sourceAsset;
-		this.owner = owner;
-	}
+    public Application(Asset sourceAsset, User owner) {
+        this.sourceAsset = sourceAsset;
+        this.owner = owner;
+    }
 
     public Application(Asset sourceAsset, ApplicationConfig applicationConfig, String repositoryURI, User owner) {
         this.sourceAsset = sourceAsset;
@@ -78,67 +77,68 @@ public class Application implements Serializable {
         this.repositoryURI = repositoryURI;
         this.owner = owner;
     }
-	public String getRepositoryURI() {
-		return repositoryURI;
-	}
 
-	public void setRepositoryURI(String sourceURI) {
-		this.repositoryURI = sourceURI;
-	}
+    public String getRepositoryURI() {
+        return repositoryURI;
+    }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+    public void setRepositoryURI(String sourceURI) {
+        this.repositoryURI = sourceURI;
+    }
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
+    public boolean isDeleted() {
+        return deleted;
+    }
 
-	public User getOwner() {
-		return owner;
-	}
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
 
-	public void setOwner(User owner) {
-		this.owner = owner;
-	}
+    public User getOwner() {
+        return owner;
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public List<ApplicationBuilt> getBuilds() {
-		return builds;
-	}
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
-	public void setBuilds(List<ApplicationBuilt> builds) {
-		this.builds = builds;
-	}
+    public List<ApplicationBuilt> getBuilds() {
+        return builds;
+    }
 
-	public ApplicationConfig getApplicationConfig() {
-		return applicationConfig;
-	}
+    public void setBuilds(List<ApplicationBuilt> builds) {
+        this.builds = builds;
+    }
 
-	public void setApplicationConfig(ApplicationConfig applicationConfig) {
-		this.applicationConfig = applicationConfig;
-	}
+    public ApplicationConfig getApplicationConfig() {
+        return applicationConfig;
+    }
 
-	public Asset getSourceAsset() {
-		return sourceAsset;
-	}
+    public void setApplicationConfig(ApplicationConfig applicationConfig) {
+        this.applicationConfig = applicationConfig;
+    }
 
-	public void setSourceAsset(Asset sourceAsset) {
-		this.sourceAsset = sourceAsset;
-	}
+    public Asset getSourceAsset() {
+        return sourceAsset;
+    }
+
+    public void setSourceAsset(Asset sourceAsset) {
+        this.sourceAsset = sourceAsset;
+    }
 }

@@ -4,36 +4,34 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
-@Entity
+@Embeddable
 public class ApplicationConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
-    @SequenceGenerator(allocationSize = 50, name = "APP_CONFIG_SEQ")
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "APP_CONFIG_SEQ")
-    private long id;
+
     @Column(length = 1024)
     @Basic
-    private String appPackage;
+    private String applicationPackage;
     @Column(length = 200)
     @Basic
-    private String version;
+    private String applicationVersion;
     @Column(length = 200)
     @Basic
     private String phoneGapversion;
     @Column(length = 1024)
     @Basic
-    private String name;
+    private String applicationName;
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private Set<ApplicationFeature> features;
 
-    public ApplicationConfig(String name, String appPackage, String version,
+    public ApplicationConfig(String applicationName, String applicationPackage, String applicationVersion,
                              String phoneGapversion, Set<ApplicationFeature> features) {
-        this.name = name;
-        this.appPackage = appPackage;
-        this.version = version;
+        this.applicationName = applicationName;
+        this.applicationPackage = applicationPackage;
+        this.applicationVersion = applicationVersion;
         this.phoneGapversion = phoneGapversion;
         this.features = features;
     }
@@ -41,20 +39,28 @@ public class ApplicationConfig {
     public ApplicationConfig() {
     }
 
-    public String getAppPackage() {
-        return appPackage;
+    public ApplicationConfig(ApplicationConfig applicationConfig) {
+        this.applicationName=applicationConfig.applicationName;
+        this.applicationPackage = applicationConfig.applicationPackage;
+        this.applicationVersion = applicationConfig.applicationVersion;
+        this.phoneGapversion = applicationConfig.phoneGapversion;
+        this.features = new HashSet<>(applicationConfig.features);
     }
 
-    public void setAppPackage(String appPackage) {
-        this.appPackage = appPackage;
+    public String getApplicationPackage() {
+        return applicationPackage;
     }
 
-    public String getVersion() {
-        return version;
+    public void setApplicationPackage(String appPackage) {
+        this.applicationPackage = appPackage;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public String getApplicationVersion() {
+        return applicationVersion;
+    }
+
+    public void setApplicationVersion(String version) {
+        this.applicationVersion = version;
     }
 
     public String getPhoneGapversion() {
@@ -67,17 +73,17 @@ public class ApplicationConfig {
 
     @Override
     public String toString() {
-        return "ApplicationConfig [appPackage=" + appPackage + ", version="
-                + version + ", phoneGapversion=" + phoneGapversion + ", name="
-                + name + "]";
+        return "ApplicationConfig [appPackage=" + applicationPackage + ", version="
+                + applicationVersion + ", phoneGapversion=" + phoneGapversion + ", name="
+                + applicationName + "]";
     }
 
-    public String getName() {
-        return name;
+    public String getApplicationName() {
+        return applicationName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setApplicationName(String name) {
+        this.applicationName = name;
     }
 
     public Set<ApplicationFeature> getFeatures() {
@@ -86,13 +92,5 @@ public class ApplicationConfig {
 
     public void setFeatures(Set<ApplicationFeature> features) {
         this.features = features;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 }

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 @Entity
 public class ApplicationBuilt implements Serializable {
 
@@ -30,24 +32,31 @@ public class ApplicationBuilt implements Serializable {
      *
      */
     private static final long serialVersionUID = 7425285261159480420L;
+    @SequenceGenerator(allocationSize = 50, name = "APP_BUILT_SEQ")
     @Id
+    @GeneratedValue(strategy = SEQUENCE, generator = "APP_BUILT_SEQ")
     private Long id;
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn
+    @Embedded
     private ApplicationConfig builtConfig;
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn
     private Asset builtAsset;
     @ElementCollection
-    private List<BuiltTarget> builtTargets=new ArrayList<>();
+    private List<BuiltTarget> builtTargets = new ArrayList<>();
 
     @Version
-    private long version;
+    private int version;
 
     public ApplicationBuilt() {
         this.startDate = new Date();
+    }
+
+    public ApplicationBuilt(Application application) {
+        this();
+        this.builtAsset = application.getSourceAsset();
+        this.builtConfig = new ApplicationConfig(application.getApplicationConfig());
     }
 
     public Long getId() {

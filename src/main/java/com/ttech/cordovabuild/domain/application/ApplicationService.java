@@ -27,7 +27,7 @@ public interface ApplicationService {
 
 	Application createApplication(User owner, Asset asset);
 
-	Future<Application> buildApplication(Application application);
+	ApplicationBuilt buildApplication(Application application);
 
 	Application findApplication(Long id);
 

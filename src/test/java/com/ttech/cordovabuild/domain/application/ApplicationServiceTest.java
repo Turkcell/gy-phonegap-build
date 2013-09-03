@@ -17,14 +17,13 @@
 package com.ttech.cordovabuild.domain.application;
 
 import static com.ttech.cordovabuild.infrastructure.git.GitUtils.clone;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.nio.file.Path;
 
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +42,8 @@ import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
 
+import javax.persistence.EntityManager;
+
 /**
  * @author capacman
  */
@@ -58,16 +59,23 @@ public class ApplicationServiceTest {
     ApplicationService applicationService;
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     ApplicationSourceFactory sourceFactory;
+    private static Path clonePath;
+    @Autowired
+    EntityManager entityManager;
+
+    @BeforeClass
+    public static void cloneRepo() {
+        clonePath = GitUtils.clone(GIT_REPO);
+    }
 
     @Test
     public void testAssetCreate() {
         Asset asset = createAsset();
         assertNotNull(asset);
         assertNotNull(asset.getData());
-        assertTrue(asset.getData().length>0);
+        assertTrue(asset.getData().length > 0);
         ApplicationSource source = sourceFactory.createSource(asset);
         assertNotNull(source);
         assertTrue(source.getLocalPath().toFile().exists());
@@ -75,10 +83,10 @@ public class ApplicationServiceTest {
     }
 
     private Asset createAsset() {
-        Path localPath = GitUtils.clone(GIT_REPO);
-        return sourceFactory.createSource(localPath).toAsset();
+        return sourceFactory.createSource(clonePath).toAsset();
     }
 
+    @Ignore
     @Test
     @Transactional
     public void testCreateApplicationWithRepo() {
@@ -91,17 +99,34 @@ public class ApplicationServiceTest {
 
     private User createUser() {
         return new User("anil", "halil", "achalil@gmail.com", "capacman",
-                    new ImmutableSet.Builder<Role>().add(Role.USER).build(),
-                    "passowrd");
+                new ImmutableSet.Builder<Role>().add(Role.USER).build(),
+                "passowrd");
     }
 
     @Test
+    @Ignore
     public void testCreateApplicationWithAsset() {
         Asset asset = createAsset();
         User user = createUser();
         userRepository.saveOrUpdateUser(user);
         Application application = applicationService.createApplication(user, asset);
         assertNotNull(application);
+    }
+
+    @Test
+    @Transactional
+    public void testApplicationConfig() {
+        Asset asset = createAsset();
+        User user = createUser();
+        userRepository.saveOrUpdateUser(user);
+        Application application = applicationService.createApplication(user, asset);
+        assertNotNull(application);
+        ApplicationConfig config = application.getApplicationConfig();
+        ApplicationBuilt applicationBuilt = applicationService.buildApplication(application);
+        assertFalse(config == applicationBuilt.getBuiltConfig());
+        config.setApplicationName("test");
+        entityManager.flush();
+        assertFalse(config.getApplicationName().equals(applicationService.findApplicationBuilt(applicationBuilt.getId()).getBuiltConfig().getApplicationName()));
     }
 
 }
