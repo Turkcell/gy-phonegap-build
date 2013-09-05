@@ -18,16 +18,14 @@ package com.ttech.cordovabuild.infrastructure.queue;
 
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.BuiltType;
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * Created with IntelliJ IDEA.
  * User: capacman
- * Date: 9/1/13
- * Time: 4:48 PM
+ * Date: 9/5/13
+ * Time: 1:28 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface QueueListener {
-    @Async
-    void onBuilt(ApplicationBuilt built,BuiltType builtType);
+public interface BuiltQueuePublisher {
+    void publishBuilt(ApplicationBuilt built);
 }

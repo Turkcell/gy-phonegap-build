@@ -16,18 +16,31 @@
 
 package com.ttech.cordovabuild.infrastructure.queue;
 
+import com.hazelcast.core.HazelcastInstance;
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.BuiltType;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Created with IntelliJ IDEA.
  * User: capacman
- * Date: 9/1/13
- * Time: 4:48 PM
+ * Date: 9/5/13
+ * Time: 1:32 PM
  * To change this template use File | Settings | File Templates.
  */
-public interface QueueListener {
-    @Async
-    void onBuilt(ApplicationBuilt built,BuiltType builtType);
+@Component
+public class BuiltQueuePublisherImpl implements BuiltQueuePublisher {
+    @Autowired
+    HazelcastInstance instance;
+    @Value("${build.queue.prefix}")
+    String builtQueuePrefix;
+
+    @Override
+    public void publishBuilt(ApplicationBuilt built) {
+        //TODO implement recovery for queue full
+        for (BuiltType builtType : BuiltType.values())
+            instance.getQueue(builtQueuePrefix + "." + builtType.getPlatformString()).offer(built.getId());
+    }
 }

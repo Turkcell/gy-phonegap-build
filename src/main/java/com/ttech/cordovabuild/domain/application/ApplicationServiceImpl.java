@@ -21,6 +21,7 @@ import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory
 import com.ttech.cordovabuild.domain.asset.Asset;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
+import com.ttech.cordovabuild.infrastructure.queue.BuiltQueuePublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
-import java.util.concurrent.Future;
 
 /**
  * @author Anıl Halil
@@ -43,6 +43,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     ApplicationRepository repository;
     @Autowired
     ApplicationSourceFactory sourceFactory;
+    @Autowired
+    BuiltQueuePublisher builtQueuePublisher;
 
     @Override
     public Application createApplication(User owner, String repositoryURI) {
@@ -63,10 +65,12 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationBuilt buildApplication(Application application) {
-        ApplicationBuilt built=new ApplicationBuilt(application);
+        ApplicationBuilt built = new ApplicationBuilt(application);
         application.getBuilds().add(built);
         repository.saveApplication(application);
-        return application.getBuilds().get(0);
+        ApplicationBuilt applicationBuilt = application.getBuilds().get(0);
+        builtQueuePublisher.publishBuilt(applicationBuilt);
+        return applicationBuilt;
     }
 
     @Override
@@ -86,7 +90,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt, BuiltTarget builtTarget) {
-        return repository.addBuiltTarget(applicationBuilt,builtTarget);
+        return repository.addBuiltTarget(applicationBuilt, builtTarget);
     }
 
 }

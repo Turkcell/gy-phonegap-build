@@ -16,9 +16,13 @@
 
 package com.ttech.cordovabuild.domain.built;
 
-import com.ttech.cordovabuild.domain.application.*;
+import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
+import com.ttech.cordovabuild.domain.application.ApplicationService;
+import com.ttech.cordovabuild.domain.application.BuiltTarget;
+import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.infrastructure.queue.QueueListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,20 +31,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Time: 4:46 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BuildService implements QueueListener<Long> {
-    private final BuiltType builtType;
-    private final ApplicationBuilder applicationBuilder;
-    private final ApplicationService applicationService;
+@Component
+public class BuiltQueueListenerImpl implements QueueListener {
+    @Autowired
+    ApplicationService applicationService;
+    @Autowired
+    ApplicationBuilderFactory builderFactory;
 
-    public BuildService(BuiltType builtType, ApplicationBuilder applicationBuilder, ApplicationService applicationService) {
-        this.builtType = builtType;
-        this.applicationBuilder = applicationBuilder;
-        this.applicationService = applicationService;
-    }
-
-    @Override
-    public void onItem(Long itemId) {
-        ApplicationBuilt applicationBuilt = applicationService.findApplicationBuilt(itemId);
+    public void onBuilt(ApplicationBuilt applicationBuilt, BuiltType builtType) {
+        ApplicationBuilder applicationBuilder = builderFactory.getApplicationBuilder(builtType, applicationBuilt);
         BuildInfo buildInfo = applicationBuilder.buildApplication();
         applicationService.addBuiltTarget(applicationBuilt, new BuiltTarget(builtType, buildInfo));
     }
