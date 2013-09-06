@@ -17,10 +17,12 @@
 
 package com.ttech.cordovabuild.domain.asset;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.InputStream;
 import java.util.List;
 
-
+@Transactional
 public interface AssetService {
     void handleInputStream(AssetRef assetRef,InputStreamHandler handler);
 

@@ -18,7 +18,9 @@ package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.user.User;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public interface ApplicationService {
 
 	Application createApplication(User owner, String repositoryURI);

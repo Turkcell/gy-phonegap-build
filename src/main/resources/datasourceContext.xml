@@ -45,4 +45,5 @@
             <bean class="org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect"/>
         </property>
     </bean>
+    <tx:annotation-driven transaction-manager="tx"/>
 </beans>
