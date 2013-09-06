@@ -17,7 +17,7 @@
 package com.ttech.cordovabuild.domain.built;
 
 import com.ttech.cordovabuild.domain.application.BuiltType;
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 
 import java.nio.file.Path;
 import java.util.Date;
@@ -29,15 +29,15 @@ public class BuildInfo {
     private final long duration;
     private final BuiltType builtType;
     private final String applicationName;
-    private final Asset asset;
+    private final AssetRef assetRef;
 
-    public BuildInfo(Path path, Date started, long duration, BuiltType builtType, String applicationName, Asset asset) {
+    public BuildInfo(Path path, Date started, long duration, BuiltType builtType, String applicationName, AssetRef assetRef) {
         this.path = path;
         this.startDate = started;
         this.duration = duration;
         this.builtType = builtType;
         this.applicationName = applicationName;
-        this.asset = asset;
+        this.assetRef = assetRef;
     }
 
     public Path getPath() {
@@ -52,8 +52,8 @@ public class BuildInfo {
         return duration;
     }
 
-    public Asset getAsset() {
-        return asset;
+    public AssetRef getAssetRef() {
+        return assetRef;
     }
 
     public BuiltType getBuiltType() {

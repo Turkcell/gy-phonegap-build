@@ -16,24 +16,20 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import java.util.concurrent.Future;
-
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.user.User;
 
 public interface ApplicationService {
 
 	Application createApplication(User owner, String repositoryURI);
 
-	Application createApplication(User owner, Asset asset);
+	Application createApplication(User owner, AssetRef assetRef);
 
 	ApplicationBuilt buildApplication(Application application);
 
 	Application findApplication(Long id);
 
     ApplicationBuilt findApplicationBuilt(Long id);
-
-    Application findByApplicationBuilt(ApplicationBuilt applicationBuilt);
 
     ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt,BuiltTarget builtTarget);
 }

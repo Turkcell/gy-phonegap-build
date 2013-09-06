@@ -20,6 +20,8 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
 import com.ttech.cordovabuild.domain.application.ApplicationService;
 import com.ttech.cordovabuild.domain.application.BuiltType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -36,7 +38,8 @@ import javax.annotation.PostConstruct;
 @Component
 public class BuiltQueuePollerFactory {
 
-    @Value("built.types")
+    private static final Logger LOGGER = LoggerFactory.getLogger(BuiltQueuePollerFactory.class);
+    @Value("${built.types}")
     String builtTypes;
     @Value("${build.queue.prefix}")
     String builtQueuePrefix;
@@ -50,6 +53,7 @@ public class BuiltQueuePollerFactory {
 
     @PostConstruct
     void buildQueuePollers() {
+        LOGGER.info("built.types value {} and builtQueue prefix {}",builtTypes,builtQueuePrefix);
         String[] split = builtTypes.split(",");
         for (String splitVal : split) {
             BuiltType builtType = BuiltType.valueOf(splitVal);

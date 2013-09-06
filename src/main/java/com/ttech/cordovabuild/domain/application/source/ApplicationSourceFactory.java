@@ -18,10 +18,10 @@ package com.ttech.cordovabuild.domain.application.source;
 
 import java.nio.file.Path;
 
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 
 public interface ApplicationSourceFactory {
-	ApplicationSource createSource(Asset asset);
-    ApplicationSource createSource(Asset asset,Path path);
+	ApplicationSource createSource(AssetRef assetRef);
+    ApplicationSource createSource(AssetRef assetRef,Path path);
     ApplicationSource createSource(Path localPath);
 }

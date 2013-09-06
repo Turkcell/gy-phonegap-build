@@ -16,6 +16,7 @@
 package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.user.User;
+
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
@@ -38,7 +39,7 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Application> cq = cb.createQuery(Application.class);
         Root<Application> from = cq.from(Application.class);
-        return em.createQuery(cq.select(from).where(cb.equal(from.get(Application_.owner).get(User_.id),owner.getId()))).getResultList();
+        return em.createQuery(cq.select(from).where(cb.equal(from.get(Application_.owner).get(User_.id), owner.getId()))).getResultList();
     }
 
     @Override
@@ -53,11 +54,13 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
     }
 
     @Override
-    public Application findByApplicationBuild(ApplicationBuilt applicationBuilt) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Application> cq = cb.createQuery(Application.class);
-        Root<Application> from = cq.from(Application.class);
-        return em.createQuery(cq.select(from).where(cb.isMember(applicationBuilt,from.get(Application_.builds)))).getSingleResult();
+    public ApplicationBuilt saveApplicationBuilt(ApplicationBuilt applicationBuilt) {
+        try {
+            return em.merge(applicationBuilt);
+        } catch (IllegalArgumentException e) {
+            em.persist(applicationBuilt);
+            return applicationBuilt;
+        }
     }
 
     @Override

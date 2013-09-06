@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.application.source;
 
-import java.nio.file.Path;
+package com.ttech.cordovabuild.domain.asset;
 
-import com.ttech.cordovabuild.domain.application.ApplicationConfig;
-import com.ttech.cordovabuild.domain.asset.AssetRef;
+import java.io.InputStream;
+import java.util.List;
 
-public interface ApplicationSource {
 
-	public abstract ApplicationConfig getApplicationConfig();
+public interface AssetService {
+    void handleInputStream(AssetRef assetRef,InputStreamHandler handler);
 
-	public abstract Path getLocalPath();
-
-    public AssetRef toAsset();
+    AssetRef save(InputStream inputStream);
 }

@@ -30,7 +30,7 @@ public interface ApplicationRepository {
     
     Application saveApplication(Application application);
 
-    Application findByApplicationBuild(ApplicationBuilt applicationBuilt);
+    ApplicationBuilt saveApplicationBuilt(ApplicationBuilt applicationBuilt);
 
     ApplicationBuilt findApplicationBuild(Long id);
 

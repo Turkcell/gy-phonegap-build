@@ -20,8 +20,10 @@ import com.google.common.io.Files;
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.asset.AssetService;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,15 +37,15 @@ import java.nio.file.Path;
  */
 public class AndroidApplicationBuilder extends ApplicationBuilderBase {
 
-    protected AndroidApplicationBuilder(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory, ApplicationBuilt applicationBuilt) {
-        super(buildPath, createPath, sourceFactory, BuiltType.ANDROID, applicationBuilt);
+    protected AndroidApplicationBuilder(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory,AssetService assetService, ApplicationBuilt applicationBuilt) {
+        super(buildPath, createPath, sourceFactory, assetService, BuiltType.ANDROID, applicationBuilt);
     }
 
     @Override
-    protected Asset buildAsset(Path path) {
+    protected AssetRef buildAsset(Path path) {
         Path assetPath = path.resolve("platforms").resolve(builtType.getPlatformString()).resolve("bin").resolve(applicationBuilt.getBuiltConfig().getApplicationName().concat("-debug.apk"));
         try {
-            return new Asset(Files.toByteArray(assetPath.toFile()));
+            return assetService.save(new ByteArrayInputStream(Files.toByteArray(assetPath.toFile())));
         } catch (FileNotFoundException e) {
             throw new PlatformBuiltException(e);
         } catch (IOException e) {

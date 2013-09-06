@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-
 package com.ttech.cordovabuild.domain.asset;
 
-import java.util.List;
+import com.ttech.cordovabuild.domain.CordovaException;
 
+import java.io.IOException;
 
-public interface AssetRepository {
-    Asset findByID(Long id);
-    Asset save(Asset asset);
-    List<Asset> getAll();
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/6/13
+ * Time: 3:50 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class AssetCreationException extends CordovaException {
+    public AssetCreationException(IOException e) {
+        super(e);
+    }
 }

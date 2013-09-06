@@ -14,18 +14,31 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.application.source;
+package com.ttech.cordovabuild.domain.asset;
 
-import java.nio.file.Path;
 
-import com.ttech.cordovabuild.domain.application.ApplicationConfig;
-import com.ttech.cordovabuild.domain.asset.AssetRef;
+import javax.persistence.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
-public interface ApplicationSource {
 
-	public abstract ApplicationConfig getApplicationConfig();
+@Embeddable
+public class AssetRef {
 
-	public abstract Path getLocalPath();
+    private String uuid;
 
-    public AssetRef toAsset();
+    public AssetRef() {
+    }
+
+    public String toString(){
+        return "assetRef"+uuid;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
 }

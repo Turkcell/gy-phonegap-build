@@ -17,9 +17,9 @@
 package com.ttech.cordovabuild.domain.built;
 
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
-import com.ttech.cordovabuild.domain.application.BuiltTarget;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
+import com.ttech.cordovabuild.domain.asset.AssetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,11 +44,14 @@ public class ApplicationBuilderFactoryImpl implements ApplicationBuilderFactory 
     @Autowired
     ApplicationSourceFactory sourceFactory;
 
+    @Autowired
+    AssetService assetService;
+
     @Override
     public ApplicationBuilder getApplicationBuilder(BuiltType builtType, ApplicationBuilt applicationBuilt) {
         switch (builtType) {
             case ANDROID:
-                return new AndroidApplicationBuilder(buildPath, createPath, sourceFactory, applicationBuilt);
+                return new AndroidApplicationBuilder(buildPath, createPath, sourceFactory, assetService, applicationBuilt);
             default:
                 throw new IllegalArgumentException("could not find ApplicationBuilder for " + builtType);
         }

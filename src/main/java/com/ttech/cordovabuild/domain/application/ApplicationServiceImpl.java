@@ -18,7 +18,7 @@ package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
 import com.ttech.cordovabuild.infrastructure.queue.BuiltQueuePublisher;
@@ -58,19 +58,17 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public Application createApplication(User owner, Asset asset) {
-        ApplicationSource source = sourceFactory.createSource(asset);
-        return repository.saveApplication(new Application(asset, source.getApplicationConfig(), null, owner));
+    public Application createApplication(User owner, AssetRef assetRef) {
+        ApplicationSource source = sourceFactory.createSource(assetRef);
+        return repository.saveApplication(new Application(assetRef, source.getApplicationConfig(), null, owner));
     }
 
     @Override
     public ApplicationBuilt buildApplication(Application application) {
         ApplicationBuilt built = new ApplicationBuilt(application);
-        application.getBuilds().add(built);
-        repository.saveApplication(application);
-        ApplicationBuilt applicationBuilt = application.getBuilds().get(0);
-        builtQueuePublisher.publishBuilt(applicationBuilt);
-        return applicationBuilt;
+        repository.saveApplicationBuilt(built);
+        builtQueuePublisher.publishBuilt(built);
+        return built;
     }
 
     @Override
@@ -81,11 +79,6 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationBuilt findApplicationBuilt(Long id) {
         return repository.findApplicationBuild(id);
-    }
-
-    @Override
-    public Application findByApplicationBuilt(ApplicationBuilt applicationBuilt) {
-        return repository.findByApplicationBuild(applicationBuilt);
     }
 
     @Override

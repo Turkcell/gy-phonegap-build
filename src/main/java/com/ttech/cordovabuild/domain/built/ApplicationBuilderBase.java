@@ -20,7 +20,8 @@ import com.ttech.cordovabuild.domain.application.BuiltType;
 
 import com.ttech.cordovabuild.domain.application.ApplicationFeature;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.asset.AssetService;
 import com.ttech.cordovabuild.infrastructure.FilesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,14 +41,17 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
     private final Path buildPath;
     private final String createPath;
     private final ApplicationSourceFactory sourceFactory;
+    protected final AssetService assetService;
     protected final BuiltType builtType;
     protected final ApplicationBuilt applicationBuilt;
 
 
-    protected ApplicationBuilderBase(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory, BuiltType builtType, ApplicationBuilt applicationBuilt) {
+
+    protected ApplicationBuilderBase(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory, AssetService assetService, BuiltType builtType, ApplicationBuilt applicationBuilt) {
         this.buildPath = buildPath;
         this.createPath = createPath;
         this.sourceFactory = sourceFactory;
+        this.assetService = assetService;
         this.builtType = builtType;
         this.applicationBuilt = applicationBuilt;
     }
@@ -64,14 +68,14 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
         } catch (IOException e) {
             throw new PlatformBuiltException(e);
         }
-        sourceFactory.createSource(applicationBuilt.getBuiltAsset(), webAssetPath);
+        sourceFactory.createSource(applicationBuilt.getBuiltAssetRef(), webAssetPath);
         addPlatformSupport(builtType, buildPathFile);
         addFeatures(applicationBuilt.getBuiltConfig().getFeatures(), buildPathFile);
         buildPlatform(builtType, buildPathFile);
         return new BuildInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getApplicationName(), buildAsset(buildPath));
     }
 
-    protected abstract Asset buildAsset(Path buildPath);
+    protected abstract AssetRef buildAsset(Path buildPath);
 
     private void buildPlatform(BuiltType builtType, File buildPath) {
         try {

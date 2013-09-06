@@ -15,7 +15,7 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.built.BuildInfo;
 
 import java.io.Serializable;
@@ -38,8 +38,8 @@ public class BuiltTarget implements Serializable {
     private Date startDate;
     @Enumerated(EnumType.STRING)
     private BuiltType type;
-    @OneToOne
-    private Asset asset;
+    @Embedded
+    private AssetRef assetRef;
 
     public BuiltType getType() {
         return type;
@@ -49,12 +49,12 @@ public class BuiltTarget implements Serializable {
         this.type = type;
     }
 
-    public Asset getAsset() {
-        return asset;
+    public AssetRef getAssetRef() {
+        return assetRef;
     }
 
-    public void setAsset(Asset asset) {
-        this.asset = asset;
+    public void setAssetRef(AssetRef assetRef) {
+        this.assetRef = assetRef;
     }
 
     public BuiltTarget() {
@@ -62,7 +62,7 @@ public class BuiltTarget implements Serializable {
 
     public BuiltTarget(BuiltType type,BuildInfo builtInfo) {
         this.type = type;
-        this.asset = builtInfo.getAsset();
+        this.assetRef = builtInfo.getAssetRef();
         this.startDate=builtInfo.getStartDate();
         this.duration=builtInfo.getDuration();
     }

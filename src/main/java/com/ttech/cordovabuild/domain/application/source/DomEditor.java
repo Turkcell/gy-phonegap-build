@@ -110,7 +110,7 @@ public class DomEditor {
     public Set<ApplicationFeature> getFeatures() throws XPathExpressionException {
         NodeList features = (NodeList) featureExpr.evaluate(doc, XPathConstants.NODESET);
         if(features.getLength()<1)
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         List<String> values=new ArrayList<>(features.getLength());
         for(int i=0;i<features.getLength();i++)
             values.add(features.item(i).getNodeValue());

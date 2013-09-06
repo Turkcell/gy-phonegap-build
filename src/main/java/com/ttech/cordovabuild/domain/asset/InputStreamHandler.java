@@ -16,56 +16,17 @@
 
 package com.ttech.cordovabuild.domain.asset;
 
-
-import javax.persistence.*;
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/5/13
+ * Time: 5:59 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public interface InputStreamHandler {
 
-@Entity
-public class Asset {
-    @Id
-    @GeneratedValue
-    private Long id;
-    @Lob
-    @Basic(fetch = FetchType.EAGER)
-    @Column(length = 10 * 1024 * 1024)
-    private byte[] data;
-
-    public Asset(byte[] data) {
-        this.data = data;
-    }
-
-    public Asset() {
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public Asset(long id) {
-        this.id = id;
-    }
-
-    public InputStream asInputStream() {
-        return new ByteArrayInputStream(data);
-    }
-
-    public String toString(){
-        return "assetRef"+id;
-    }
-
+    void handleInputStream(InputStream inputStream) throws IOException;
 }

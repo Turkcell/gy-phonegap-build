@@ -15,15 +15,10 @@
  */
 package com.ttech.cordovabuild.domain.built;
 
-import com.google.common.collect.ImmutableSet;
 import com.ttech.cordovabuild.domain.application.*;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
-import com.ttech.cordovabuild.domain.asset.Asset;
-import com.ttech.cordovabuild.domain.user.Role;
-import com.ttech.cordovabuild.domain.user.User;
 
-import com.ttech.cordovabuild.domain.user.UserRepository;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
 import org.junit.Test;
 
@@ -76,10 +71,10 @@ public class ApplicationBuilderTest {
         ApplicationConfig applicationConfig = source.getApplicationConfig();
         ApplicationBuilt applicationBuilt = new ApplicationBuilt();
         applicationBuilt.setId(1L);
-        applicationBuilt.setBuiltAsset(source.toAsset());
+        applicationBuilt.setBuiltAssetRef(source.toAsset());
         applicationBuilt.setBuiltConfig(applicationConfig);
         ApplicationBuilder builder = builderFactory.getApplicationBuilder(BuiltType.ANDROID, applicationBuilt);
         BuildInfo buildInfo = builder.buildApplication();
-        assertNotNull(buildInfo.getAsset());
+        assertNotNull(buildInfo.getAssetRef());
     }
 }

@@ -15,7 +15,7 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -40,14 +40,17 @@ public class ApplicationBuilt implements Serializable {
     private Date startDate;
     @Embedded
     private ApplicationConfig builtConfig;
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn
-    private Asset builtAsset;
+    @Embedded
+    private AssetRef builtAssetRef;
     @ElementCollection
     private List<BuiltTarget> builtTargets = new ArrayList<>();
 
     @Version
     private int version;
+
+    @ManyToOne
+    @JoinColumn
+    private Application application;
 
     public ApplicationBuilt() {
         this.startDate = new Date();
@@ -55,8 +58,9 @@ public class ApplicationBuilt implements Serializable {
 
     public ApplicationBuilt(Application application) {
         this();
-        this.builtAsset = application.getSourceAsset();
+        this.builtAssetRef = application.getSourceAssetRef();
         this.builtConfig = new ApplicationConfig(application.getApplicationConfig());
+        this.application = application;
     }
 
     public Long getId() {
@@ -91,11 +95,19 @@ public class ApplicationBuilt implements Serializable {
         this.builtConfig = builtConfig;
     }
 
-    public Asset getBuiltAsset() {
-        return builtAsset;
+    public AssetRef getBuiltAssetRef() {
+        return builtAssetRef;
     }
 
-    public void setBuiltAsset(Asset builtAsset) {
-        this.builtAsset = builtAsset;
+    public void setBuiltAssetRef(AssetRef builtAssetRef) {
+        this.builtAssetRef = builtAssetRef;
+    }
+
+    public Application getApplication() {
+        return application;
+    }
+
+    public void setApplication(Application application) {
+        this.application = application;
     }
 }

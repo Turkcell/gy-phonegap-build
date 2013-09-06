@@ -20,11 +20,10 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.*;
 
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.user.User;
 
 @Entity
@@ -42,10 +41,6 @@ public class Application implements Serializable {
     @Basic
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
-            CascadeType.REFRESH})
-    @OrderBy("startDate ASC")
-    private List<ApplicationBuilt> builds;
     @ManyToOne(optional = false)
     private User owner;
     @Basic
@@ -56,9 +51,8 @@ public class Application implements Serializable {
     @Column(length = 1024, nullable = true)
     private String repositoryURI;
 
-    @OneToOne(fetch = LAZY, cascade = {CascadeType.PERSIST,
-            CascadeType.REFRESH})
-    private Asset sourceAsset;
+    @Embedded
+    private AssetRef sourceAssetRef;
 
     @Embedded
     private ApplicationConfig applicationConfig = new ApplicationConfig();
@@ -66,13 +60,13 @@ public class Application implements Serializable {
     public Application() {
     }
 
-    public Application(Asset sourceAsset, User owner) {
-        this.sourceAsset = sourceAsset;
+    public Application(AssetRef sourceAssetRef, User owner) {
+        this.sourceAssetRef = sourceAssetRef;
         this.owner = owner;
     }
 
-    public Application(Asset sourceAsset, ApplicationConfig applicationConfig, String repositoryURI, User owner) {
-        this.sourceAsset = sourceAsset;
+    public Application(AssetRef sourceAssetRef, ApplicationConfig applicationConfig, String repositoryURI, User owner) {
+        this.sourceAssetRef = sourceAssetRef;
         this.applicationConfig = applicationConfig;
         this.repositoryURI = repositoryURI;
         this.owner = owner;
@@ -118,14 +112,6 @@ public class Application implements Serializable {
         this.created = created;
     }
 
-    public List<ApplicationBuilt> getBuilds() {
-        return builds;
-    }
-
-    public void setBuilds(List<ApplicationBuilt> builds) {
-        this.builds = builds;
-    }
-
     public ApplicationConfig getApplicationConfig() {
         return applicationConfig;
     }
@@ -134,11 +120,11 @@ public class Application implements Serializable {
         this.applicationConfig = applicationConfig;
     }
 
-    public Asset getSourceAsset() {
-        return sourceAsset;
+    public AssetRef getSourceAssetRef() {
+        return sourceAssetRef;
     }
 
-    public void setSourceAsset(Asset sourceAsset) {
-        this.sourceAsset = sourceAsset;
+    public void setSourceAssetRef(AssetRef sourceAssetRef) {
+        this.sourceAssetRef = sourceAssetRef;
     }
 }

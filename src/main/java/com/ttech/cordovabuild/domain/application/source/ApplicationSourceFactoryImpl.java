@@ -18,12 +18,14 @@ package com.ttech.cordovabuild.domain.application.source;
 
 import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
-import com.ttech.cordovabuild.domain.application.ApplicationFeature;
-import com.ttech.cordovabuild.domain.asset.Asset;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 
+import com.ttech.cordovabuild.domain.asset.AssetService;
+import com.ttech.cordovabuild.domain.asset.InputStreamHandler;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -33,7 +35,6 @@ import javax.xml.xpath.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.compressDirectory;
 import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.extractFiles;
@@ -42,6 +43,9 @@ import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.extract
 public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(ApplicationSourceFactoryImpl.class);
+
+    @Autowired
+    AssetService assetService;
 
 	public class ApplicationSourceImpl implements ApplicationSource {
 
@@ -62,33 +66,43 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 		}
 
         @Override
-        public Asset toAsset() {
+        public AssetRef toAsset() {
             ByteArrayOutputStream output = new ByteArrayOutputStream(
                     10 * 1024 * 1024);
             compressDirectory(localPath, output);
-            return new Asset(output.toByteArray());
+            return assetService.save(new ByteArrayInputStream(output.toByteArray()));
         }
 	}
 
 	@Override
-	public ApplicationSource createSource(Asset asset) {
-        LOGGER.info("creating source for asset{}",asset.getId());
-		Path localPath = null;
+	public ApplicationSource createSource(AssetRef assetRef) {
+        LOGGER.info("creating source for assetRef {}", assetRef.getUuid());
 		try {
-			localPath = Files.createTempDirectory(null);
+			final Path localPath = Files.createTempDirectory(null);
+            LOGGER.info("assetRef will be extracted to {}",localPath);
+            assetService.handleInputStream(assetRef,new InputStreamHandler() {
+                @Override
+                public void handleInputStream(InputStream inputStream) {
+                    extractFiles(inputStream, localPath);
+                }
+            });
+            return new ApplicationSourceImpl(localPath);
 		} catch (IOException e) {
 			throw new ApplicationSourceException(e);
 		}
-        LOGGER.info("asset will be extracted to {}",localPath);
-		extractFiles(asset.asInputStream(), localPath);
-		return new ApplicationSourceImpl(localPath);
+
 
 	}
 
     @Override
-    public ApplicationSource createSource(Asset asset, Path path) {
-        LOGGER.info("asset {} will be extracted to {}",asset.getId(),path);
-        extractFiles(asset.asInputStream(),path);
+    public ApplicationSource createSource(AssetRef assetRef, final Path path) {
+        LOGGER.info("assetRef {} will be extracted to {}", assetRef.getUuid(),path);
+        assetService.handleInputStream(assetRef,new InputStreamHandler() {
+            @Override
+            public void handleInputStream(InputStream inputStream) {
+                extractFiles(inputStream, path);
+            }
+        });
         return new ApplicationSourceImpl(path);
     }
 

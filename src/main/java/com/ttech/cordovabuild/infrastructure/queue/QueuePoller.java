@@ -16,6 +16,7 @@
 
 package com.ttech.cordovabuild.infrastructure.queue;
 
+import com.hazelcast.core.HazelcastInstanceNotActiveException;
 import com.hazelcast.core.IQueue;
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.ApplicationService;
@@ -59,6 +60,9 @@ public class QueuePoller implements Runnable {
                 }
             } catch (InterruptedException e) {
                 LOGGER.info("queue polling for {} has been interrupted", e);
+                break;
+            } catch (HazelcastInstanceNotActiveException e) {
+                LOGGER.warn("hazelcast is going down stop threads");
                 break;
             } catch (DataAccessException e) {
                 LOGGER.error("could not get applicationBuilt for {}", builtID, e);
