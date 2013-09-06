@@ -70,9 +70,4 @@ public class AssetServiceTest {
             }
         });
     }
-
-    @Test
-    public void testSave() throws Exception {
-
-    }
 }

@@ -64,11 +64,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationBuilt buildApplication(Application application) {
-        ApplicationBuilt built = new ApplicationBuilt(application);
-        repository.saveApplicationBuilt(built);
-        builtQueuePublisher.publishBuilt(built);
-        return built;
+    public ApplicationBuilt prepareApplicationBuilt(Application application) {
+        return repository.saveApplicationBuilt(new ApplicationBuilt(application));
     }
 
     @Override

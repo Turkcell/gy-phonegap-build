@@ -54,7 +54,7 @@ public class HazelcastTest {
 
     @Test
     public void testQueue() throws InterruptedException {
-        IQueue<Object> queue = hi.getQueue(queuePrefix + ".android");
+        IQueue<Object> queue = hi.getQueue(queuePrefix + ".test");
         assertNotNull(queue);
         queue.put(new ApplicationBuilt());
         assertNotNull(queue.poll());

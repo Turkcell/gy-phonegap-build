@@ -16,15 +16,15 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import static com.ttech.cordovabuild.infrastructure.git.GitUtils.clone;
-import static org.junit.Assert.*;
-
-import java.nio.file.Path;
-
+import com.google.common.collect.ImmutableSet;
+import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
+import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.user.Role;
+import com.ttech.cordovabuild.domain.user.User;
+import com.ttech.cordovabuild.domain.user.UserRepository;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,14 +35,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableSet;
-import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
-import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
-import com.ttech.cordovabuild.domain.user.Role;
-import com.ttech.cordovabuild.domain.user.User;
-import com.ttech.cordovabuild.domain.user.UserRepository;
-
 import javax.persistence.EntityManager;
+import java.nio.file.Path;
+
+import static org.junit.Assert.*;
 
 /**
  * @author capacman
@@ -71,7 +67,6 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    @Ignore
     public void testAssetCreate() {
         AssetRef assetRef = createAsset();
         ApplicationSource source = sourceFactory.createSource(assetRef);
@@ -84,7 +79,6 @@ public class ApplicationServiceTest {
         return sourceFactory.createSource(clonePath).toAsset();
     }
 
-    @Ignore
     @Test
     @Transactional
     public void testCreateApplicationWithRepo() {
@@ -102,7 +96,6 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    @Ignore
     public void testCreateApplicationWithAsset() {
         AssetRef assetRef = createAsset();
         User user = createUser();
@@ -119,8 +112,9 @@ public class ApplicationServiceTest {
         userRepository.saveOrUpdateUser(user);
         Application application = applicationService.createApplication(user, assetRef);
         assertNotNull(application);
+        assertNotNull(application.getId());
         ApplicationConfig config = application.getApplicationConfig();
-        ApplicationBuilt applicationBuilt = applicationService.buildApplication(application);
+        ApplicationBuilt applicationBuilt = applicationService.prepareApplicationBuilt(application);
         assertFalse(config == applicationBuilt.getBuiltConfig());
         config.setApplicationName("test");
         entityManager.flush();

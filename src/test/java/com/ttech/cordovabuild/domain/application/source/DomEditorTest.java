@@ -43,7 +43,7 @@ public class DomEditorTest {
         assertEquals(domEditor.getPackage(), "com.turkcell.restaurantee");
         assertEquals(domEditor.getVersion(), "1.0.0");
         assertEquals(domEditor.getPhoneGapVersion(), "2.5.0");
-        assertEquals(domEditor.getFeatures().size(),3);
+        assertEquals(domEditor.getFeatures().size(),0);
 
         domEditor.setName("name");
         domEditor.setPackage("package");
