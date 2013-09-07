@@ -13,23 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain.user;
 
+package com.ttech.cordovabuild.web;
 
-import org.springframework.transaction.annotation.Transactional;
+import com.ttech.cordovabuild.domain.user.User;
+import com.ttech.cordovabuild.domain.user.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 /**
- * 
- * @author Anıl Halil
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/7/13
+ * Time: 2:52 PM
+ * To change this template use File | Settings | File Templates.
  */
-@Transactional
-public interface UserRepository {
+@Component
+public class UserResource {
 
-	User findUserByID(Long id);
-
-	User findUserByUserName(String username);
-
-	User findUserByEmail(String email);
-
-	User saveOrUpdateUser(User user);
+    @Autowired
+    UserRepository userRepository;
+    @POST
+    public User createUser(User user) {
+        return userRepository.saveOrUpdateUser(user);
+    }
 }

@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.domain.user;
 
+package com.ttech.cordovabuild.web;
 
-import org.springframework.transaction.annotation.Transactional;
+import javax.ws.rs.core.Application;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * 
- * @author Anıl Halil
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/7/13
+ * Time: 4:03 PM
+ * To change this template use File | Settings | File Templates.
  */
-@Transactional
-public interface UserRepository {
-
-	User findUserByID(Long id);
-
-	User findUserByUserName(String username);
-
-	User findUserByEmail(String email);
-
-	User saveOrUpdateUser(User user);
+public class CordovaApplication extends Application{
+    @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> classes=new HashSet<>();
+        classes.add(RootResource.class);
+        classes.add(UserResource.class);
+        return classes;
+    }
 }

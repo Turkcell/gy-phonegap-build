@@ -1,13 +1,12 @@
 package com.ttech.cordovabuild.web;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ApiResponse {
 
@@ -33,7 +32,7 @@ public class ApiResponse {
 		this.basePath=basePath;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getCallback() {
 		return callback;
 	}
@@ -42,7 +41,7 @@ public class ApiResponse {
 		this.callback = callback;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getError() {
 		return error;
 	}
@@ -100,7 +99,7 @@ public class ApiResponse {
 		return this;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	@JsonProperty("error_description")
 	public String getErrorDescription() {
 		return errorDescription;
@@ -111,7 +110,7 @@ public class ApiResponse {
 		this.errorDescription = errorDescription;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+	@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	@JsonProperty("error_uri")
 	public String getErrorUri() {
 		return errorUri;
@@ -122,7 +121,7 @@ public class ApiResponse {
 		this.errorUri = errorUri;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getException() {
 		return exception;
 	}
@@ -131,7 +130,7 @@ public class ApiResponse {
 		this.exception = exception;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getPath() {
 		return path;
 	}
@@ -145,12 +144,12 @@ public class ApiResponse {
 		uri = basePath+path;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getUri() {
 		return uri;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getStatus() {
 		return status;
 	}
@@ -164,7 +163,7 @@ public class ApiResponse {
 		return this;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public long getDuration() {
 		return System.currentTimeMillis() - timestamp;
 	}
@@ -178,12 +177,12 @@ public class ApiResponse {
 		return this;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public long getTimestamp() {
 		return timestamp;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getAction() {
 		return action;
 	}
@@ -197,7 +196,7 @@ public class ApiResponse {
 		return this;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public String getCursor() {
 		return cursor;
 	}
@@ -206,7 +205,7 @@ public class ApiResponse {
 		this.cursor = cursor;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public Integer getCount() {
 		return count;
 	}
@@ -215,7 +214,7 @@ public class ApiResponse {
 		this.count = count;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public Object getData() {
 		return data;
 	}
@@ -233,7 +232,7 @@ public class ApiResponse {
 		return this;
 	}
 
-	@JsonInclude(Include.NON_NULL)
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 	public Map<String, List<String>> getParams() {
 		return params;
 	}

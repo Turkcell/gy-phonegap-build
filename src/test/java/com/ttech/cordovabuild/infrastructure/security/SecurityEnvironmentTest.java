@@ -15,7 +15,15 @@
  */
 package com.ttech.cordovabuild.infrastructure.security;
 
-import static org.junit.Assert.assertEquals;
+import com.hazelcast.security.UsernamePasswordCredentials;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -24,22 +32,13 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.junit.Test;
-
-import com.hazelcast.security.UsernamePasswordCredentials;
 import java.nio.file.Paths;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.webapp.WebAppContext;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
+
+import static org.junit.Assert.assertEquals;
 
 public class SecurityEnvironmentTest {
 
-    private static final String ROOT_TARGET = "http://localhost:8080/resources";
+    private static final String ROOT_TARGET = "http://localhost:8080";
     private static Server server;
 
     @BeforeClass
@@ -60,11 +59,10 @@ public class SecurityEnvironmentTest {
     }
 
     @Test
-    @Ignore
     public void testNotAuthenticated() throws InterruptedException {
-        Response response = createTarget(ROOT_TARGET).path("example")
+        Response response = createTarget(ROOT_TARGET).path("application").path("1")
                 .request(MediaType.APPLICATION_JSON_TYPE).get();
-        assertEquals(Status.UNAUTHORIZED.getStatusCode(), response.getStatus());
+        assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
     }
 
     private WebTarget createTarget(String path) {
@@ -80,7 +78,7 @@ public class SecurityEnvironmentTest {
                 .path("authenticate/login")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(new UsernamePasswordCredentials("anil",
-                "anil"), MediaType.APPLICATION_JSON_TYPE));
+                        "anil"), MediaType.APPLICATION_JSON_TYPE));
         assertEquals(Status.OK.getStatusCode(), post.getStatus());
     }
 }

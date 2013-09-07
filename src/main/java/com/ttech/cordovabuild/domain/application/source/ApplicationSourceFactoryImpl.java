@@ -19,10 +19,8 @@ package com.ttech.cordovabuild.domain.application.source;
 import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
-
 import com.ttech.cordovabuild.domain.asset.AssetService;
 import com.ttech.cordovabuild.domain.asset.InputStreamHandler;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +28,11 @@ import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.*;
-
-import java.io.*;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 

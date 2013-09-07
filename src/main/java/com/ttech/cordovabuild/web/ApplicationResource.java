@@ -4,7 +4,7 @@
  */
 package com.ttech.cordovabuild.web;
 
-import javax.ws.rs.POST;
+import javax.ws.rs.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,9 +18,14 @@ public class ApplicationResource {
     @Autowired
     ApplicationService service;
 
+    @GET
+    @Path("/{id}")
+    public Application getApplication(@PathParam("id") Long id) {
+        return service.findApplication(id);
+    }
+
     @POST
-    public Application createApplication(Application app) {
-        //return service.saveApplication(app);
+    public Application createApplication(@QueryParam("sourceUri") String sourceUri) {
         return null;
     }
 }

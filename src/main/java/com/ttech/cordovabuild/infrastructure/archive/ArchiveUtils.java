@@ -26,14 +26,12 @@ import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.utils.IOUtils;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.zip.GZIPOutputStream;
 
 public class ArchiveUtils {
@@ -62,7 +60,7 @@ public class ArchiveUtils {
             if (ae.isDirectory()) {
                 continue;
             }
-            try (FileOutputStream outputStream = FileUtils.openOutputStream(Paths.get(localPath.toString(), ae.getName()).toFile())) {
+            try (OutputStream outputStream = Files.newOutputStream(localPath.resolve(ae.getName()))) {
                 IOUtils.copy(ais, outputStream);
             }
         }

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  *
  * @author capacman
  */
-@Service
+@Service("userService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
