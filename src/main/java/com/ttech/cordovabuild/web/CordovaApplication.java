@@ -16,6 +16,8 @@
 
 package com.ttech.cordovabuild.web;
 
+import com.ttech.cordovabuild.web.exception.NotFoundExceptionMapper;
+
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +35,7 @@ public class CordovaApplication extends Application {
         Set<Class<?>> classes = new HashSet<>();
         classes.add(RootResource.class);
         classes.add(UserResource.class);
+        classes.add(NotFoundExceptionMapper.class);
         return classes;
     }
 }

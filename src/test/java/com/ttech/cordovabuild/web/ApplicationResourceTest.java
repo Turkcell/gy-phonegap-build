@@ -39,8 +39,8 @@ public class ApplicationResourceTest extends BaseResourceTest {
     public void testGetApplication() throws Exception {
         login(ROOT_TARGET);
         Response createAppResponse = createTarget(ROOT_TARGET).path("application").queryParam("sourceUri", "https://github.com/Turkcell/RestaurantReviews.git").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(null, MediaType.APPLICATION_JSON_TYPE));
-        assertEquals(Response.Status.OK.getStatusCode(), createAppResponse.getStatus());
         Application app = createAppResponse.readEntity(Application.class);
+        assertEquals(Response.Status.OK.getStatusCode(), createAppResponse.getStatus());
         Response findResponse = createTarget(ROOT_TARGET).path("application").path(app.getId().toString()).request(MediaType.APPLICATION_JSON_TYPE).get();
         Application findApp = findResponse.readEntity(Application.class);
         assertEquals(app.getId(), findApp.getId());
@@ -50,8 +50,16 @@ public class ApplicationResourceTest extends BaseResourceTest {
     public void testCreateApplication() throws Exception {
         login(ROOT_TARGET);
         Response createAppResponse = createTarget(ROOT_TARGET).path("application").queryParam("sourceUri", "https://github.com/Turkcell/RestaurantReviews.git").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(null, MediaType.APPLICATION_JSON_TYPE));
+        createAppResponse.readEntity(String.class);
         assertEquals(Response.Status.OK.getStatusCode(), createAppResponse.getStatus());
-        System.out.println(createAppResponse.readEntity(String.class));
+    }
+
+    @Test
+    public void testNotFoundApplication() {
+        login(ROOT_TARGET);
+        Response application = createTarget(ROOT_TARGET).path("application").path("-1").request(MediaType.APPLICATION_JSON_TYPE).get();
+        application.readEntity(String.class);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), application.getStatus());
     }
 
 }

@@ -14,21 +14,29 @@
  * limitations under the License.
  */
 
-package com.ttech.cordovabuild.domain.application;
+package com.ttech.cordovabuild.web.exception;
 
-import com.ttech.cordovabuild.domain.CordovaException;
+import com.ttech.cordovabuild.domain.application.EntityNotFoundException;
 
-import java.text.MessageFormat;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
 /**
  * Created with IntelliJ IDEA.
  * User: capacman
  * Date: 9/8/13
- * Time: 11:24 PM
+ * Time: 11:38 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ApplicationBuiltNotFoundException extends EntityNotFoundException {
-    public ApplicationBuiltNotFoundException(Long id) {
-        super(MessageFormat.format("applicationBuilt with id {0} could not be found", id));
+@Provider
+public class NotFoundExceptionMapper implements ExceptionMapper<EntityNotFoundException> {
+
+    @Override
+    public Response toResponse(EntityNotFoundException e) {
+        return Response.status(Status.NOT_FOUND).type(APPLICATION_JSON_TYPE).build();
     }
 }

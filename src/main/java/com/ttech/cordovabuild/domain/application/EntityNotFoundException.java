@@ -18,17 +18,15 @@ package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.CordovaException;
 
-import java.text.MessageFormat;
-
 /**
  * Created with IntelliJ IDEA.
  * User: capacman
  * Date: 9/8/13
- * Time: 11:24 PM
+ * Time: 11:37 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ApplicationBuiltNotFoundException extends EntityNotFoundException {
-    public ApplicationBuiltNotFoundException(Long id) {
-        super(MessageFormat.format("applicationBuilt with id {0} could not be found", id));
+public class EntityNotFoundException extends CordovaException {
+    public EntityNotFoundException(String message) {
+        super(message);
     }
 }

@@ -16,8 +16,6 @@
 
 package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.CordovaException;
-
 import java.text.MessageFormat;
 
 /**
@@ -27,7 +25,7 @@ import java.text.MessageFormat;
  * Time: 11:21 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ApplicationNotFoundException extends CordovaException {
+public class ApplicationNotFoundException extends EntityNotFoundException {
     public ApplicationNotFoundException(Long id) {
         super(MessageFormat.format("application with id {0} could not be found", id));
     }

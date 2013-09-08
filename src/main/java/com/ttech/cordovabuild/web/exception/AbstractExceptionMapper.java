@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -41,15 +40,12 @@ public abstract class AbstractExceptionMapper<E extends java.lang.Throwable>
                 new HashSet<String>(Arrays.asList("ecmascript", "jscript")));
     }
 
-    @Context
-    HttpHeaders hh;
-
-    @Context
-    protected HttpServletRequest httpServletRequest;
 
     public boolean isJSONP() {
-        return isJavascript(hh.getAcceptableMediaTypes());
+        return isJavascript(getHh().getAcceptableMediaTypes());
     }
+
+    protected abstract HttpHeaders getHh();
 
     public static boolean isJavascript(MediaType m) {
         if (m == null) {
@@ -85,7 +81,7 @@ public abstract class AbstractExceptionMapper<E extends java.lang.Throwable>
     public Response toResponse(int status, E e) {
         logger.error("Error in request (" + status + ")", e);
         ApiResponse response = new ApiResponse(
-                httpServletRequest.getServletPath());
+                getHttpServletRequest().getServletPath());
         AuthErrorInfo authError = AuthErrorInfo.getForException(e);
         if (authError != null) {
             response.setError(authError.getType(), authError.getMessage(), e);
@@ -102,7 +98,7 @@ public abstract class AbstractExceptionMapper<E extends java.lang.Throwable>
 
     public Response toResponse(int status, String jsonResponse) {
         logger.error("Error in request (" + status + "):\n" + jsonResponse);
-        String callback = httpServletRequest.getParameter("callback");
+        String callback = getHttpServletRequest().getParameter("callback");
         if (isJSONP() && !Strings.isNullOrEmpty(callback)) {
             jsonResponse = wrapJSONPResponse(callback, jsonResponse);
             return Response.status(OK).type("application/javascript")
@@ -113,6 +109,8 @@ public abstract class AbstractExceptionMapper<E extends java.lang.Throwable>
 
         }
     }
+
+    protected abstract HttpServletRequest getHttpServletRequest();
 
     public static String wrapJSONPResponse(String callback, String jsonResponse) {
         if (!Strings.isNullOrEmpty(callback)) {
