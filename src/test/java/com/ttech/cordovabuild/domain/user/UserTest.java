@@ -46,7 +46,7 @@ public class UserTest {
 	@Transactional
 	public void testCreateUser() {
 		User user = new User("anil", "halil", EMAIL, "capacman",
-				new ImmutableSet.Builder<Role>().add(Role.USER).build(),
+				new ImmutableSet.Builder<Role>().add(Role.ROLE_USER).build(),
 				"passowrd");
 		user = userRepository.saveOrUpdateUser(user);
 		assertNotNull(user.getId());

@@ -91,7 +91,7 @@ public class ApplicationServiceTest {
 
     private User createUser() {
         return new User("anil", "halil", "achalil@gmail.com", "capacman",
-                new ImmutableSet.Builder<Role>().add(Role.USER).build(),
+                new ImmutableSet.Builder<Role>().add(Role.ROLE_USER).build(),
                 "passowrd");
     }
 

@@ -16,6 +16,7 @@
 
 package com.ttech.cordovabuild.web;
 
+import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ public class UserResource {
 
     @POST
     public User createUser(User user) {
+        user.addRole(Role.ROLE_USER);
         User result = userRepository.saveOrUpdateUser(user);
         result.setPassword(null);
         return result;

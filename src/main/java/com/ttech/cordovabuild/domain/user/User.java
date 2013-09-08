@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -50,7 +51,7 @@ public class User implements Serializable, UserDetails {
     private String username;
     @ElementCollection(targetClass = Role.class)
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    private Set<Role> roles=new HashSet<>();
 
     @Basic
     @Column(length = 1024, nullable = false)
@@ -178,5 +179,10 @@ public class User implements Serializable, UserDetails {
     @JsonIgnore
     public boolean isEnabled() {
         return enabled;
+    }
+
+
+    public void addRole(Role role){
+        roles.add(role);
     }
 }
