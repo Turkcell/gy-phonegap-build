@@ -19,10 +19,11 @@ package com.ttech.cordovabuild.web;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,12 +33,24 @@ import javax.ws.rs.Path;
  * To change this template use File | Settings | File Templates.
  */
 @Component
+@Consumes({MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON})
 public class UserResource {
 
     @Autowired
     UserRepository userRepository;
+
+
     @POST
     public User createUser(User user) {
-        return userRepository.saveOrUpdateUser(user);
+        User result = userRepository.saveOrUpdateUser(user);
+        result.setPassword(null);
+        return result;
+    }
+
+    @GET
+    public User currentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findUserByUserName(username);
     }
 }

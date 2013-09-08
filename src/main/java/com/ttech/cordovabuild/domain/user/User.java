@@ -15,34 +15,27 @@
  */
 package com.ttech.cordovabuild.domain.user;
 
+import com.fasterxml.jackson.annotation.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 @Entity
 @Table(name = "APP_USERS")
+@JsonIgnoreProperties({"authorities"})
 public class User implements Serializable, UserDetails {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -54880463471029518L;
-	@Id
+     *
+     */
+    private static final long serialVersionUID = -54880463471029518L;
+    @Id
     @GeneratedValue
-	private Long id;
+    private Long id;
     @Basic
     @Column(length = 1024)
     private String name;
@@ -58,6 +51,7 @@ public class User implements Serializable, UserDetails {
     @ElementCollection(targetClass = Role.class)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
+
     @Basic
     @Column(length = 1024, nullable = false)
     private String password;
@@ -72,24 +66,32 @@ public class User implements Serializable, UserDetails {
 
     public User() {
     }
-    
-    public User(String name, String surname, String email, String username,
-			Set<Role> roles, String password) {
-		this.name = name;
-		this.surname = surname;
-		this.email = email;
-		this.username = username;
-		this.roles = roles;
-		this.password = password;
-	}
 
-	public void setName(String name) {
+    public User(String name, String surname, String email, String username,
+                Set<Role> roles, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.username = username;
+        this.roles = roles;
+        this.password = password;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
+
 
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getPassword() {
+        return password;
+    }
+
 
     public void setAccountNonExpired(boolean accountNonExpired) {
         this.accountNonExpired = accountNonExpired;
@@ -115,9 +117,9 @@ public class User implements Serializable, UserDetails {
         this.surname = surname;
     }
 
-        public String getEmail() {
-            return email;
-        }
+    public String getEmail() {
+        return email;
+    }
 
     public void setEmail(String email) {
         this.email = email;
@@ -153,27 +155,27 @@ public class User implements Serializable, UserDetails {
         return roles;
     }
 
-    @Override
-    public String getPassword() {
-        return password;
-    }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return accountNonExpired;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return accountNonLocked;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return credentialsNonExpired;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return enabled;
     }

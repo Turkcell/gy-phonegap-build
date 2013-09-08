@@ -24,12 +24,16 @@
            http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
     <beans:bean id="forbiddenEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
-    <http entry-point-ref="forbiddenEntryPoint">
+
+    <http entry-point-ref="forbiddenEntryPoint" authentication-manager-ref="authenticationManager">
         <logout/>
+        <intercept-url pattern="/user" access="IS_AUTHENTICATED_ANONYMOUSLY" method="POST"/>
+        <intercept-url pattern="/login" access="IS_AUTHENTICATED_ANONYMOUSLY" method="POST"/>
         <intercept-url pattern="/**" access="ROLE_USER"/>
+
     </http>
-    <authentication-manager>
+    <authentication-manager id="authenticationManager">
         <authentication-provider user-service-ref="userService"/>
     </authentication-manager>
-    
+
 </beans:beans>

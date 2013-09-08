@@ -4,23 +4,25 @@
  */
 package com.ttech.cordovabuild.web;
 
-import javax.ws.rs.*;
-
+import com.ttech.cordovabuild.domain.application.Application;
+import com.ttech.cordovabuild.domain.application.ApplicationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.ttech.cordovabuild.domain.application.Application;
-import com.ttech.cordovabuild.domain.application.ApplicationService;
+import javax.ws.rs.*;
 
 @Component
 public class ApplicationResource {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationResource.class);
     @Autowired
     ApplicationService service;
 
     @GET
     @Path("/{id}")
     public Application getApplication(@PathParam("id") Long id) {
+        LOGGER.info("get application with {} and application service {}", id, service);
         return service.findApplication(id);
     }
 

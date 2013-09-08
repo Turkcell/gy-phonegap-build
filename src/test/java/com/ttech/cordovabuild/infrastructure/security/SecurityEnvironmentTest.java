@@ -15,30 +15,37 @@
  */
 package com.ttech.cordovabuild.infrastructure.security;
 
-import com.hazelcast.security.UsernamePasswordCredentials;
+import com.ttech.cordovabuild.domain.user.Role;
+import com.ttech.cordovabuild.domain.user.User;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.glassfish.jersey.apache.connector.ApacheClientProperties;
+import org.glassfish.jersey.apache.connector.ApacheConnector;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.spi.Connector;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SecurityEnvironmentTest {
 
-    private static final String ROOT_TARGET = "http://localhost:8080";
+    private static final String ROOT_TARGET = "http://localhost:8090";
     private static Server server;
 
     @BeforeClass
@@ -66,19 +73,36 @@ public class SecurityEnvironmentTest {
     }
 
     private WebTarget createTarget(String path) {
-        Client client = ClientBuilder.newClient();
+        Client client = ClientBuilder.newBuilder().build();
         WebTarget target = client.target(ROOT_TARGET);
         return target;
     }
 
     @Test
-    @Ignore
-    public void testAuthentication() {
-        Response post = createTarget(ROOT_TARGET)
-                .path("authenticate/login")
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.entity(new UsernamePasswordCredentials("anil",
-                        "anil"), MediaType.APPLICATION_JSON_TYPE));
-        assertEquals(Status.OK.getStatusCode(), post.getStatus());
+    public void testCreateUser() {
+        User user = new User("anil", "halil", "achalil@gmail.com", "capacman", Collections.<Role>emptySet(), "password");
+        Response response = createTarget(ROOT_TARGET).path("user").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
+        assertEquals(Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
+        System.out.println(response.readEntity(String.class));
+    }
+
+    @Test
+    public void testLogin() {
+        User user = new User();
+        user.setUsername("capacman");
+        user.setPassword("password");
+
+        ClientConfig clientConfig=new ClientConfig();
+        clientConfig.connector(new ApacheConnector(null));
+        Client client = ClientBuilder.newBuilder().withConfig(clientConfig).build();
+
+        WebTarget target = client.target(ROOT_TARGET);
+        Response login = target.path("login").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
+        assertTrue(login.getCookies().size() > 0);
+        assertEquals(Status.OK.getStatusCode(), login.getStatus());
+        Response response = client.target(ROOT_TARGET).path("user").request(MediaType.APPLICATION_JSON_TYPE).get();
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        System.out.println(response.readEntity(String.class));
     }
 }

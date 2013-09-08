@@ -27,10 +27,10 @@ import java.util.Set;
  * Time: 4:03 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CordovaApplication extends Application{
+public class CordovaApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
-        Set<Class<?>> classes=new HashSet<>();
+        Set<Class<?>> classes = new HashSet<>();
         classes.add(RootResource.class);
         classes.add(UserResource.class);
         return classes;
