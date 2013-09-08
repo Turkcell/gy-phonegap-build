@@ -16,7 +16,7 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.nio.file.Path;
@@ -46,7 +44,6 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:hazelcastContext.xml",
         "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
-@TransactionConfiguration(transactionManager = "tx")
 public class ApplicationServiceTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceTest.class);
     public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";
@@ -60,6 +57,7 @@ public class ApplicationServiceTest {
     private static Path clonePath;
     @Autowired
     EntityManager entityManager;
+    private static User user;
 
     @BeforeClass
     public static void cloneRepo() {
@@ -80,45 +78,45 @@ public class ApplicationServiceTest {
     }
 
     @Test
-    @Transactional
     public void testCreateApplicationWithRepo() {
-        User user = createUser();
-        user = userRepository.saveOrUpdateUser(user);
-        Application application = applicationService.createApplication(user, GIT_REPO);
+        Application application = applicationService.createApplication(createUser(), GIT_REPO);
         assertNotNull(application.getId());
         assertNotNull(applicationService.findApplication(application.getId()).getOwner());
     }
 
     private User createUser() {
-        return new User("anil", "halil", "achalil@gmail.com", "capacman",
-                new ImmutableSet.Builder<Role>().add(Role.ROLE_USER).build(),
-                "passowrd");
+        if (user == null) {
+            user = new User("anil", "halil", "achalil@gmail.com", "capacman",
+                    Sets.newHashSet(Role.ROLE_USER),
+                    "passowrd");
+            user = userRepository.saveOrUpdateUser(user);
+        }
+        return user;
     }
 
     @Test
     public void testCreateApplicationWithAsset() {
         AssetRef assetRef = createAsset();
-        User user = createUser();
-        userRepository.saveOrUpdateUser(user);
-        Application application = applicationService.createApplication(user, assetRef);
+        Application application = applicationService.createApplication(createUser(), assetRef);
         assertNotNull(application);
     }
 
     @Test
-    @Transactional
     public void testApplicationConfig() {
         AssetRef assetRef = createAsset();
-        User user = createUser();
-        userRepository.saveOrUpdateUser(user);
-        Application application = applicationService.createApplication(user, assetRef);
+        Application application = applicationService.createApplication(createUser(), assetRef);
         assertNotNull(application);
         assertNotNull(application.getId());
         ApplicationConfig config = application.getApplicationConfig();
         ApplicationBuilt applicationBuilt = applicationService.prepareApplicationBuilt(application);
         assertFalse(config == applicationBuilt.getBuiltConfig());
         config.setApplicationName("test");
-        entityManager.flush();
         assertFalse(config.getApplicationName().equals(applicationService.findApplicationBuilt(applicationBuilt.getId()).getBuiltConfig().getApplicationName()));
+    }
+
+    @Test(expected = ApplicationNotFoundException.class)
+    public void testNotFoundApplication() {
+        applicationService.findApplication(-1L);
     }
 
 }

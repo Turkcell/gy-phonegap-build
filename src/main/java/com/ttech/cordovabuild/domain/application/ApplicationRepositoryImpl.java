@@ -44,7 +44,10 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
 
     @Override
     public Application findById(Long id) {
-        return em.find(Application.class, id);
+        Application application = em.find(Application.class, id);
+        if (application == null)
+            throw new ApplicationNotFoundException(id);
+        return application;
     }
 
     @Override
@@ -65,7 +68,10 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
 
     @Override
     public ApplicationBuilt findApplicationBuild(Long id) {
-        return em.find(ApplicationBuilt.class, id);
+        ApplicationBuilt applicationBuilt = em.find(ApplicationBuilt.class, id);
+        if (applicationBuilt == null)
+            throw new ApplicationBuiltNotFoundException(id);
+        return applicationBuilt;
     }
 
     @Override

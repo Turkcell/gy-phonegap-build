@@ -65,7 +65,7 @@ public class ApplicationBuilderTest {
     }
 
     @Test
-    public void testTemplateCreation() {
+    public void testBuildCreation() {
         Path sourcePath = GitUtils.clone(GIT_REPO);
         ApplicationSource source = sourceFactory.createSource(sourcePath);
         ApplicationConfig applicationConfig = source.getApplicationConfig();

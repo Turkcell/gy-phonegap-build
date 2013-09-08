@@ -36,14 +36,15 @@ import java.util.zip.GZIPOutputStream;
 
 public class ArchiveUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ArchiveUtils.class);
+
     public static void extractFiles(InputStream is, Path localPath) {
         ArchiveStreamFactory archiveStreamFactory = new ArchiveStreamFactory();
         try (ArchiveInputStream ais = archiveStreamFactory.createArchiveInputStream(is);) {
             extractArchive(localPath, ais);
         } catch (ArchiveException e) {
             LOGGER.info("archiveFactory could not determine archive file type probably tar.gz");
-            try (ArchiveInputStream ais=new TarArchiveInputStream(new GzipCompressorInputStream(is))){
-                extractArchive(localPath,ais);
+            try (ArchiveInputStream ais = new TarArchiveInputStream(new GzipCompressorInputStream(is))) {
+                extractArchive(localPath, ais);
             } catch (IOException e1) {
                 throw new ArchiveExtractionException(e1);
             }
@@ -60,13 +61,16 @@ public class ArchiveUtils {
             if (ae.isDirectory()) {
                 continue;
             }
-            try (OutputStream outputStream = Files.newOutputStream(localPath.resolve(ae.getName()))) {
+            Path filePath = localPath.resolve(ae.getName());
+            if (!filePath.getParent().equals(localPath))
+                Files.createDirectories(filePath.getParent());
+            try (OutputStream outputStream = Files.newOutputStream(filePath)) {
                 IOUtils.copy(ais, outputStream);
             }
         }
     }
 
-    public static void compressDirectory(Path path,OutputStream output) {
+    public static void compressDirectory(Path path, OutputStream output) {
         try {
             // Wrap the output file stream in streams that will tar and gzip everything
             TarArchiveOutputStream taos = new TarArchiveOutputStream(
