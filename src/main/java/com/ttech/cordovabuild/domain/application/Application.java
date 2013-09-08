@@ -15,16 +15,15 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
-import static javax.persistence.FetchType.LAZY;
-import static javax.persistence.GenerationType.SEQUENCE;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.user.User;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.*;
-
-import com.ttech.cordovabuild.domain.asset.AssetRef;
-import com.ttech.cordovabuild.domain.user.User;
+import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity
 public class Application implements Serializable {
@@ -41,16 +40,15 @@ public class Application implements Serializable {
     @Basic
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
+    @JsonIgnore
     @ManyToOne(optional = false)
     private User owner;
-    @Basic
-    private boolean deleted;
-
 
     @Basic
     @Column(length = 1024, nullable = true)
     private String repositoryURI;
 
+    @JsonIgnore
     @Embedded
     private AssetRef sourceAssetRef;
 
@@ -60,16 +58,12 @@ public class Application implements Serializable {
     public Application() {
     }
 
-    public Application(AssetRef sourceAssetRef, User owner) {
-        this.sourceAssetRef = sourceAssetRef;
-        this.owner = owner;
-    }
-
     public Application(AssetRef sourceAssetRef, ApplicationConfig applicationConfig, String repositoryURI, User owner) {
         this.sourceAssetRef = sourceAssetRef;
         this.applicationConfig = applicationConfig;
         this.repositoryURI = repositoryURI;
         this.owner = owner;
+        this.created = new Date();
     }
 
     public String getRepositoryURI() {
@@ -78,14 +72,6 @@ public class Application implements Serializable {
 
     public void setRepositoryURI(String sourceURI) {
         this.repositoryURI = sourceURI;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public User getOwner() {

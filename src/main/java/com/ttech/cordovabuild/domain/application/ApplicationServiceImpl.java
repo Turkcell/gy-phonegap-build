@@ -20,6 +20,7 @@ import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.user.User;
+import com.ttech.cordovabuild.domain.user.UserRepository;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
 import com.ttech.cordovabuild.infrastructure.queue.BuiltQueuePublisher;
 import org.slf4j.Logger;
@@ -46,6 +47,9 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     BuiltQueuePublisher builtQueuePublisher;
 
+    @Autowired
+    UserRepository userRepository;
+
     @Override
     public Application createApplication(User owner, String repositoryURI) {
         LOGGER.info(
@@ -55,6 +59,11 @@ public class ApplicationServiceImpl implements ApplicationService {
         LOGGER.info("clone finished");
         ApplicationSource applicationSource = sourceFactory.createSource(localPath);
         return repository.saveApplication(new Application(applicationSource.toAsset(), applicationSource.getApplicationConfig(), repositoryURI, owner));
+    }
+
+    @Override
+    public Application createApplication(String userName, String repositoryURI) {
+        return createApplication(userRepository.findUserByUserName(userName),repositoryURI);
     }
 
     @Override

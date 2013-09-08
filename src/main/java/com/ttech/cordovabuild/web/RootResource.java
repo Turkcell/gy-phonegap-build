@@ -43,12 +43,12 @@ public class RootResource {
     @Autowired
     UserRepository userRepository;
 
-    @Path("/application")
+    @Path("application")
     public ApplicationResource getApplication() {
         return resourceContext.getResource(ApplicationResource.class);
     }
 
-    @Path("/user")
+    @Path("user")
     public UserResource getUserResource() {
         return resourceContext.getResource(UserResource.class);
     }

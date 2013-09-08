@@ -9,6 +9,7 @@ import com.ttech.cordovabuild.domain.application.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
@@ -28,6 +29,6 @@ public class ApplicationResource {
 
     @POST
     public Application createApplication(@QueryParam("sourceUri") String sourceUri) {
-        return null;
+        return service.createApplication(SecurityContextHolder.getContext().getAuthentication().getName(), sourceUri);
     }
 }

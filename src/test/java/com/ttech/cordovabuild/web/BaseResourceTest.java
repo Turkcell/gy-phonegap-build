@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.ttech.cordovabuild.infrastructure.security;
+
+package com.ttech.cordovabuild.web;
 
 import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
@@ -25,7 +26,6 @@ import org.glassfish.jersey.apache.connector.ApacheConnector;
 import org.glassfish.jersey.client.ClientConfig;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -33,17 +33,21 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import java.nio.file.Paths;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class SecurityEnvironmentTest {
-
-    private static final String ROOT_TARGET = "http://localhost:8090";
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/8/13
+ * Time: 9:52 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public abstract class BaseResourceTest {
     private static Server server;
+    private Client client;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -62,49 +66,26 @@ public class SecurityEnvironmentTest {
         server.stop();
     }
 
-    @Test
-    public void testNotAuthenticated() throws InterruptedException {
-        Response response = createTarget(ROOT_TARGET).path("application").path("1")
-                .request(MediaType.APPLICATION_JSON_TYPE).get();
-        assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
-    }
-
-    private WebTarget createTarget(String path) {
-        Client client = getClient();
-        WebTarget target = client.target(ROOT_TARGET);
+    protected WebTarget createTarget(String path) {
+        if (client == null)
+            client = getClient();
+        WebTarget target = client.target(path);
         return target;
     }
 
-    @Test
-    public void testCreateUser() {
-        User user = new User("anil", "halil", "achalil@gmail.com", "capacman", Collections.<Role>emptySet(), "password");
-        Response response = createTarget(ROOT_TARGET).path("user").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
-        assertEquals(Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
-        System.out.println(response.readEntity(String.class));
-    }
-
-    @Test
-    public void testLogin() {
-        User user = new User();
-        user.setUsername("capacman");
-        user.setPassword("password");
-
-        Client client = getClient();
-
-        WebTarget target = client.target(ROOT_TARGET);
-        Response login = target.path("login").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
-        login.readEntity(String.class);
-        assertTrue(login.getCookies().size() > 0);
-        assertEquals(Status.OK.getStatusCode(), login.getStatus());
-        Response response = client.target(ROOT_TARGET).path("user").request(MediaType.APPLICATION_JSON_TYPE).get();
-
-        assertEquals(Status.OK.getStatusCode(), response.getStatus());
-        System.out.println(response.readEntity(String.class));
-    }
-
-    private Client getClient() {
+    protected Client getClient() {
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.connector(new ApacheConnector(null));
         return ClientBuilder.newBuilder().withConfig(clientConfig).build();
+    }
+
+    protected void login(String path) {
+        User user = new User("anil", "halil", "achalil@gmail.com", "capacman", Collections.<Role>emptySet(), "password");
+        Response userResponse = createTarget(path).path("user").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
+        assertEquals(Response.Status.OK.getStatusCode(), userResponse.getStatusInfo().getStatusCode());
+        userResponse.readEntity(String.class);
+        Response loginResponse = createTarget(path).path("login").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
+        assertEquals(Response.Status.OK.getStatusCode(), loginResponse.getStatusInfo().getStatusCode());
+        loginResponse.readEntity(String.class);
     }
 }

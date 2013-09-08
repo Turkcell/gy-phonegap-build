@@ -25,6 +25,8 @@ public interface ApplicationService {
 
 	Application createApplication(User owner, String repositoryURI);
 
+    Application createApplication(String userName,String repositoryURI);
+
 	Application createApplication(User owner, AssetRef assetRef);
 
 	ApplicationBuilt prepareApplicationBuilt(Application application);
