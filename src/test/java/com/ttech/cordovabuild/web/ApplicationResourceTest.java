@@ -16,14 +16,12 @@
 
 package com.ttech.cordovabuild.web;
 
-import com.ttech.cordovabuild.domain.user.Role;
-import com.ttech.cordovabuild.domain.user.User;
+import com.ttech.cordovabuild.domain.application.Application;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,7 +37,13 @@ public class ApplicationResourceTest extends BaseResourceTest {
 
     @Test
     public void testGetApplication() throws Exception {
-
+        login(ROOT_TARGET);
+        Response createAppResponse = createTarget(ROOT_TARGET).path("application").queryParam("sourceUri", "https://github.com/Turkcell/RestaurantReviews.git").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(null, MediaType.APPLICATION_JSON_TYPE));
+        assertEquals(Response.Status.OK.getStatusCode(), createAppResponse.getStatus());
+        Application app = createAppResponse.readEntity(Application.class);
+        Response findResponse = createTarget(ROOT_TARGET).path("application").path(app.getId().toString()).request(MediaType.APPLICATION_JSON_TYPE).get();
+        Application findApp = findResponse.readEntity(Application.class);
+        assertEquals(app.getId(), findApp.getId());
     }
 
     @Test

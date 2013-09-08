@@ -47,7 +47,8 @@ import static org.junit.Assert.assertEquals;
  */
 public abstract class BaseResourceTest {
     private static Server server;
-    private Client client;
+    protected static Client client;
+    protected static boolean login;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -80,12 +81,15 @@ public abstract class BaseResourceTest {
     }
 
     protected void login(String path) {
-        User user = new User("anil", "halil", "achalil@gmail.com", "capacman", Collections.<Role>emptySet(), "password");
-        Response userResponse = createTarget(path).path("user").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
-        assertEquals(Response.Status.OK.getStatusCode(), userResponse.getStatusInfo().getStatusCode());
-        userResponse.readEntity(String.class);
-        Response loginResponse = createTarget(path).path("login").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
-        assertEquals(Response.Status.OK.getStatusCode(), loginResponse.getStatusInfo().getStatusCode());
-        loginResponse.readEntity(String.class);
+        if (!login) {
+            User user = new User("anil", "halil", "achalil@gmail.com", "capacman", Collections.<Role>emptySet(), "password");
+            Response userResponse = createTarget(path).path("user").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
+            assertEquals(Response.Status.OK.getStatusCode(), userResponse.getStatusInfo().getStatusCode());
+            userResponse.readEntity(String.class);
+            Response loginResponse = createTarget(path).path("login").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
+            assertEquals(Response.Status.OK.getStatusCode(), loginResponse.getStatusInfo().getStatusCode());
+            loginResponse.readEntity(String.class);
+            login = true;
+        }
     }
 }
