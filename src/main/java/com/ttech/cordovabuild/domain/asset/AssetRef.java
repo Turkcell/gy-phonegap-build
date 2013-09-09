@@ -17,9 +17,7 @@
 package com.ttech.cordovabuild.domain.asset;
 
 
-import javax.persistence.*;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import javax.persistence.Embeddable;
 
 
 @Embeddable
@@ -30,8 +28,8 @@ public class AssetRef {
     public AssetRef() {
     }
 
-    public String toString(){
-        return "assetRef"+uuid;
+    public String toString() {
+        return "assetRef" + uuid;
     }
 
     public String getUuid() {
@@ -40,5 +38,22 @@ public class AssetRef {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        AssetRef ref = (AssetRef) o;
+
+        if (uuid != null ? !uuid.equals(ref.uuid) : ref.uuid != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid != null ? uuid.hashCode() : 0;
     }
 }

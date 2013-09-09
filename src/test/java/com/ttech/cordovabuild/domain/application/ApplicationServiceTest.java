@@ -75,6 +75,17 @@ public class ApplicationServiceTest {
         assertTrue(source.getLocalPath().resolve("config.xml").toFile().exists());
     }
 
+    @Test
+    public void testApplicationURI() {
+        Application appWithURI = new Application();
+        appWithURI.setRepositoryURI("testuri");
+        assertTrue(appWithURI.hasRepositoryUri());
+        Application appWithNullURL = new Application();
+        assertFalse(appWithNullURL.hasRepositoryUri());
+        appWithNullURL.setRepositoryURI("");
+        assertFalse(appWithNullURL.hasRepositoryUri());
+    }
+
     private AssetRef createAsset() {
         return sourceFactory.createSource(clonePath).toAsset();
     }
@@ -144,6 +155,28 @@ public class ApplicationServiceTest {
         ApplicationBuilt iosBuilt = applicationService.findApplicationBuilt(androidBuilt.getId());
         applicationService.updateApplicationBuilt(androidBuilt.update(BuiltInfo.failedFor(application.getApplicationConfig().getApplicationName(), BuiltType.ANDROID)));
         applicationService.updateApplicationBuilt(iosBuilt.update(BuiltInfo.failedFor(application.getApplicationConfig().getApplicationName(), BuiltType.IOS)));
+    }
+
+    @Test
+    public void testUpdateApplicationSource() {
+        Application application = applicationService.createApplication(createUser(), GIT_REPO);
+        assertNotNull(application.getSourceAssetRef());
+        Application updatedApplication = applicationService.updateApplicationCode(application.getId());
+        assertNotNull(updatedApplication.getSourceAssetRef());
+        assertFalse(application.getSourceAssetRef().equals(updatedApplication.getSourceAssetRef()));
+    }
+
+    @Test(expected = ApplicationUpdateException.class)
+    public void testApplicationUpdateExceptionWithURI() {
+        Application application = applicationService.createApplication(createUser(), GIT_REPO);
+        applicationService.updateApplicationCode(application.getId(), new AssetRef());
+    }
+
+    @Test(expected = ApplicationUpdateException.class)
+    public void testApplicationUpdateExceptionWithOutURI() {
+        AssetRef asset = createAsset();
+        Application application = applicationService.createApplication(createUser(), asset);
+        applicationService.updateApplicationCode(application.getId());
     }
 
 }

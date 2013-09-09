@@ -19,7 +19,6 @@ package com.ttech.cordovabuild.domain.application;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
-import com.ttech.cordovabuild.domain.built.BuiltInfo;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
+import java.text.MessageFormat;
 
 /**
  * @author Anıl Halil
@@ -56,10 +56,14 @@ public class ApplicationServiceImpl implements ApplicationService {
         LOGGER.info(
                 "new application will be created for {} with repository {}",
                 owner, repositoryURI);
+        ApplicationSource applicationSource = createApplicationSource(repositoryURI);
+        return repository.saveApplication(new Application(applicationSource.toAsset(), applicationSource.getApplicationConfig(), repositoryURI, owner));
+    }
+
+    private ApplicationSource createApplicationSource(String repositoryURI) {
         Path localPath = GitUtils.clone(repositoryURI);
         LOGGER.info("clone finished");
-        ApplicationSource applicationSource = sourceFactory.createSource(localPath);
-        return repository.saveApplication(new Application(applicationSource.toAsset(), applicationSource.getApplicationConfig(), repositoryURI, owner));
+        return sourceFactory.createSource(localPath);
     }
 
     @Override
@@ -71,6 +75,27 @@ public class ApplicationServiceImpl implements ApplicationService {
     public Application createApplication(User owner, AssetRef assetRef) {
         ApplicationSource source = sourceFactory.createSource(assetRef);
         return repository.saveApplication(new Application(assetRef, source.getApplicationConfig(), null, owner));
+    }
+
+    @Override
+    public Application updateApplicationCode(Long id) {
+        Application application = findApplication(id);
+        if (!application.hasRepositoryUri())
+            throw new ApplicationUpdateException(MessageFormat.format("application with id {0} does not have any repositoryURI", application.getId()));
+        return updateApplicationSourceInner(application, createApplicationSource(application.getRepositoryURI()).toAsset());
+    }
+
+    private Application updateApplicationSourceInner(Application application, AssetRef assetRef) {
+        application.setSourceAssetRef(assetRef);
+        return repository.updateApplication(application);
+    }
+
+    @Override
+    public Application updateApplicationCode(Long id, AssetRef assetRef) {
+        Application application = findApplication(id);
+        if (application.hasRepositoryUri())
+            throw new ApplicationUpdateException(MessageFormat.format("application with id {0} does have repositoryURI {1}", application.getId(), application.getRepositoryURI()));
+        return updateApplicationSourceInner(application, assetRef);
     }
 
     @Override

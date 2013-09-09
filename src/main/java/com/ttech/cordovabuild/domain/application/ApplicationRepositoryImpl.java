@@ -55,6 +55,11 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
     }
 
     @Override
+    public Application updateApplication(Application application) {
+        return em.merge(application);
+    }
+
+    @Override
     public ApplicationBuilt saveApplicationBuilt(ApplicationBuilt applicationBuilt) {
         em.persist(applicationBuilt);
         return applicationBuilt;

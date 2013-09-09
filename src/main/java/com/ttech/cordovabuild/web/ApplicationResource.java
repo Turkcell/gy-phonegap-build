@@ -27,6 +27,12 @@ public class ApplicationResource {
         return service.findApplication(id);
     }
 
+    @PUT
+    @Path("/{id}")
+    public Application updateApplication(@PathParam("id") Long id) {
+        return service.updateApplicationCode(id);
+    }
+
     @POST
     public Application createApplication(@QueryParam("sourceUri") String sourceUri) {
         return service.createApplication(SecurityContextHolder.getContext().getAuthentication().getName(), sourceUri);

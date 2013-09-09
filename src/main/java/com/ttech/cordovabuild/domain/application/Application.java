@@ -138,4 +138,8 @@ public class Application implements Serializable {
         result = 31 * result + (repositoryURI != null ? repositoryURI.hashCode() : 0);
         return result;
     }
+
+    public boolean hasRepositoryUri() {
+        return repositoryURI != null && !repositoryURI.isEmpty();
+    }
 }

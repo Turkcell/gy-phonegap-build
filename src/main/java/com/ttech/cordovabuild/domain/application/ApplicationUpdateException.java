@@ -13,28 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.ttech.cordovabuild.domain.application;
 
-import com.ttech.cordovabuild.domain.user.User;
-import java.util.List;
+import com.ttech.cordovabuild.domain.CordovaException;
 
 /**
- *
- * @author capacman
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/9/13
+ * Time: 11:26 PM
+ * To change this template use File | Settings | File Templates.
  */
-public interface ApplicationRepository {
-
-    List<Application> getApplications(User owner);
-
-    Application findById(Long id);
-    
-    Application saveApplication(Application application);
-
-    Application updateApplication(Application application);
-
-    ApplicationBuilt saveApplicationBuilt(ApplicationBuilt applicationBuilt);
-
-    ApplicationBuilt findApplicationBuild(Long id);
-
-    ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt);
+public class ApplicationUpdateException extends CordovaException {
+    public ApplicationUpdateException(String message) {
+        super(message);
+    }
 }

@@ -29,6 +29,10 @@ public interface ApplicationService {
 
     Application createApplication(User owner, AssetRef assetRef);
 
+    Application updateApplicationCode(Long id);
+
+    Application updateApplicationCode(Long id, AssetRef assetRef);
+
     ApplicationBuilt prepareApplicationBuilt(Application application);
 
     Application findApplication(Long id);
