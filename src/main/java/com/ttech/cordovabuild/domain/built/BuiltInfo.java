@@ -63,4 +63,8 @@ public class BuiltInfo {
     public String getApplicationName() {
         return applicationName;
     }
+
+    static BuiltInfo failedFor(String applicationName, BuiltType builtType) {
+        return new BuiltInfo(null, new Date(), 0, builtType, applicationName, null);
+    }
 }

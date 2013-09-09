@@ -116,14 +116,14 @@ public class ApplicationBuilt implements Serializable {
     }
 
 
-    public void update(BuiltInfo builtInfo) {
+    public ApplicationBuilt update(BuiltInfo builtInfo) {
         for (BuiltTarget builtTarget : builtTargets) {
             if (builtTarget.getType().equals(builtInfo.getBuiltType())) {
                 builtTarget.setAssetRef(builtInfo.getAssetRef());
                 builtTarget.setDuration(builtInfo.getDuration());
                 builtTarget.setStartDate(builtInfo.getStartDate());
-                return;
             }
         }
+        return this;
     }
 }

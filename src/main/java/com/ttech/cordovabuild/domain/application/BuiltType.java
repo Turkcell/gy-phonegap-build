@@ -18,7 +18,7 @@ package com.ttech.cordovabuild.domain.application;
 
 
 public enum BuiltType {
-    ANDROID("android","apk");
+    ANDROID("android","apk"),IOS("ios","ipa");
 
     private final String platformString;
     private final String platformSuffix;

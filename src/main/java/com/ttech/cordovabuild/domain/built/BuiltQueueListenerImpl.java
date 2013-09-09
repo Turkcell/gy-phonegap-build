@@ -38,9 +38,12 @@ public class BuiltQueueListenerImpl implements QueueListener {
     ApplicationBuilderFactory builderFactory;
 
     public void onBuilt(ApplicationBuilt applicationBuilt, BuiltType builtType) {
-        ApplicationBuilder applicationBuilder = builderFactory.getApplicationBuilder(builtType, applicationBuilt);
-        BuiltInfo builtInfo = applicationBuilder.buildApplication();
-        applicationBuilt.update(builtInfo);
-        applicationService.updateApplicationBuilt(applicationBuilt);
+        try {
+            ApplicationBuilder applicationBuilder = builderFactory.getApplicationBuilder(builtType, applicationBuilt);
+            BuiltInfo builtInfo = applicationBuilder.buildApplication();
+            applicationService.updateApplicationBuilt(applicationBuilt.update(builtInfo));
+        } catch (IllegalArgumentException e) {
+            applicationService.updateApplicationBuilt(applicationBuilt.update(BuiltInfo.failedFor(applicationBuilt.getApplication().getApplicationConfig().getApplicationName(), builtType)));
+        }
     }
 }
