@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.built.BuiltInfo;
 import com.ttech.cordovabuild.domain.user.Role;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
@@ -34,6 +35,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
+import javax.persistence.OptimisticLockException;
 import java.nio.file.Path;
 
 import static org.junit.Assert.*;
@@ -124,13 +126,24 @@ public class ApplicationServiceTest {
 
 
     @Test
-    public void testApplicationBuilt(){
+    public void testApplicationBuilt() {
         AssetRef asset = createAsset();
         Application application = applicationService.createApplication(createUser(), asset);
         ApplicationBuilt applicationBuilt = applicationService.prepareApplicationBuilt(application);
         assertNotNull(applicationBuilt.getId());
-        assertEquals(applicationBuilt.getApplication(),application);
+        assertEquals(applicationBuilt.getApplication(), application);
         assertNotNull(applicationBuilt.getStartDate());
+    }
+
+
+    @Test(expected = OptimisticLockException.class)
+    public void testApplicationBuiltConcurrency() {
+        AssetRef asset = createAsset();
+        Application application = applicationService.createApplication(createUser(), asset);
+        ApplicationBuilt androidBuilt = applicationService.prepareApplicationBuilt(application);
+        ApplicationBuilt iosBuilt = applicationService.findApplicationBuilt(androidBuilt.getId());
+        applicationService.updateApplicationBuilt(androidBuilt.update(BuiltInfo.failedFor(application.getApplicationConfig().getApplicationName(), BuiltType.ANDROID)));
+        applicationService.updateApplicationBuilt(iosBuilt.update(BuiltInfo.failedFor(application.getApplicationConfig().getApplicationName(), BuiltType.IOS)));
     }
 
 }

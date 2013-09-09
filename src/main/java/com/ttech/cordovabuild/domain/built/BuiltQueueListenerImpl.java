@@ -20,8 +20,13 @@ import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.ApplicationService;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.infrastructure.queue.QueueListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.OptimisticLockException;
+import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,18 +37,43 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class BuiltQueueListenerImpl implements QueueListener {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BuiltQueueListenerImpl.class);
+    public static final int SLEEP_TIME_CONSTANT = 1000;
     @Autowired
     ApplicationService applicationService;
     @Autowired
     ApplicationBuilderFactory builderFactory;
 
+    private Random randomGenerator = new Random(System.currentTimeMillis());
+
     public void onBuilt(ApplicationBuilt applicationBuilt, BuiltType builtType) {
+        BuiltInfo builtInfo = null;
         try {
             ApplicationBuilder applicationBuilder = builderFactory.getApplicationBuilder(builtType, applicationBuilt);
-            BuiltInfo builtInfo = applicationBuilder.buildApplication();
-            applicationService.updateApplicationBuilt(applicationBuilt.update(builtInfo));
+            builtInfo = applicationBuilder.buildApplication();
+            updateApplicationBuilt(applicationBuilt, builtInfo, 0);
+            return;
         } catch (IllegalArgumentException e) {
-            applicationService.updateApplicationBuilt(applicationBuilt.update(BuiltInfo.failedFor(applicationBuilt.getApplication().getApplicationConfig().getApplicationName(), builtType)));
+            updateApplicationBuilt(applicationBuilt, BuiltInfo.failedFor(applicationBuilt.getApplication().getApplicationConfig().getApplicationName(), builtType), 0);
         }
+    }
+
+    private void updateApplicationBuilt(ApplicationBuilt applicationBuilt, BuiltInfo builtInfo, int count) {
+        if (count > 0)
+            LOGGER.info("retrying applicationBuilt update with count {}", count + 1);
+        try {
+            applicationService.updateApplicationBuilt(applicationBuilt.update(builtInfo));
+            return;
+        } catch (OptimisticLockException e) {
+            LOGGER.warn("optimisticLockingException for applicationBuilt");
+        }
+        int sleepTime = randomGenerator.nextInt(SLEEP_TIME_CONSTANT) + SLEEP_TIME_CONSTANT;
+        LOGGER.info("sleep {} ms and retry", sleepTime);
+        try {
+            Thread.sleep(sleepTime);
+        } catch (InterruptedException e) {
+            LOGGER.warn("sleep interrupted");
+        }
+        updateApplicationBuilt(applicationService.findApplicationBuilt(applicationBuilt.getId()), builtInfo, count + 1);
     }
 }
