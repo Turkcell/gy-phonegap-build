@@ -57,7 +57,7 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
     }
 
     @Override
-    public BuildInfo buildApplication() {
+    public BuiltInfo buildApplication() {
         Date startDate = new Date();
         Path buildPath = createBuild(applicationBuilt);
         File buildPathFile = buildPath.toFile();
@@ -72,7 +72,7 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
         addPlatformSupport(builtType, buildPathFile);
         addFeatures(applicationBuilt.getBuiltConfig().getFeatures(), buildPathFile);
         buildPlatform(builtType, buildPathFile);
-        return new BuildInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getApplicationName(), buildAsset(buildPath));
+        return new BuiltInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getApplicationName(), buildAsset(buildPath));
     }
 
     protected abstract AssetRef buildAsset(Path buildPath);

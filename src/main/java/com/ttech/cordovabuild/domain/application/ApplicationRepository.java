@@ -34,5 +34,5 @@ public interface ApplicationRepository {
 
     ApplicationBuilt findApplicationBuild(Long id);
 
-    ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt, BuiltTarget builtTarget);
+    ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt);
 }

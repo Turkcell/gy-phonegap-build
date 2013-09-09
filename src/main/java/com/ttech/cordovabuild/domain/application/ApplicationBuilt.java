@@ -16,6 +16,7 @@
 package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.built.BuiltInfo;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -61,6 +62,9 @@ public class ApplicationBuilt implements Serializable {
         this.builtAssetRef = application.getSourceAssetRef();
         this.builtConfig = new ApplicationConfig(application.getApplicationConfig());
         this.application = application;
+        for (BuiltType builtType : BuiltType.values()) {
+            this.builtTargets.add(new BuiltTarget(builtType));
+        }
     }
 
     public Long getId() {
@@ -109,5 +113,17 @@ public class ApplicationBuilt implements Serializable {
 
     public void setApplication(Application application) {
         this.application = application;
+    }
+
+
+    public void update(BuiltInfo builtInfo) {
+        for (BuiltTarget builtTarget : builtTargets) {
+            if (builtTarget.getType().equals(builtInfo.getBuiltType())) {
+                builtTarget.setAssetRef(builtInfo.getAssetRef());
+                builtTarget.setDuration(builtInfo.getDuration());
+                builtTarget.setStartDate(builtInfo.getStartDate());
+                return;
+            }
+        }
     }
 }

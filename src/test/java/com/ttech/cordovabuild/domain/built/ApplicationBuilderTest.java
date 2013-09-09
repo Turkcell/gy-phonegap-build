@@ -74,7 +74,7 @@ public class ApplicationBuilderTest {
         applicationBuilt.setBuiltAssetRef(source.toAsset());
         applicationBuilt.setBuiltConfig(applicationConfig);
         ApplicationBuilder builder = builderFactory.getApplicationBuilder(BuiltType.ANDROID, applicationBuilt);
-        BuildInfo buildInfo = builder.buildApplication();
-        assertNotNull(buildInfo.getAssetRef());
+        BuiltInfo builtInfo = builder.buildApplication();
+        assertNotNull(builtInfo.getAssetRef());
     }
 }

@@ -81,6 +81,9 @@ public class ApplicationServiceTest {
     public void testCreateApplicationWithRepo() {
         Application application = applicationService.createApplication(createUser(), GIT_REPO);
         assertNotNull(application.getId());
+        assertNotNull(application.getCreated());
+        assertNotNull(application.getOwner());
+        assertNotNull(application.getRepositoryURI());
         assertNotNull(applicationService.findApplication(application.getId()).getOwner());
     }
 
@@ -117,6 +120,17 @@ public class ApplicationServiceTest {
     @Test(expected = ApplicationNotFoundException.class)
     public void testNotFoundApplication() {
         applicationService.findApplication(-1L);
+    }
+
+
+    @Test
+    public void testApplicationBuilt(){
+        AssetRef asset = createAsset();
+        Application application = applicationService.createApplication(createUser(), asset);
+        ApplicationBuilt applicationBuilt = applicationService.prepareApplicationBuilt(application);
+        assertNotNull(applicationBuilt.getId());
+        assertEquals(applicationBuilt.getApplication(),application);
+        assertNotNull(applicationBuilt.getStartDate());
     }
 
 }

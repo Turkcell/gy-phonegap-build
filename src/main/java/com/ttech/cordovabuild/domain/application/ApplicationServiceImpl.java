@@ -19,6 +19,7 @@ package com.ttech.cordovabuild.domain.application;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSource;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.built.BuiltInfo;
 import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
 import com.ttech.cordovabuild.infrastructure.git.GitUtils;
@@ -63,7 +64,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public Application createApplication(String userName, String repositoryURI) {
-        return createApplication(userRepository.findUserByUserName(userName),repositoryURI);
+        return createApplication(userRepository.findUserByUserName(userName), repositoryURI);
     }
 
     @Override
@@ -88,8 +89,8 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
-    public ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt, BuiltTarget builtTarget) {
-        return repository.addBuiltTarget(applicationBuilt, builtTarget);
+    public ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt) {
+        return repository.updateApplicationBuilt(applicationBuilt);
     }
 
 }

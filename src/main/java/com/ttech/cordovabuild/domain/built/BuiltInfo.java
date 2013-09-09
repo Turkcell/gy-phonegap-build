@@ -22,7 +22,7 @@ import com.ttech.cordovabuild.domain.asset.AssetRef;
 import java.nio.file.Path;
 import java.util.Date;
 
-public class BuildInfo {
+public class BuiltInfo {
 
     private final Path path;
     private final Date startDate;
@@ -31,7 +31,7 @@ public class BuildInfo {
     private final String applicationName;
     private final AssetRef assetRef;
 
-    public BuildInfo(Path path, Date started, long duration, BuiltType builtType, String applicationName, AssetRef assetRef) {
+    public BuiltInfo(Path path, Date started, long duration, BuiltType builtType, String applicationName, AssetRef assetRef) {
         this.path = path;
         this.startDate = started;
         this.duration = duration;

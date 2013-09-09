@@ -16,25 +16,27 @@
 package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.asset.AssetRef;
-import com.ttech.cordovabuild.domain.built.BuildInfo;
+import com.ttech.cordovabuild.domain.built.BuiltInfo;
 
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
 
 /**
- *
  * @author Anıl Halil
  */
 @Embeddable
 public class BuiltTarget implements Serializable {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -3100288908130355062L;
-    private long duration;
+     *
+     */
+    private static final long serialVersionUID = -3100288908130355062L;
+    @Basic
+    @Column(nullable = true)
+    private Long duration;
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = true)
     private Date startDate;
     @Enumerated(EnumType.STRING)
     private BuiltType type;
@@ -60,10 +62,30 @@ public class BuiltTarget implements Serializable {
     public BuiltTarget() {
     }
 
-    public BuiltTarget(BuiltType type,BuildInfo builtInfo) {
-        this.type = type;
+    public BuiltTarget(BuiltType builtType) {
+        this.type = builtType;
+    }
+
+    public BuiltTarget(BuiltInfo builtInfo) {
+        this.type = builtInfo.getBuiltType();
         this.assetRef = builtInfo.getAssetRef();
-        this.startDate=builtInfo.getStartDate();
-        this.duration=builtInfo.getDuration();
+        this.startDate = builtInfo.getStartDate();
+        this.duration = builtInfo.getDuration();
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 }

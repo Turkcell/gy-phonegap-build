@@ -18,7 +18,6 @@ package com.ttech.cordovabuild.domain.built;
 
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.ApplicationService;
-import com.ttech.cordovabuild.domain.application.BuiltTarget;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.infrastructure.queue.QueueListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +39,8 @@ public class BuiltQueueListenerImpl implements QueueListener {
 
     public void onBuilt(ApplicationBuilt applicationBuilt, BuiltType builtType) {
         ApplicationBuilder applicationBuilder = builderFactory.getApplicationBuilder(builtType, applicationBuilt);
-        BuildInfo buildInfo = applicationBuilder.buildApplication();
-        applicationService.addBuiltTarget(applicationBuilt, new BuiltTarget(builtType, buildInfo));
+        BuiltInfo builtInfo = applicationBuilder.buildApplication();
+        applicationBuilt.update(builtInfo);
+        applicationService.updateApplicationBuilt(applicationBuilt);
     }
 }

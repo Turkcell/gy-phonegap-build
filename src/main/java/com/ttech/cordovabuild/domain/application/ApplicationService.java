@@ -23,17 +23,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface ApplicationService {
 
-	Application createApplication(User owner, String repositoryURI);
+    Application createApplication(User owner, String repositoryURI);
 
-    Application createApplication(String userName,String repositoryURI);
+    Application createApplication(String userName, String repositoryURI);
 
-	Application createApplication(User owner, AssetRef assetRef);
+    Application createApplication(User owner, AssetRef assetRef);
 
-	ApplicationBuilt prepareApplicationBuilt(Application application);
+    ApplicationBuilt prepareApplicationBuilt(Application application);
 
-	Application findApplication(Long id);
+    Application findApplication(Long id);
 
     ApplicationBuilt findApplicationBuilt(Long id);
 
-    ApplicationBuilt addBuiltTarget(ApplicationBuilt applicationBuilt,BuiltTarget builtTarget);
+    ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt);
 }

@@ -93,4 +93,30 @@ public class ApplicationConfig {
     public void setFeatures(Set<ApplicationFeature> features) {
         this.features = features;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ApplicationConfig that = (ApplicationConfig) o;
+
+        if (!applicationName.equals(that.applicationName)) return false;
+        if (!applicationPackage.equals(that.applicationPackage)) return false;
+        if (!applicationVersion.equals(that.applicationVersion)) return false;
+        if (!features.equals(that.features)) return false;
+        if (!phoneGapversion.equals(that.phoneGapversion)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = applicationPackage.hashCode();
+        result = 31 * result + applicationVersion.hashCode();
+        result = 31 * result + phoneGapversion.hashCode();
+        result = 31 * result + applicationName.hashCode();
+        result = 31 * result + features.hashCode();
+        return result;
+    }
 }
