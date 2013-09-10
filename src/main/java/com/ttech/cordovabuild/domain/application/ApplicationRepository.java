@@ -16,10 +16,10 @@
 package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.user.User;
+
 import java.util.List;
 
 /**
- *
  * @author capacman
  */
 public interface ApplicationRepository {
@@ -27,7 +27,7 @@ public interface ApplicationRepository {
     List<Application> getApplications(User owner);
 
     Application findById(Long id);
-    
+
     Application saveApplication(Application application);
 
     Application updateApplication(Application application);
@@ -37,4 +37,6 @@ public interface ApplicationRepository {
     ApplicationBuilt findApplicationBuild(Long id);
 
     ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt);
+
+    ApplicationBuilt getLatestBuilt(Application application);
 }

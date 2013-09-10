@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -76,5 +77,18 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
     @Override
     public ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt) {
         return em.merge(applicationBuilt);
+    }
+
+    @Override
+    public ApplicationBuilt getLatestBuilt(Application application) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ApplicationBuilt> cq = cb.createQuery(ApplicationBuilt.class);
+        Root<ApplicationBuilt> from = cq.from(ApplicationBuilt.class);
+        cq = cq.where(cb.equal(from.get(ApplicationBuilt_.application), application)).orderBy(cb.desc(from.get(ApplicationBuilt_.startDate)));
+        try {
+            return em.createQuery(cq).setMaxResults(1).getSingleResult();
+        } catch (NoResultException e) {
+            throw new ApplicationBuiltNotFoundException(e);
+        }
     }
 }

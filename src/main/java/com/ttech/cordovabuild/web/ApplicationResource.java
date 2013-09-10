@@ -5,6 +5,7 @@
 package com.ttech.cordovabuild.web;
 
 import com.ttech.cordovabuild.domain.application.Application;
+import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,13 @@ public class ApplicationResource {
     @Path("/{id}")
     public Application updateApplication(@PathParam("id") Long id) {
         return service.updateApplicationCode(id);
+    }
+
+    @POST
+    @Path("/{1}/build")
+    public ApplicationBuilt rebuildApplication(@PathParam("id") Long id) {
+        ApplicationBuilt applicationBuilt = service.prepareApplicationBuilt(id);
+        return applicationBuilt;
     }
 
     @POST

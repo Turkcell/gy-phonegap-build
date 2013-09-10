@@ -104,6 +104,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    public ApplicationBuilt prepareApplicationBuilt(Long id) {
+        return prepareApplicationBuilt(findApplication(id));
+    }
+
+    @Override
     public Application findApplication(Long id) {
         return repository.findById(id);
     }
@@ -116,6 +121,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt) {
         return repository.updateApplicationBuilt(applicationBuilt);
+    }
+
+    @Override
+    public ApplicationBuilt getLatestBuilt(Long id) {
+        return getLatestBuilt(findApplication(id));
+    }
+
+    @Override
+    public ApplicationBuilt getLatestBuilt(Application application) {
+        return repository.getLatestBuilt(application);
     }
 
 }

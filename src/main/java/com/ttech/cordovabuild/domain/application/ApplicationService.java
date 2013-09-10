@@ -35,9 +35,15 @@ public interface ApplicationService {
 
     ApplicationBuilt prepareApplicationBuilt(Application application);
 
+    ApplicationBuilt prepareApplicationBuilt(Long id);
+
     Application findApplication(Long id);
 
     ApplicationBuilt findApplicationBuilt(Long id);
 
     ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt);
+
+    ApplicationBuilt getLatestBuilt(Long id);
+
+    ApplicationBuilt getLatestBuilt(Application application);
 }

@@ -18,6 +18,8 @@ package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.CordovaException;
 
+import javax.persistence.NoResultException;
+
 /**
  * Created with IntelliJ IDEA.
  * User: capacman
@@ -28,5 +30,9 @@ import com.ttech.cordovabuild.domain.CordovaException;
 public class EntityNotFoundException extends CordovaException {
     public EntityNotFoundException(String message) {
         super(message);
+    }
+
+    public EntityNotFoundException(NoResultException e) {
+        super(e);
     }
 }

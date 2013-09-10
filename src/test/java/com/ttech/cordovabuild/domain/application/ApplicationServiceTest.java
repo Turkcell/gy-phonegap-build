@@ -179,4 +179,12 @@ public class ApplicationServiceTest {
         applicationService.updateApplicationCode(application.getId());
     }
 
+    @Test
+    public void testLatestBuilt() {
+        Application application = applicationService.createApplication(createUser(), GIT_REPO);
+        applicationService.prepareApplicationBuilt(application);
+        ApplicationBuilt lastBuilt = applicationService.prepareApplicationBuilt(application);
+        assertEquals(lastBuilt.getId(), applicationService.getLatestBuilt(application).getId());
+    }
+
 }

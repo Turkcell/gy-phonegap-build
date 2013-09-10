@@ -18,6 +18,7 @@ package com.ttech.cordovabuild.domain.application;
 
 import com.ttech.cordovabuild.domain.CordovaException;
 
+import javax.persistence.NoResultException;
 import java.text.MessageFormat;
 
 /**
@@ -30,5 +31,9 @@ import java.text.MessageFormat;
 public class ApplicationBuiltNotFoundException extends EntityNotFoundException {
     public ApplicationBuiltNotFoundException(Long id) {
         super(MessageFormat.format("applicationBuilt with id {0} could not be found", id));
+    }
+
+    public ApplicationBuiltNotFoundException(NoResultException e) {
+        super(e);
     }
 }
