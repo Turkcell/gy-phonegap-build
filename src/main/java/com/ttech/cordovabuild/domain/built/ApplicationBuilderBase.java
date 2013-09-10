@@ -16,9 +16,9 @@
 package com.ttech.cordovabuild.domain.built;
 
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
-import com.ttech.cordovabuild.domain.application.BuiltType;
-
 import com.ttech.cordovabuild.domain.application.ApplicationFeature;
+import com.ttech.cordovabuild.domain.application.BuiltTarget;
+import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.application.source.ApplicationSourceFactory;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.asset.AssetService;
@@ -46,7 +46,6 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
     protected final ApplicationBuilt applicationBuilt;
 
 
-
     protected ApplicationBuilderBase(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory, AssetService assetService, BuiltType builtType, ApplicationBuilt applicationBuilt) {
         this.buildPath = buildPath;
         this.createPath = createPath;
@@ -63,7 +62,7 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
         File buildPathFile = buildPath.toFile();
         Path webAssetPath = buildPath.resolve("www");
         try {
-            LOGGER.info("removing web asset director {}",webAssetPath);
+            LOGGER.info("removing web asset director {}", webAssetPath);
             FilesUtils.removeDirectory(webAssetPath);
         } catch (IOException e) {
             throw new PlatformBuiltException(e);
@@ -72,7 +71,7 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
         addPlatformSupport(builtType, buildPathFile);
         addFeatures(applicationBuilt.getBuiltConfig().getFeatures(), buildPathFile);
         buildPlatform(builtType, buildPathFile);
-        return new BuiltInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getApplicationName(), buildAsset(buildPath));
+        return new BuiltInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getApplicationName(), buildAsset(buildPath), BuiltTarget.Status.SUCCESS);
     }
 
     protected abstract AssetRef buildAsset(Path buildPath);

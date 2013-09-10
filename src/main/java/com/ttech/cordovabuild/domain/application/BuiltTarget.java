@@ -15,12 +15,14 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.built.BuiltInfo;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.*;
 
 /**
  * @author Anıl Halil
@@ -32,16 +34,22 @@ public class BuiltTarget implements Serializable {
      *
      */
     private static final long serialVersionUID = -3100288908130355062L;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Basic
     @Column(nullable = true)
     private Long duration;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = true)
     private Date startDate;
     @Enumerated(EnumType.STRING)
     private BuiltType type;
+    @JsonIgnore
     @Embedded
     private AssetRef assetRef;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
 
     public BuiltType getType() {
         return type;
@@ -64,6 +72,7 @@ public class BuiltTarget implements Serializable {
 
     public BuiltTarget(BuiltType builtType) {
         this.type = builtType;
+        this.status = Status.WAITING;
     }
 
     public BuiltTarget(BuiltInfo builtInfo) {
@@ -71,6 +80,7 @@ public class BuiltTarget implements Serializable {
         this.assetRef = builtInfo.getAssetRef();
         this.startDate = builtInfo.getStartDate();
         this.duration = builtInfo.getDuration();
+        this.status = builtInfo.getStatus();
     }
 
     public Long getDuration() {
@@ -87,5 +97,17 @@ public class BuiltTarget implements Serializable {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public static enum Status {
+        FAILED, SUCCESS, STARTED, WAITING
     }
 }

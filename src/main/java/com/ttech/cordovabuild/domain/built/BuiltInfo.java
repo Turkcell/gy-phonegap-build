@@ -16,6 +16,7 @@
  */
 package com.ttech.cordovabuild.domain.built;
 
+import com.ttech.cordovabuild.domain.application.BuiltTarget;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 
@@ -26,18 +27,24 @@ public class BuiltInfo {
 
     private final Path path;
     private final Date startDate;
-    private final long duration;
+    private final Long duration;
     private final BuiltType builtType;
     private final String applicationName;
     private final AssetRef assetRef;
+    private final BuiltTarget.Status status;
 
-    public BuiltInfo(Path path, Date started, long duration, BuiltType builtType, String applicationName, AssetRef assetRef) {
+    public BuiltInfo(Path path, Date started, Long duration, BuiltType builtType, String applicationName, AssetRef assetRef, BuiltTarget.Status status) {
         this.path = path;
         this.startDate = started;
         this.duration = duration;
         this.builtType = builtType;
         this.applicationName = applicationName;
         this.assetRef = assetRef;
+        this.status = status;
+    }
+
+    public BuiltInfo(BuiltTarget.Status status) {
+        this(null, null, null, null, null, null, status);
     }
 
     public Path getPath() {
@@ -65,6 +72,10 @@ public class BuiltInfo {
     }
 
     static public BuiltInfo failedFor(String applicationName, BuiltType builtType) {
-        return new BuiltInfo(null, new Date(), 0, builtType, applicationName, null);
+        return new BuiltInfo(null, new Date(), 0L, builtType, applicationName, null, BuiltTarget.Status.FAILED);
+    }
+
+    public BuiltTarget.Status getStatus() {
+        return status;
     }
 }

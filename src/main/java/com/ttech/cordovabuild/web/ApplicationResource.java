@@ -10,12 +10,15 @@ import com.ttech.cordovabuild.domain.application.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.ws.rs.*;
 
 @Component
+@Scope(WebApplicationContext.SCOPE_REQUEST)
 public class ApplicationResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationResource.class);
     @Autowired

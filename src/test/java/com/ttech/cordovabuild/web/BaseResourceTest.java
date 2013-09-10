@@ -46,6 +46,7 @@ import static org.junit.Assert.assertEquals;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class BaseResourceTest {
+    protected static final String ROOT_TARGET = "http://localhost:8080";
     private static Server server;
     protected static Client client;
     protected static boolean login;

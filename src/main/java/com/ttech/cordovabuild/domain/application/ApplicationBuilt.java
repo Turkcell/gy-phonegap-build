@@ -15,6 +15,7 @@
  */
 package com.ttech.cordovabuild.domain.application;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.built.BuiltInfo;
 
@@ -41,11 +42,12 @@ public class ApplicationBuilt implements Serializable {
     private Date startDate;
     @Embedded
     private ApplicationConfig builtConfig;
+    @JsonIgnore
     @Embedded
     private AssetRef builtAssetRef;
     @ElementCollection
     private List<BuiltTarget> builtTargets = new ArrayList<>();
-
+    @JsonIgnore
     @Version
     private int version;
 
@@ -122,6 +124,7 @@ public class ApplicationBuilt implements Serializable {
                 builtTarget.setAssetRef(builtInfo.getAssetRef());
                 builtTarget.setDuration(builtInfo.getDuration());
                 builtTarget.setStartDate(builtInfo.getStartDate());
+                builtTarget.setStatus(builtInfo.getStatus());
             }
         }
         return this;

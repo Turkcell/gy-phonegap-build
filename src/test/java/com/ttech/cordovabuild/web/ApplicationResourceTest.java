@@ -33,8 +33,6 @@ import static org.junit.Assert.assertEquals;
  * To change this template use File | Settings | File Templates.
  */
 public class ApplicationResourceTest extends BaseResourceTest {
-    private static final String ROOT_TARGET = "http://localhost:8090";
-
     @Test
     public void testGetApplication() throws Exception {
         login(ROOT_TARGET);

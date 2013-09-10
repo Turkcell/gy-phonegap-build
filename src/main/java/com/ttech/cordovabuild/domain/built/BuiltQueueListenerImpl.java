@@ -18,6 +18,7 @@ package com.ttech.cordovabuild.domain.built;
 
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import com.ttech.cordovabuild.domain.application.ApplicationService;
+import com.ttech.cordovabuild.domain.application.BuiltTarget;
 import com.ttech.cordovabuild.domain.application.BuiltType;
 import com.ttech.cordovabuild.infrastructure.queue.QueueListener;
 import org.slf4j.Logger;
@@ -49,8 +50,14 @@ public class BuiltQueueListenerImpl implements QueueListener {
     public void onBuilt(ApplicationBuilt applicationBuilt, BuiltType builtType) {
         BuiltInfo builtInfo = null;
         try {
+            updateApplicationBuilt(applicationBuilt, new BuiltInfo(BuiltTarget.Status.STARTED), 0);
             ApplicationBuilder applicationBuilder = builderFactory.getApplicationBuilder(builtType, applicationBuilt);
-            builtInfo = applicationBuilder.buildApplication();
+            try {
+                builtInfo = applicationBuilder.buildApplication();
+            } catch (Exception e) {
+                //TODO should be more specific and should include reason
+                builtInfo = new BuiltInfo(BuiltTarget.Status.FAILED);
+            }
             updateApplicationBuilt(applicationBuilt, builtInfo, 0);
             return;
         } catch (IllegalArgumentException e) {

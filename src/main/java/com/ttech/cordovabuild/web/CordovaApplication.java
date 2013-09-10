@@ -17,10 +17,8 @@
 package com.ttech.cordovabuild.web;
 
 import com.ttech.cordovabuild.web.exception.NotFoundExceptionMapper;
-
-import javax.ws.rs.core.Application;
-import java.util.HashSet;
-import java.util.Set;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,13 +27,12 @@ import java.util.Set;
  * Time: 4:03 PM
  * To change this template use File | Settings | File Templates.
  */
-public class CordovaApplication extends Application {
-    @Override
-    public Set<Class<?>> getClasses() {
-        Set<Class<?>> classes = new HashSet<>();
-        classes.add(RootResource.class);
-        classes.add(UserResource.class);
-        classes.add(NotFoundExceptionMapper.class);
-        return classes;
+public class CordovaApplication extends ResourceConfig {
+
+    public CordovaApplication() {
+        register(RequestContextFilter.class);
+        register(RootResource.class);
+        register(UserResource.class);
+        register(NotFoundExceptionMapper.class);
     }
 }
