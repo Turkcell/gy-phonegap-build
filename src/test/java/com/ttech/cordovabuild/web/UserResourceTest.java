@@ -29,7 +29,6 @@ import static org.junit.Assert.assertEquals;
 
 public class UserResourceTest extends BaseResourceTest {
 
-
     @Test
     public void testNotAuthenticated() throws InterruptedException {
         Response response = createTarget(ROOT_TARGET).path("application").path("1")
@@ -48,6 +47,12 @@ public class UserResourceTest extends BaseResourceTest {
     @Test
     public void testLogin() {
         login(ROOT_TARGET);
+    }
+
+    @Test
+    public void testHello() {
+        Response response = createTarget(ROOT_TARGET).path("1").path("hello").request(MediaType.APPLICATION_JSON_TYPE).get();
+        System.out.println(response.readEntity(String.class));
     }
 
 }

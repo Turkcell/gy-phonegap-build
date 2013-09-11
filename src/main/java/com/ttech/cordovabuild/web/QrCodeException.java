@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
+package com.ttech.cordovabuild.web;
 
-package com.ttech.cordovabuild.domain.asset;
+import com.google.zxing.WriterException;
+import com.ttech.cordovabuild.domain.CordovaException;
 
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.InputStream;
-
-@Transactional
-public interface AssetService {
-    void handleInputStream(AssetRef assetRef, InputStreamHandler handler);
-
-    AssetRef save(InputStream inputStream, String mimeType);
+/**
+ * Created with IntelliJ IDEA.
+ * User: capacman
+ * Date: 9/11/13
+ * Time: 3:41 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class QrCodeException extends CordovaException {
+    public QrCodeException(WriterException e) {
+        super(e);
+    }
 }

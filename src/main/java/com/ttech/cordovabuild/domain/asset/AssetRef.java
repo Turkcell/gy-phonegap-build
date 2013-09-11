@@ -25,6 +25,8 @@ public class AssetRef {
 
     private String uuid;
 
+    private String mimeType;
+
     public AssetRef() {
     }
 
@@ -55,5 +57,13 @@ public class AssetRef {
     @Override
     public int hashCode() {
         return uuid != null ? uuid.hashCode() : 0;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
     }
 }

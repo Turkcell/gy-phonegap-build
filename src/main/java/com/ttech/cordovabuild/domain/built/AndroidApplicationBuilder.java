@@ -37,7 +37,7 @@ import java.nio.file.Path;
  */
 public class AndroidApplicationBuilder extends ApplicationBuilderBase {
 
-    protected AndroidApplicationBuilder(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory,AssetService assetService, ApplicationBuilt applicationBuilt) {
+    protected AndroidApplicationBuilder(Path buildPath, String createPath, ApplicationSourceFactory sourceFactory, AssetService assetService, ApplicationBuilt applicationBuilt) {
         super(buildPath, createPath, sourceFactory, assetService, BuiltType.ANDROID, applicationBuilt);
     }
 
@@ -45,7 +45,7 @@ public class AndroidApplicationBuilder extends ApplicationBuilderBase {
     protected AssetRef buildAsset(Path path) {
         Path assetPath = path.resolve("platforms").resolve(builtType.getPlatformString()).resolve("bin").resolve(applicationBuilt.getBuiltConfig().getApplicationName().concat("-debug.apk"));
         try {
-            return assetService.save(new ByteArrayInputStream(Files.toByteArray(assetPath.toFile())));
+            return assetService.save(new ByteArrayInputStream(Files.toByteArray(assetPath.toFile())), builtType.getMimeType());
         } catch (FileNotFoundException e) {
             throw new PlatformBuiltException(e);
         } catch (IOException e) {

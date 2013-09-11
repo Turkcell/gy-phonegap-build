@@ -41,63 +41,63 @@ import static com.ttech.cordovabuild.infrastructure.archive.ArchiveUtils.extract
 
 @Service
 public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
-	private static final Logger LOGGER = LoggerFactory
-			.getLogger(ApplicationSourceFactoryImpl.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(ApplicationSourceFactoryImpl.class);
 
     @Autowired
     AssetService assetService;
 
-	public class ApplicationSourceImpl implements ApplicationSource {
+    public class ApplicationSourceImpl implements ApplicationSource {
 
-		private Path localPath;
+        private Path localPath;
 
-		public ApplicationSourceImpl(Path localPath) {
-			this.localPath = localPath;
-		}
-
-		@Override
-		public Path getLocalPath() {
-			return localPath;
-		}
+        public ApplicationSourceImpl(Path localPath) {
+            this.localPath = localPath;
+        }
 
         @Override
-		public ApplicationConfig getApplicationConfig() {
-			return getApplicationConfigInner(localPath);
-		}
+        public Path getLocalPath() {
+            return localPath;
+        }
+
+        @Override
+        public ApplicationConfig getApplicationConfig() {
+            return getApplicationConfigInner(localPath);
+        }
 
         @Override
         public AssetRef toAsset() {
             ByteArrayOutputStream output = new ByteArrayOutputStream(
                     10 * 1024 * 1024);
             compressDirectory(localPath, output);
-            return assetService.save(new ByteArrayInputStream(output.toByteArray()));
+            return assetService.save(new ByteArrayInputStream(output.toByteArray()), "application/x-gzip");
         }
-	}
+    }
 
-	@Override
-	public ApplicationSource createSource(AssetRef assetRef) {
+    @Override
+    public ApplicationSource createSource(AssetRef assetRef) {
         LOGGER.info("creating source for assetRef {}", assetRef.getUuid());
-		try {
-			final Path localPath = Files.createTempDirectory(null);
-            LOGGER.info("assetRef will be extracted to {}",localPath);
-            assetService.handleInputStream(assetRef,new InputStreamHandler() {
+        try {
+            final Path localPath = Files.createTempDirectory(null);
+            LOGGER.info("assetRef will be extracted to {}", localPath);
+            assetService.handleInputStream(assetRef, new InputStreamHandler() {
                 @Override
                 public void handleInputStream(InputStream inputStream) {
                     extractFiles(inputStream, localPath);
                 }
             });
             return new ApplicationSourceImpl(localPath);
-		} catch (IOException e) {
-			throw new ApplicationSourceException(e);
-		}
+        } catch (IOException e) {
+            throw new ApplicationSourceException(e);
+        }
 
 
-	}
+    }
 
     @Override
     public ApplicationSource createSource(AssetRef assetRef, final Path path) {
-        LOGGER.info("assetRef {} will be extracted to {}", assetRef.getUuid(),path);
-        assetService.handleInputStream(assetRef,new InputStreamHandler() {
+        LOGGER.info("assetRef {} will be extracted to {}", assetRef.getUuid(), path);
+        assetService.handleInputStream(assetRef, new InputStreamHandler() {
             @Override
             public void handleInputStream(InputStream inputStream) {
                 extractFiles(inputStream, path);
@@ -107,29 +107,29 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
     }
 
     @Override
-	public ApplicationSource createSource(Path localPath) {
-		return new ApplicationSourceImpl(localPath);
-	}
+    public ApplicationSource createSource(Path localPath) {
+        return new ApplicationSourceImpl(localPath);
+    }
 
-	private ApplicationConfig getApplicationConfigInner(Path sourcePath) {
-		try {
+    private ApplicationConfig getApplicationConfigInner(Path sourcePath) {
+        try {
             LOGGER.info("extracting appConfig");
-			DomEditor configEditor = new DomEditor(sourcePath);
-			return new ApplicationConfig(configEditor.getName(),
-					configEditor.getPackage(), configEditor.getVersion(),
-					configEditor.getPhoneGapVersion(),configEditor.getFeatures());
-		} catch (XPathExpressionException ex) {
-			LOGGER.info("could not parse config.xml", ex);
-			throw new ApplicationConfigurationException(ex);
-		} catch (SAXException e) {
-			LOGGER.info("could not parse config.xml", e);
-			throw new ApplicationConfigurationException(e);
-		} catch (IOException e) {
-			LOGGER.info("could not parse config.xml", e);
-			throw new ApplicationConfigurationException(e);
-		} catch (ParserConfigurationException e) {
-			LOGGER.info("could not parse config.xml", e);
-			throw new ApplicationConfigurationException(e);
-		}
-	}
+            DomEditor configEditor = new DomEditor(sourcePath);
+            return new ApplicationConfig(configEditor.getName(),
+                    configEditor.getPackage(), configEditor.getVersion(),
+                    configEditor.getPhoneGapVersion(), configEditor.getFeatures());
+        } catch (XPathExpressionException ex) {
+            LOGGER.info("could not parse config.xml", ex);
+            throw new ApplicationConfigurationException(ex);
+        } catch (SAXException e) {
+            LOGGER.info("could not parse config.xml", e);
+            throw new ApplicationConfigurationException(e);
+        } catch (IOException e) {
+            LOGGER.info("could not parse config.xml", e);
+            throw new ApplicationConfigurationException(e);
+        } catch (ParserConfigurationException e) {
+            LOGGER.info("could not parse config.xml", e);
+            throw new ApplicationConfigurationException(e);
+        }
+    }
 }

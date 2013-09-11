@@ -187,4 +187,14 @@ public class ApplicationServiceTest {
         assertEquals(lastBuilt.getId(), applicationService.getLatestBuilt(application).getId());
     }
 
+    @Test
+    public void testWaitingApplicationBuilt() {
+        Application application = applicationService.createApplication(createUser(), GIT_REPO);
+        ApplicationBuilt applicationBuilt = applicationService.prepareApplicationBuilt(application);
+        assertEquals(BuiltType.values().length, applicationBuilt.getBuiltTargets().size());
+        for (BuiltTarget builtTarget : applicationBuilt.getBuiltTargets()) {
+            assertEquals(BuiltTarget.Status.WAITING, builtTarget.getStatus());
+        }
+    }
+
 }

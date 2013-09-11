@@ -29,7 +29,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigInteger;
 import java.nio.file.Path;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 
 /**
@@ -51,13 +53,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Autowired
     UserRepository userRepository;
 
+    private SecureRandom random = new SecureRandom();
+
+
     @Override
     public Application createApplication(User owner, String repositoryURI) {
         LOGGER.info(
                 "new application will be created for {} with repository {}",
                 owner, repositoryURI);
         ApplicationSource applicationSource = createApplicationSource(repositoryURI);
-        return repository.saveApplication(new Application(applicationSource.toAsset(), applicationSource.getApplicationConfig(), repositoryURI, owner));
+        return repository.saveApplication(new Application(applicationSource.toAsset(), applicationSource.getApplicationConfig(), repositoryURI, owner, nextQrKey()));
     }
 
     private ApplicationSource createApplicationSource(String repositoryURI) {
@@ -74,7 +79,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public Application createApplication(User owner, AssetRef assetRef) {
         ApplicationSource source = sourceFactory.createSource(assetRef);
-        return repository.saveApplication(new Application(assetRef, source.getApplicationConfig(), null, owner));
+        return repository.saveApplication(new Application(assetRef, source.getApplicationConfig(), null, owner, nextQrKey()));
     }
 
     @Override
@@ -131,6 +136,11 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public ApplicationBuilt getLatestBuilt(Application application) {
         return repository.getLatestBuilt(application);
+    }
+
+
+    private String nextQrKey() {
+        return new BigInteger(130, random).toString(32);
     }
 
 }

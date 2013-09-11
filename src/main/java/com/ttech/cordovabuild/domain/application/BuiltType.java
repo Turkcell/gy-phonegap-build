@@ -18,14 +18,16 @@ package com.ttech.cordovabuild.domain.application;
 
 
 public enum BuiltType {
-    ANDROID("android","apk"),IOS("ios","ipa");
+    ANDROID("android", "apk", "application/vnd.android.package-archive"), IOS("ios", "ipa", "application/octet-stream");
 
     private final String platformString;
     private final String platformSuffix;
+    private final String mimeType;
 
-    private BuiltType(String val, String platformSuffix) {
+    private BuiltType(String val, String platformSuffix, String mimeType) {
         this.platformString = val;
         this.platformSuffix = platformSuffix;
+        this.mimeType = mimeType;
     }
 
     public String getPlatformString() {
@@ -39,5 +41,9 @@ public enum BuiltType {
     @Override
     public String toString() {
         return platformString;
+    }
+
+    public String getMimeType() {
+        return mimeType;
     }
 }

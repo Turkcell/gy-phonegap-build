@@ -15,16 +15,6 @@
  */
 package com.ttech.cordovabuild.domain.asset;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.UUID;
-
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
 import com.google.common.io.ByteStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +27,15 @@ import org.springframework.jdbc.core.support.AbstractLobStreamingResultSetExtrac
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.stereotype.Repository;
+
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
 
 @Repository
 public class AssetServiceImpl implements AssetService {
@@ -70,15 +69,16 @@ public class AssetServiceImpl implements AssetService {
     }
 
     @Override
-    public AssetRef save(final InputStream inputStream) {
-        final AssetRef ref=new AssetRef();
+    public AssetRef save(final InputStream inputStream, String mimeType) {
+        final AssetRef ref = new AssetRef();
+        ref.setMimeType(mimeType);
         jdbcTemplate.execute("insert into ASSETS (uuid,data) values (?,?)", new AbstractLobCreatingPreparedStatementCallback(lobHandler) {
             @Override
             protected void setValues(PreparedStatement ps, LobCreator lobCreator) throws SQLException, DataAccessException {
                 ref.setUuid(UUID.randomUUID().toString());
                 ps.setString(1, ref.getUuid());
                 try {
-                    lobCreator.setBlobAsBytes(ps,2, ByteStreams.toByteArray(inputStream));
+                    lobCreator.setBlobAsBytes(ps, 2, ByteStreams.toByteArray(inputStream));
                 } catch (IOException e) {
                     throw new AssetCreationException(e);
                 }

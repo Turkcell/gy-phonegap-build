@@ -16,14 +16,23 @@
 
 package com.ttech.cordovabuild.web;
 
-import com.ttech.cordovabuild.domain.application.Application;
+import com.google.zxing.*;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
+import com.google.zxing.common.GlobalHistogramBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
+import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
 import org.junit.Test;
 
+import javax.imageio.ImageIO;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created with IntelliJ IDEA.
@@ -37,11 +46,12 @@ public class ApplicationResourceTest extends BaseResourceTest {
     public void testGetApplication() throws Exception {
         login(ROOT_TARGET);
         Response createAppResponse = createTarget(ROOT_TARGET).path("application").queryParam("sourceUri", "https://github.com/Turkcell/RestaurantReviews.git").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(null, MediaType.APPLICATION_JSON_TYPE));
-        Application app = createAppResponse.readEntity(Application.class);
+        ApplicationBuilt app = createAppResponse.readEntity(ApplicationBuilt.class);
         assertEquals(Response.Status.OK.getStatusCode(), createAppResponse.getStatus());
         Response findResponse = createTarget(ROOT_TARGET).path("application").path(app.getId().toString()).request(MediaType.APPLICATION_JSON_TYPE).get();
-        Application findApp = findResponse.readEntity(Application.class);
-        assertEquals(app.getId(), findApp.getId());
+        ApplicationBuilt findApp = findResponse.readEntity(ApplicationBuilt.class);
+        assertEquals(Response.Status.OK.getStatusCode(), findResponse.getStatus());
+        assertEquals(app.getApplication().getId(), findApp.getApplication().getId());
     }
 
     @Test
@@ -58,6 +68,19 @@ public class ApplicationResourceTest extends BaseResourceTest {
         Response application = createTarget(ROOT_TARGET).path("application").path("-1").request(MediaType.APPLICATION_JSON_TYPE).get();
         application.readEntity(String.class);
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), application.getStatus());
+    }
+
+    @Test
+    public void testQrImage() throws IOException, FormatException, ChecksumException, NotFoundException {
+        login(ROOT_TARGET);
+        Response createAppResponse = createTarget(ROOT_TARGET).path("application").queryParam("sourceUri", "https://github.com/Turkcell/RestaurantReviews.git").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(null, MediaType.APPLICATION_JSON_TYPE));
+        ApplicationBuilt app = createAppResponse.readEntity(ApplicationBuilt.class);
+        WebTarget path = createTarget(ROOT_TARGET).path("application").path(app.getApplication().getId().toString()).path("qrimage");
+        Response response = path.request("image/jpeg").get();
+        String prefix = path.getUri().resolve(".").resolve("install").normalize().toString() + "?qrKey=";
+        QRCodeReader qrCodeReader = new QRCodeReader();
+        Result result = qrCodeReader.decode(new BinaryBitmap(new GlobalHistogramBinarizer(new BufferedImageLuminanceSource(ImageIO.read(response.readEntity(InputStream.class))))));
+        assertTrue(result.getText().startsWith(prefix));
     }
 
 }

@@ -52,18 +52,24 @@ public class Application implements Serializable {
     @Embedded
     private AssetRef sourceAssetRef;
 
+    @JsonIgnore
+    @Basic
+    @Column(nullable = false, updatable = false)
+    private String qrKey;
+
     @Embedded
     private ApplicationConfig applicationConfig = new ApplicationConfig();
 
     public Application() {
     }
 
-    public Application(AssetRef sourceAssetRef, ApplicationConfig applicationConfig, String repositoryURI, User owner) {
+    public Application(AssetRef sourceAssetRef, ApplicationConfig applicationConfig, String repositoryURI, User owner, String qrKey) {
         this.sourceAssetRef = sourceAssetRef;
         this.applicationConfig = applicationConfig;
         this.repositoryURI = repositoryURI;
         this.owner = owner;
         this.created = new Date();
+        this.qrKey = qrKey;
     }
 
     public String getRepositoryURI() {
@@ -141,5 +147,13 @@ public class Application implements Serializable {
 
     public boolean hasRepositoryUri() {
         return repositoryURI != null && !repositoryURI.isEmpty();
+    }
+
+    public String getQrKey() {
+        return qrKey;
+    }
+
+    public void setQrKey(String qrKey) {
+        this.qrKey = qrKey;
     }
 }
