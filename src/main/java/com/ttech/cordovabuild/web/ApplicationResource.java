@@ -9,12 +9,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import com.ttech.cordovabuild.domain.application.Application;
-import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
-import com.ttech.cordovabuild.domain.application.ApplicationService;
+import com.ttech.cordovabuild.domain.application.*;
+import com.ttech.cordovabuild.infrastructure.queue.BuiltQueuePublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +20,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.StreamingOutput;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
@@ -39,6 +40,8 @@ public class ApplicationResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationResource.class);
     @Autowired
     ApplicationService service;
+    @Autowired
+    BuiltQueuePublisher queuePublisher;
 
     @GET
     @Path("/{id}")
@@ -57,7 +60,7 @@ public class ApplicationResource {
     @Path("/{id}/build")
     public ApplicationBuilt rebuildApplication(@PathParam("id") Long id) {
         ApplicationBuilt applicationBuilt = service.prepareApplicationBuilt(id);
-        //TODO publish application built
+        queuePublisher.publishBuilt(applicationBuilt);
         return applicationBuilt;
     }
 
@@ -76,11 +79,32 @@ public class ApplicationResource {
         }
     }
 
+    @GET
+    @Path("/{id}/download/{type}")
+    @Produces({BuiltType.Constants.ANDROID_MIME_TYPE, BuiltType.Constants.IOS_MIME_TYPE})
+    public Response getBuiltAsset(@PathParam("id") Long id, @PathParam("type") BuiltType type) {
+        ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
+        for (BuiltTarget builtTarget : latestBuilt.getBuiltTargets()) {
+            if (builtTarget.getType().equals(type))
+                if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS)) {
+                    Response.accepted().
+                            type(type.getMimeType()).
+                            header("content-disposition",
+                                    MessageFormat.format("attachment; filename = {0}.{1}",
+                                            latestBuilt.getBuiltConfig().getApplicationName(), type.getPlatformSuffix())).build();
+                } else {
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
     @POST
     public ApplicationBuilt createApplication(@QueryParam("sourceUri") String sourceUri) {
         Application application = service.createApplication(SecurityContextHolder.getContext().getAuthentication().getName(), sourceUri);
-        //TODO publish application built
-        return service.prepareApplicationBuilt(application);
+        ApplicationBuilt applicationBuilt = service.prepareApplicationBuilt(application);
+        queuePublisher.publishBuilt(applicationBuilt);
+        return applicationBuilt;
     }
 
     class StreamingImageOutput implements StreamingOutput {
@@ -91,12 +115,15 @@ public class ApplicationResource {
         }
 
         public void write(OutputStream output) throws IOException, WebApplicationException {
-            JPEGImageEncoder jencoder = JPEGCodec.createJPEGEncoder(output);
-            JPEGEncodeParam enParam = jencoder.getDefaultJPEGEncodeParam(image);
-            enParam.setQuality(1.0F, true);
-            jencoder.setJPEGEncodeParam(enParam);
-            jencoder.encode(image);
-            output.close();
+            JPEGImageWriteParam jpegParams = new JPEGImageWriteParam(null);
+            jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            jpegParams.setCompressionQuality(1f);
+            ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+            MemoryCacheImageOutputStream out = new MemoryCacheImageOutputStream(output);
+            writer.setOutput(out);
+            writer.write(null, new IIOImage(image, null, null), jpegParams);
+            writer.dispose();
+            out.close();
         }
     }
 }

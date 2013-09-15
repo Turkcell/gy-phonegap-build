@@ -16,16 +16,16 @@
 
 package com.ttech.cordovabuild.domain.application.source;
 
-import java.nio.file.Path;
-
 import com.ttech.cordovabuild.domain.application.ApplicationConfig;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 
+import java.nio.file.Path;
+
 public interface ApplicationSource {
 
-	public abstract ApplicationConfig getApplicationConfig();
+    public abstract ApplicationConfig getApplicationConfig();
 
-	public abstract Path getLocalPath();
+    public abstract Path getLocalPath();
 
     public AssetRef toAsset();
 }

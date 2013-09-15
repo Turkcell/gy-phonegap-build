@@ -39,6 +39,11 @@ public class ArchiveUtils {
 
     public static void extractFiles(InputStream is, Path localPath) {
         ArchiveStreamFactory archiveStreamFactory = new ArchiveStreamFactory();
+        try {
+            Files.createDirectories(localPath);
+        } catch (IOException e) {
+            throw new ArchiveExtractionException(e);
+        }
         try (ArchiveInputStream ais = archiveStreamFactory.createArchiveInputStream(is);) {
             extractArchive(localPath, ais);
         } catch (ArchiveException e) {

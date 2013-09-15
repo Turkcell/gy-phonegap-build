@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -46,6 +47,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"classpath:hazelcastContext.xml",
         "classpath:datasourceContext.xml", "classpath:applicationContext.xml"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class ApplicationServiceTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationServiceTest.class);
     public static final String GIT_REPO = "https://github.com/Turkcell/RestaurantReviews.git";

@@ -50,13 +50,13 @@ public class BuiltQueueListenerImpl implements QueueListener {
     public void onBuilt(ApplicationBuilt applicationBuilt, BuiltType builtType) {
         BuiltInfo builtInfo = null;
         try {
-            updateApplicationBuilt(applicationBuilt, new BuiltInfo(BuiltTarget.Status.STARTED), 0);
+            applicationBuilt = updateApplicationBuilt(applicationBuilt, new BuiltInfo(builtType, BuiltTarget.Status.STARTED), 0);
             ApplicationBuilder applicationBuilder = builderFactory.getApplicationBuilder(builtType, applicationBuilt);
             try {
                 builtInfo = applicationBuilder.buildApplication();
             } catch (Exception e) {
                 //TODO should be more specific and should include reason
-                builtInfo = new BuiltInfo(BuiltTarget.Status.FAILED);
+                builtInfo = new BuiltInfo(builtType, BuiltTarget.Status.FAILED);
             }
             updateApplicationBuilt(applicationBuilt, builtInfo, 0);
             return;
@@ -65,12 +65,11 @@ public class BuiltQueueListenerImpl implements QueueListener {
         }
     }
 
-    private void updateApplicationBuilt(ApplicationBuilt applicationBuilt, BuiltInfo builtInfo, int count) {
+    private ApplicationBuilt updateApplicationBuilt(ApplicationBuilt applicationBuilt, BuiltInfo builtInfo, int count) {
         if (count > 0)
             LOGGER.info("retrying applicationBuilt update with count {}", count + 1);
         try {
-            applicationService.updateApplicationBuilt(applicationBuilt.update(builtInfo));
-            return;
+            return applicationService.updateApplicationBuilt(applicationBuilt.update(builtInfo));
         } catch (OptimisticLockException e) {
             LOGGER.warn("optimisticLockingException for applicationBuilt");
         }
@@ -81,6 +80,6 @@ public class BuiltQueueListenerImpl implements QueueListener {
         } catch (InterruptedException e) {
             LOGGER.warn("sleep interrupted");
         }
-        updateApplicationBuilt(applicationService.findApplicationBuilt(applicationBuilt.getId()), builtInfo, count + 1);
+        return updateApplicationBuilt(applicationService.findApplicationBuilt(applicationBuilt.getId()), builtInfo, count + 1);
     }
 }

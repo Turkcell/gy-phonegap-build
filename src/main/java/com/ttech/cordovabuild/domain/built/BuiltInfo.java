@@ -43,8 +43,8 @@ public class BuiltInfo {
         this.status = status;
     }
 
-    public BuiltInfo(BuiltTarget.Status status) {
-        this(null, null, null, null, null, null, status);
+    public BuiltInfo(BuiltType builtType, BuiltTarget.Status status) {
+        this(null, null, null, builtType, null, null, status);
     }
 
     public Path getPath() {
@@ -55,7 +55,7 @@ public class BuiltInfo {
         return startDate;
     }
 
-    public long getDuration() {
+    public Long getDuration() {
         return duration;
     }
 

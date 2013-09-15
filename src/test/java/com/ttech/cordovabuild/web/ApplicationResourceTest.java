@@ -21,6 +21,8 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.GlobalHistogramBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.ttech.cordovabuild.domain.application.ApplicationBuilt;
+import com.ttech.cordovabuild.domain.application.BuiltTarget;
+import com.ttech.cordovabuild.domain.application.BuiltType;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
@@ -32,6 +34,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -81,6 +84,30 @@ public class ApplicationResourceTest extends BaseResourceTest {
         QRCodeReader qrCodeReader = new QRCodeReader();
         Result result = qrCodeReader.decode(new BinaryBitmap(new GlobalHistogramBinarizer(new BufferedImageLuminanceSource(ImageIO.read(response.readEntity(InputStream.class))))));
         assertTrue(result.getText().startsWith(prefix));
+    }
+
+    @Test
+    public void testApk() throws InterruptedException {
+        login(ROOT_TARGET);
+        Response createAppResponse = createTarget(ROOT_TARGET).path("application").queryParam("sourceUri", "https://github.com/Turkcell/RestaurantReviews.git").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(null, MediaType.APPLICATION_JSON_TYPE));
+        ApplicationBuilt app = createAppResponse.readEntity(ApplicationBuilt.class);
+        ApplicationBuilt applicationBuilt = pollBuilt(app);
+    }
+
+    private ApplicationBuilt pollBuilt(ApplicationBuilt app) throws InterruptedException {
+
+        while (true) {
+            Response response = createTarget(ROOT_TARGET).path("application").path(String.valueOf(app.getApplication().getId())).request(MediaType.APPLICATION_JSON_TYPE).get();
+            ApplicationBuilt applicationBuilt = response.readEntity(ApplicationBuilt.class);
+            for (BuiltTarget builtTarget : applicationBuilt.getBuiltTargets()) {
+                if (!builtTarget.getType().equals(BuiltType.ANDROID))
+                    continue;
+                assertFalse(builtTarget.getStatus().equals(BuiltTarget.Status.FAILED));
+                if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS))
+                    return applicationBuilt;
+            }
+            Thread.sleep(200);
+        }
     }
 
 }

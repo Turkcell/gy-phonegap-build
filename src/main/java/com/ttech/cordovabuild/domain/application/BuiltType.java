@@ -18,7 +18,7 @@ package com.ttech.cordovabuild.domain.application;
 
 
 public enum BuiltType {
-    ANDROID("android", "apk", "application/vnd.android.package-archive"), IOS("ios", "ipa", "application/octet-stream");
+    ANDROID("android", "apk", Constants.ANDROID_MIME_TYPE), IOS("ios", "ipa", Constants.IOS_MIME_TYPE);
 
     private final String platformString;
     private final String platformSuffix;
@@ -34,7 +34,7 @@ public enum BuiltType {
         return platformString;
     }
 
-    private String getPlatformSuffix() {
+    public String getPlatformSuffix() {
         return platformSuffix;
     }
 
@@ -45,5 +45,10 @@ public enum BuiltType {
 
     public String getMimeType() {
         return mimeType;
+    }
+
+    public static class Constants {
+        public static final String ANDROID_MIME_TYPE = "application/vnd.android.package-archive";
+        public static final String IOS_MIME_TYPE = "application/octet-stream";
     }
 }

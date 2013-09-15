@@ -34,6 +34,7 @@ public class UserResourceTest extends BaseResourceTest {
         Response response = createTarget(ROOT_TARGET).path("application").path("1")
                 .request(MediaType.APPLICATION_JSON_TYPE).get();
         assertEquals(Status.FORBIDDEN.getStatusCode(), response.getStatus());
+        response.readEntity(String.class);
     }
 
     @Test
@@ -41,7 +42,7 @@ public class UserResourceTest extends BaseResourceTest {
         User user = new User("anil", "halil", "anil@anil.com", "anil", Collections.<Role>emptySet(), "password");
         Response response = createTarget(ROOT_TARGET).path("user").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.entity(user, MediaType.APPLICATION_JSON_TYPE));
         assertEquals(Status.OK.getStatusCode(), response.getStatusInfo().getStatusCode());
-        System.out.println(response.readEntity(String.class));
+        response.readEntity(String.class);
     }
 
     @Test
