@@ -34,11 +34,11 @@ public class ApplicationRepositoryImpl implements ApplicationRepository {
     EntityManager em;
 
     @Override
-    public List<Application> getApplications(User owner) {
+    public List<ApplicationBuilt> getApplications(User owner) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<Application> cq = cb.createQuery(Application.class);
-        Root<Application> from = cq.from(Application.class);
-        return em.createQuery(cq.select(from).where(cb.equal(from.get(Application_.owner).get(User_.id), owner.getId()))).getResultList();
+        CriteriaQuery<ApplicationBuilt> cq = cb.createQuery(ApplicationBuilt.class);
+        Root<ApplicationBuilt> from = cq.from(ApplicationBuilt.class);
+        return em.createQuery(cq.select(from).where(cb.equal(from.get(ApplicationBuilt_.application).get(Application_.owner), owner))).getResultList();
     }
 
     @Override

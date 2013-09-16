@@ -24,7 +24,7 @@ import java.util.List;
  */
 public interface ApplicationRepository {
 
-    List<Application> getApplications(User owner);
+    List<ApplicationBuilt> getApplications(User owner);
 
     Application findById(Long id);
 

@@ -32,6 +32,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.List;
 
 @Component
 @Scope(WebApplicationContext.SCOPE_REQUEST)
@@ -42,6 +43,11 @@ public class ApplicationResource {
     ApplicationService service;
     @Autowired
     BuiltQueuePublisher queuePublisher;
+
+    @GET
+    public List<ApplicationBuilt> getApplications() {
+        return service.getApplications(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
 
     @GET
     @Path("/{id}")

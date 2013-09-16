@@ -33,6 +33,7 @@ import java.math.BigInteger;
 import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * @author Anıl Halil
@@ -55,6 +56,16 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     private SecureRandom random = new SecureRandom();
 
+
+    @Override
+    public List<ApplicationBuilt> getApplications(User user) {
+        return repository.getApplications(user);
+    }
+
+    @Override
+    public List<ApplicationBuilt> getApplications(String username) {
+        return getApplications(userRepository.findUserByUserName(username));
+    }
 
     @Override
     public Application createApplication(User owner, String repositoryURI) {

@@ -20,8 +20,14 @@ import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.user.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Transactional
 public interface ApplicationService {
+
+    List<ApplicationBuilt> getApplications(User user);
+
+    List<ApplicationBuilt> getApplications(String username);
 
     Application createApplication(User owner, String repositoryURI);
 
