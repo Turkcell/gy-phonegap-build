@@ -15,7 +15,7 @@
         <jersey.version>2.2</jersey.version>
         <tomcat.version>7.0.19</tomcat.version>
         <hazelcast.version>3.0.1</hazelcast.version>
-        <eclipselink.version>2.5.0</eclipselink.version>
+        <eclipselink.version>2.4.2</eclipselink.version>
         <jetty.version>9.0.4.v20130625</jetty.version>
         <slf4j.version>1.7.2</slf4j.version>
     </properties>
@@ -142,9 +142,8 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
+            <artifactId>org.eclipse.persistence.jpa.modelgen</artifactId>
             <version>${eclipselink.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -353,7 +352,7 @@
             </activation>
             <properties>
                 <dataSource.driverClassName>org.hsqldb.jdbc.JDBCDriver</dataSource.driverClassName>
-                <dataSource.url>jdbc:hsqldb:mem:cordova</dataSource.url>
+                <dataSource.url>jdbc:hsqldb:file:cordovadb</dataSource.url>
                 <dataSource.username>SA</dataSource.username>
                 <dataSource.password></dataSource.password>
                 <dataSource.validationQuery><![CDATA[SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS]]>

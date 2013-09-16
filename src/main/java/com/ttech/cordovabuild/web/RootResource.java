@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.container.ResourceContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 @Component
@@ -60,12 +62,16 @@ public class RootResource {
 
     @POST
     @Path("login")
-    public User authenticate(User user, @Context HttpServletRequest request, @Context HttpServletResponse response) {
+    public Response authenticate(User user, @Context HttpServletRequest request, @Context HttpServletResponse response) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
-        Authentication authentication = authenticationManager.authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
-        return userRepository.findUserByUserName(user.getUsername());
+        try {
+            Authentication authentication = authenticationManager.authenticate(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
+            return Response.accepted().entity(userRepository.findUserByUserName(user.getUsername())).build();
+        } catch (AuthenticationException e) {
+            return Response.status(Response.Status.FORBIDDEN).build();
+        }
     }
 
     @GET

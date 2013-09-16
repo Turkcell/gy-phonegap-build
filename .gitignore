@@ -6,3 +6,5 @@ target
 .project
 nb-configuration.xml
 .settings
+*.sql
+cordovadb.*

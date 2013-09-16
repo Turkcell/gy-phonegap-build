@@ -13,7 +13,9 @@
         <properties>
             <property name="javax.persistence.validation.mode" value="NONE"/>
             <property name="eclipselink.ddl-generation" value="drop-and-create-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
+            <property name="eclipselink.create-ddl-jdbc-file-name" value="create.sql"/>
+            <property name="eclipselink.drop-ddl-jdbc-file-name" value="drop.sql"/>
+            <property name="eclipselink.ddl-generation.output-mode" value="both"/>
             <property name="eclipselink.weaving" value="static"/>
         </properties>
     </persistence-unit>
