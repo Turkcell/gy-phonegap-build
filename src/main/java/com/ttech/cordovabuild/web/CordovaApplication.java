@@ -18,6 +18,7 @@ package com.ttech.cordovabuild.web;
 
 import com.ttech.cordovabuild.web.exception.NotFoundExceptionMapper;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 
 /**
@@ -30,6 +31,7 @@ import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
 public class CordovaApplication extends ResourceConfig {
 
     public CordovaApplication() {
+        property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
         register(RequestContextFilter.class);
         register(RootResource.class);
         register(UserResource.class);

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -46,7 +47,7 @@ public class UserResource {
 
 
     @POST
-    public User createUser(User user) {
+    public User createUser(@Valid User user) {
         user.addRole(Role.ROLE_USER);
         User result = userRepository.saveOrUpdateUser(user);
         result.setPassword(null);

@@ -15,11 +15,16 @@
  */
 package com.ttech.cordovabuild.domain.user;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -37,22 +42,27 @@ public class User implements Serializable, UserDetails {
     @Id
     @GeneratedValue
     private Long id;
+    @NotEmpty
     @Basic
     @Column(length = 1024)
     private String name;
+    @NotEmpty
     @Basic
     @Column(length = 1024)
     private String surname;
+    @NotNull
+    @Email
     @Basic
     @Column(length = 1024, unique = true)
     private String email;
+    @NotEmpty
     @Basic
     @Column(length = 1024, unique = true)
     private String username;
     @ElementCollection(targetClass = Role.class)
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles=new HashSet<>();
-
+    private Set<Role> roles = new HashSet<>();
+    @NotEmpty
     @Basic
     @Column(length = 1024, nullable = false)
     private String password;
@@ -182,7 +192,7 @@ public class User implements Serializable, UserDetails {
     }
 
 
-    public void addRole(Role role){
+    public void addRole(Role role) {
         roles.add(role);
     }
 
@@ -193,13 +203,13 @@ public class User implements Serializable, UserDetails {
 
         User user = (User) o;
 
-        if (!id.equals(user.id)) return false;
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return id != null ? id.hashCode() : 0;
     }
 }
