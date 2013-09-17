@@ -57,7 +57,7 @@ public class BuiltQueueListenerImpl implements QueueListener {
             try {
                 builtInfo = applicationBuilder.buildApplication();
             } catch (Exception e) {
-                //TODO should be more specific and should include reason
+                LOGGER.error("application built failed", e);
                 builtInfo = new BuiltInfo(builtType, BuiltTarget.Status.FAILED);
             }
             updateApplicationBuilt(applicationBuilt, builtInfo, 0);
