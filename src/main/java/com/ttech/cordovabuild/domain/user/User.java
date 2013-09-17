@@ -59,7 +59,7 @@ public class User implements Serializable, UserDetails {
     @Basic
     @Column(length = 1024, unique = true)
     private String username;
-    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(targetClass = Role.class,fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<Role> roles = new HashSet<>();
     @NotEmpty
