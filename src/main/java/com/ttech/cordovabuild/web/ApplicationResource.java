@@ -4,6 +4,7 @@
  */
 package com.ttech.cordovabuild.web;
 
+import com.google.common.io.ByteStreams;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -11,6 +12,9 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.ttech.cordovabuild.domain.application.Application;
 import com.ttech.cordovabuild.domain.application.*;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
+import com.ttech.cordovabuild.domain.asset.AssetService;
+import com.ttech.cordovabuild.domain.asset.InputStreamHandler;
 import com.ttech.cordovabuild.infrastructure.queue.BuiltQueuePublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +30,12 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.List;
@@ -43,6 +49,8 @@ public class ApplicationResource {
     ApplicationService service;
     @Autowired
     BuiltQueuePublisher queuePublisher;
+    @Autowired
+    AssetService assetService;
 
     @GET
     public List<ApplicationBuilt> getApplications() {
@@ -88,25 +96,26 @@ public class ApplicationResource {
     @GET
     @Path("/{id}/download/{type}")
     @Produces({BuiltType.Constants.ANDROID_MIME_TYPE, BuiltType.Constants.IOS_MIME_TYPE})
-    public Response getBuiltAsset(@PathParam("id") Long id, @PathParam("type") BuiltType type) {
+    public Response getBuiltAsset(@PathParam("id") Long id, @PathParam("type") BuiltType type, @Context HttpServletResponse httpServletResponse) throws IOException {
         LOGGER.info("application asset download for id:{} and type:{} requested", id, type);
         ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
         LOGGER.info("application built with id:{} found", latestBuilt.getId());
         for (BuiltTarget builtTarget : latestBuilt.getBuiltTargets()) {
             if (builtTarget.getType().equals(type)) {
-                LOGGER.info("built target for {} found with status {}",builtTarget.getType(),builtTarget.getStatus());
+                LOGGER.info("built target for {} found with status {}", builtTarget.getType(), builtTarget.getStatus());
                 if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS)) {
-                    Response.accepted().
-                            type(type.getMimeType()).
-                            header("content-disposition",
-                                    MessageFormat.format("attachment; filename = {0}.{1}",
-                                            latestBuilt.getBuiltConfig().getApplicationName(), type.getPlatformSuffix())).build();
+                    httpServletResponse.setHeader("Content-Type", type.getMimeType());
+                    httpServletResponse.setHeader("content-disposition", MessageFormat.format("attachment; filename = {0}.{1}",
+                            latestBuilt.getBuiltConfig().getApplicationName(), type.getPlatformSuffix()));
+                    write(httpServletResponse.getOutputStream(), builtTarget.getAssetRef());
+                    return Response.ok().build();
                 } else {
+                    httpServletResponse.setStatus(Response.Status.NOT_FOUND.getStatusCode());
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }
             }
         }
-        LOGGER.info("no build target found for {}",type);
+        LOGGER.info("no build target found for {}", type);
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
@@ -137,4 +146,14 @@ public class ApplicationResource {
             out.close();
         }
     }
+
+    private void write(final OutputStream output, AssetRef assetRef) throws IOException, WebApplicationException {
+        assetService.handleInputStream(assetRef, new InputStreamHandler() {
+            @Override
+            public void handleInputStream(InputStream inputStream) throws IOException {
+                ByteStreams.copy(inputStream, output);
+            }
+        });
+    }
+
 }

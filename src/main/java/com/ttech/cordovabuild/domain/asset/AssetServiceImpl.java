@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
+import org.springframework.jdbc.LobRetrievalFailureException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.support.AbstractLobCreatingPreparedStatementCallback;
 import org.springframework.jdbc.core.support.AbstractLobStreamingResultSetExtractor;
@@ -60,12 +61,16 @@ public class AssetServiceImpl implements AssetService {
 
     @Override
     public void handleInputStream(AssetRef assetRef, final InputStreamHandler handler) {
-        jdbcTemplate.query("select data from ASSETS where UUID=?", new AbstractLobStreamingResultSetExtractor() {
-            @Override
-            protected void streamData(ResultSet rs) throws SQLException, IOException, DataAccessException {
-                handler.handleInputStream(lobHandler.getBlobAsBinaryStream(rs, 1));
-            }
-        }, assetRef.getUuid());
+        try {
+            jdbcTemplate.query("select data from ASSETS where UUID=?", new AbstractLobStreamingResultSetExtractor() {
+                @Override
+                protected void streamData(ResultSet rs) throws SQLException, IOException, DataAccessException {
+                    handler.handleInputStream(lobHandler.getBlobAsBinaryStream(rs, 1));
+                }
+            }, assetRef.getUuid());
+        } catch (LobRetrievalFailureException e) {
+            throw new AssetRetrievalFailureException(e);
+        }
     }
 
     @Override
