@@ -70,7 +70,9 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
         sourceFactory.createSource(applicationBuilt.getBuiltAssetRef(), webAssetPath);
         addPlatformSupport(builtType, buildPathFile);
         addFeatures(applicationBuilt.getBuiltConfig().getFeatures(), buildPathFile);
+        LOGGER.info("starting built of {} with type {}",applicationBuilt.getId(),builtType);
         buildPlatform(builtType, buildPathFile);
+        LOGGER.info("built finish for {} with type {}",applicationBuilt.getId(),builtType);
         return new BuiltInfo(buildPath, startDate, System.currentTimeMillis() - startDate.getTime(), builtType, applicationBuilt.getBuiltConfig().getApplicationName(), buildAsset(buildPath), BuiltTarget.Status.SUCCESS);
     }
 

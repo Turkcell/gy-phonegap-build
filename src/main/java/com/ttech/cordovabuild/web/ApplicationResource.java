@@ -89,9 +89,12 @@ public class ApplicationResource {
     @Path("/{id}/download/{type}")
     @Produces({BuiltType.Constants.ANDROID_MIME_TYPE, BuiltType.Constants.IOS_MIME_TYPE})
     public Response getBuiltAsset(@PathParam("id") Long id, @PathParam("type") BuiltType type) {
+        LOGGER.info("application asset download for id:{} and type:{} requested", id, type);
         ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
+        LOGGER.info("application built with id:{} found", latestBuilt.getId());
         for (BuiltTarget builtTarget : latestBuilt.getBuiltTargets()) {
-            if (builtTarget.getType().equals(type))
+            if (builtTarget.getType().equals(type)) {
+                LOGGER.info("built target for {} found with status {}",builtTarget.getType(),builtTarget.getStatus());
                 if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS)) {
                     Response.accepted().
                             type(type.getMimeType()).
@@ -101,7 +104,9 @@ public class ApplicationResource {
                 } else {
                     return Response.status(Response.Status.NOT_FOUND).build();
                 }
+            }
         }
+        LOGGER.info("no build target found for {}",type);
         return Response.status(Response.Status.NOT_FOUND).build();
     }
 
