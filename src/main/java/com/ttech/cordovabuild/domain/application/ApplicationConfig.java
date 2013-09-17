@@ -23,7 +23,7 @@ public class ApplicationConfig {
     @Column(length = 1024)
     @Basic
     private String applicationName;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     private Set<ApplicationFeature> features;
 

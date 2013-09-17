@@ -23,6 +23,6 @@
 	<logger name="org.eclipse.jetty" level="INFO" />
 	<logger name="org.springframework" level="INFO" />
 	<logger name="jndi" level="INFO" />
-	<logger name="org.jboss.resteasy" level="DEBUG" />
+	<logger name="org.hibernate" level="INFO" />
     <logger name="org.apache.http" level="INFO"/>
 </configuration>

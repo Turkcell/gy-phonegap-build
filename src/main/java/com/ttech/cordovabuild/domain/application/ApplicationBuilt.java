@@ -45,7 +45,7 @@ public class ApplicationBuilt implements Serializable {
     @JsonIgnore
     @Embedded
     private AssetRef builtAssetRef;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<BuiltTarget> builtTargets = new ArrayList<>();
     @JsonIgnore
     @Version
