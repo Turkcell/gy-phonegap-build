@@ -24,6 +24,7 @@ import com.ttech.cordovabuild.infrastructure.queue.QueueListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.orm.jpa.JpaOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
 
@@ -71,7 +72,7 @@ public class BuiltQueueListenerImpl implements QueueListener {
             LOGGER.info("retrying applicationBuilt update with count {}", count + 1);
         try {
             return applicationService.updateApplicationBuilt(applicationBuilt.update(builtInfo));
-        } catch (javax.persistence.OptimisticLockException | JpaOptimisticLockingFailureException e) {
+        } catch (javax.persistence.OptimisticLockException | ObjectOptimisticLockingFailureException e) {
             LOGGER.warn("optimisticLockingException for applicationBuilt");
         }
         int sleepTime = randomGenerator.nextInt(SLEEP_TIME_CONSTANT) + SLEEP_TIME_CONSTANT;
