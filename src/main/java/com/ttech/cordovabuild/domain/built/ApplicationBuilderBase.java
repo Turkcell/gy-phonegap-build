@@ -136,6 +136,7 @@ public abstract class ApplicationBuilderBase implements ApplicationBuilder {
 
     private int runProcess(File ownerPath, String... args) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(args);
+        Files.createDirectories(ownerPath.toPath());
         pb.directory(ownerPath);
         pb.inheritIO();
         Process p = pb.start();
