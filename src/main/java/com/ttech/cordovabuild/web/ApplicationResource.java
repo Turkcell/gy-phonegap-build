@@ -94,6 +94,13 @@ public class ApplicationResource {
     }
 
     @GET
+    @Path("/{id}/icon")
+    @Produces("image/png")
+    public StreamingImageOutput getIcon(@PathParam("id") Long id){
+        return null;
+    }
+
+    @GET
     @Path("/{id}/download/{type}")
     @Produces({BuiltType.Constants.ANDROID_MIME_TYPE, BuiltType.Constants.IOS_MIME_TYPE})
     public Response getBuiltAsset(@PathParam("id") Long id, @PathParam("type") BuiltType type, @Context HttpServletResponse httpServletResponse) throws IOException {

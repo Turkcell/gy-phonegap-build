@@ -98,11 +98,13 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = findApplication(id);
         if (!application.hasRepositoryUri())
             throw new ApplicationUpdateException(MessageFormat.format("application with id {0} does not have any repositoryURI", application.getId()));
-        return updateApplicationSourceInner(application, createApplicationSource(application.getRepositoryURI()).toAsset());
+        ApplicationSource applicationSource = createApplicationSource(application.getRepositoryURI());
+        return updateApplicationSourceInner(application, applicationSource.toAsset(), applicationSource.getApplicationConfig());
     }
 
-    private Application updateApplicationSourceInner(Application application, AssetRef assetRef) {
+    private Application updateApplicationSourceInner(Application application, AssetRef assetRef, ApplicationConfig applicationConfig) {
         application.setSourceAssetRef(assetRef);
+        application.setApplicationConfig(applicationConfig);
         return repository.updateApplication(application);
     }
 
@@ -111,7 +113,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         Application application = findApplication(id);
         if (application.hasRepositoryUri())
             throw new ApplicationUpdateException(MessageFormat.format("application with id {0} does have repositoryURI {1}", application.getId(), application.getRepositoryURI()));
-        return updateApplicationSourceInner(application, assetRef);
+        ApplicationSource applicationSource = sourceFactory.createSource(assetRef);
+        return updateApplicationSourceInner(application, assetRef, applicationSource.getApplicationConfig());
     }
 
     @Override

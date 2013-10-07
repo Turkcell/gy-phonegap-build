@@ -49,6 +49,9 @@ public class BuiltTarget implements Serializable {
     private AssetRef assetRef;
     @Enumerated(EnumType.STRING)
     private Status status;
+    @Transient
+    @JsonIgnore
+    private ApplicationBuilt applicationBuilt;
 
 
     public BuiltType getType() {
@@ -105,6 +108,18 @@ public class BuiltTarget implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Transient
+    public String getUrl() {
+        if (status == Status.SUCCESS)
+            return "/application/" + this.applicationBuilt.getApplication().getId() + "/download/" + getType().toString();
+        return null;
+    }
+
+    public void setApplicationBuilt(ApplicationBuilt applicationBuilt) {
+        this.applicationBuilt = applicationBuilt;
     }
 
     public static enum Status {

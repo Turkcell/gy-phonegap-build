@@ -27,12 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -50,6 +51,7 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
     public class ApplicationSourceImpl implements ApplicationSource {
 
         private Path localPath;
+        private ApplicationConfig config;
 
         public ApplicationSourceImpl(Path localPath) {
             this.localPath = localPath;
@@ -62,11 +64,14 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
 
         @Override
         public ApplicationConfig getApplicationConfig() {
-            return getApplicationConfigInner(localPath);
+            if (config == null)
+                config = getApplicationConfigInner(localPath);
+            return config;
         }
 
         @Override
         public AssetRef toAsset() {
+            //TODO restrict output stream to a size
             ByteArrayOutputStream output = new ByteArrayOutputStream(
                     10 * 1024 * 1024);
             compressDirectory(localPath, output);
@@ -115,9 +120,11 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
         try {
             LOGGER.info("extracting appConfig");
             DomEditor configEditor = new DomEditor(sourcePath);
+            DomEditor.IconConfig iconConfig = configEditor.getIconConfig();
+            getIconAssetRef(sourcePath, iconConfig);
             return new ApplicationConfig(configEditor.getName(),
                     configEditor.getPackage(), configEditor.getVersion(),
-                    configEditor.getPhoneGapVersion(), configEditor.getFeatures());
+                    configEditor.getPhoneGapVersion(), configEditor.getFeatures(), iconConfig == null ? null : iconConfig.getHeight(), iconConfig == null ? null : iconConfig.getWidth(), getIconAssetRef(sourcePath, iconConfig));
         } catch (XPathExpressionException ex) {
             LOGGER.info("could not parse config.xml", ex);
             throw new ApplicationConfigurationException(ex);
@@ -132,4 +139,48 @@ public class ApplicationSourceFactoryImpl implements ApplicationSourceFactory {
             throw new ApplicationConfigurationException(e);
         }
     }
+
+    private boolean isSubPath(Path path, Path parent) {
+        if (path == null)
+            return false;
+        if (path.equals(parent))
+            return true;
+        else
+            return isSubPath(path.getParent(), parent);
+    }
+
+    private AssetRef getIconAssetRef(Path sourcePath, DomEditor.IconConfig iconConfig) {
+        if (iconConfig == null) return null;
+        Path path = sourcePath.resolve(iconConfig.getSrc()).normalize();
+        if (isSubPath(path, sourcePath) && !path.equals(sourcePath) && path.getFileName().toString().toLowerCase().endsWith(".png")) {
+            try (InputStream fs = new FileInputStream(path.toFile())) {
+                if (iconConfig.getHeight() != null || iconConfig.getWidth() != null) {
+                    BufferedImage bufferedImage = ImageIO.read(fs);
+                    bufferedImage = scaleTo(bufferedImage, iconConfig.getHeight(), iconConfig.getWidth());
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    ImageIO.write(bufferedImage, "png", outputStream);
+                    return assetService.save(new ByteArrayInputStream(outputStream.toByteArray()), "image/png");
+                } else
+                    return assetService.save(fs, "image/png");
+            } catch (IOException e) {
+                LOGGER.warn("image file cannot be read");
+            }
+        }
+        return null;
+    }
+
+    public static BufferedImage scaleTo(BufferedImage image, Integer height, Integer width) throws IOException {
+        int imageWidth = image.getWidth();
+        int imageHeight = image.getHeight();
+
+        double scaleX = (double) (width == null ? 1 : width / imageWidth);
+        double scaleY = (double) (height == null ? 1 : height / imageHeight);
+        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+        AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+
+        return bilinearScaleOp.filter(
+                image,
+                new BufferedImage(width, height, image.getType()));
+    }
+
 }

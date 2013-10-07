@@ -16,6 +16,7 @@
 package com.ttech.cordovabuild.domain.application;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.user.User;
 
@@ -118,6 +119,26 @@ public class Application implements Serializable {
 
     public void setSourceAssetRef(AssetRef sourceAssetRef) {
         this.sourceAssetRef = sourceAssetRef;
+    }
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getIconURL() {
+        if (applicationConfig.getIconAssetRef() != null)
+            return "/application/" + id + "/icon";
+        return null;
+    }
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public Integer getIconHeight() {
+        return applicationConfig.getIconHeight();
+    }
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public Integer getIconWidth() {
+        return applicationConfig.getIconWidth();
     }
 
     @Override

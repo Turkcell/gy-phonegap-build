@@ -1,5 +1,7 @@
 package com.ttech.cordovabuild.domain.application;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ttech.cordovabuild.domain.asset.AssetRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,23 +29,42 @@ public class ApplicationConfig {
     @Enumerated(EnumType.STRING)
     private Set<ApplicationFeature> features;
 
+    @JsonIgnore
+    @Basic
+    private Integer iconWidth;
+
+    @JsonIgnore
+    @Basic
+    private Integer iconHeight;
+
+    @Embedded
+    @JsonIgnore
+    @Column(nullable = true)
+    private AssetRef iconAssetRef;
+
     public ApplicationConfig(String applicationName, String applicationPackage, String applicationVersion,
-                             String phoneGapversion, Set<ApplicationFeature> features) {
+                             String phoneGapversion, Set<ApplicationFeature> features, Integer iconWidth, Integer iconHeight, AssetRef iconAssetRef) {
         this.applicationName = applicationName;
         this.applicationPackage = applicationPackage;
         this.applicationVersion = applicationVersion;
         this.phoneGapversion = phoneGapversion;
         this.features = features;
+        this.iconHeight = iconHeight;
+        this.iconWidth = iconWidth;
+        this.iconAssetRef = iconAssetRef;
     }
 
     public ApplicationConfig() {
     }
 
     public ApplicationConfig(ApplicationConfig applicationConfig) {
-        this.applicationName=applicationConfig.applicationName;
+        this.applicationName = applicationConfig.applicationName;
         this.applicationPackage = applicationConfig.applicationPackage;
         this.applicationVersion = applicationConfig.applicationVersion;
         this.phoneGapversion = applicationConfig.phoneGapversion;
+        this.iconHeight = applicationConfig.getIconHeight();
+        this.iconWidth = applicationConfig.getIconWidth();
+        this.iconAssetRef = applicationConfig.getIconAssetRef();
         this.features = new HashSet<>(applicationConfig.features);
     }
 
@@ -118,5 +139,29 @@ public class ApplicationConfig {
         result = 31 * result + applicationName.hashCode();
         result = 31 * result + features.hashCode();
         return result;
+    }
+
+    public Integer getIconWidth() {
+        return iconWidth;
+    }
+
+    public void setIconWidth(Integer iconWidth) {
+        this.iconWidth = iconWidth;
+    }
+
+    public Integer getIconHeight() {
+        return iconHeight;
+    }
+
+    public void setIconHeight(Integer iconHeight) {
+        this.iconHeight = iconHeight;
+    }
+
+    public AssetRef getIconAssetRef() {
+        return iconAssetRef;
+    }
+
+    public void setIconAssetRef(AssetRef iconAssetRef) {
+        this.iconAssetRef = iconAssetRef;
     }
 }

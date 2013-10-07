@@ -16,7 +16,6 @@
 
 package com.ttech.cordovabuild.domain.application.source;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -39,20 +38,23 @@ public class DomEditorTest {
     @Test
     public void testEditor() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
         DomEditor domEditor = new DomEditor(Paths.get("src/test/resources"));
-        assertEquals(domEditor.getName(), "RestaurantReviews");
-        assertEquals(domEditor.getPackage(), "com.turkcell.restaurantee");
-        assertEquals(domEditor.getVersion(), "1.0.0");
-        assertEquals(domEditor.getPhoneGapVersion(), "2.5.0");
-        assertEquals(domEditor.getFeatures().size(),0);
+        assertEquals("RestaurantReviews", domEditor.getName());
+        assertEquals("com.turkcell.restaurantee", domEditor.getPackage());
+        assertEquals("1.0.0", domEditor.getVersion());
+        assertEquals("2.5.0", domEditor.getPhoneGapVersion());
+        assertEquals(0, domEditor.getFeatures().size());
+        assertEquals("icons/rest_icon_57.png", domEditor.getIconConfig().getSrc());
+        assertEquals(57, domEditor.getIconConfig().getWidth());
+        assertEquals(57, domEditor.getIconConfig().getHeight());
 
         domEditor.setName("name");
         domEditor.setPackage("package");
         domEditor.setVersion("version");
         domEditor.setPhoneGapVersion("pgversion");
 
-        assertEquals(domEditor.getName(), "name");
-        assertEquals(domEditor.getPackage(), "package");
-        assertEquals(domEditor.getVersion(), "version");
-        assertEquals(domEditor.getPhoneGapVersion(), "pgversion");
+        assertEquals("name", domEditor.getName());
+        assertEquals("package", domEditor.getPackage());
+        assertEquals("version", domEditor.getVersion());
+        assertEquals("pgversion", domEditor.getPhoneGapVersion());
     }
 }

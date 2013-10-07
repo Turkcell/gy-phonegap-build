@@ -16,6 +16,7 @@
 
 package com.ttech.cordovabuild.domain.application.source;
 
+import com.google.common.primitives.Ints;
 import com.ttech.cordovabuild.domain.application.ApplicationConfigurationException;
 import com.ttech.cordovabuild.domain.application.ApplicationFeature;
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class DomEditor {
     private final XPathExpression nameExpr;
     private final XPathExpression pgExpr;
     private final XPathExpression featureExpr;
+    private final XPathExpression iconExpr;
     private final Document doc;
 
     public DomEditor(Document doc) {
@@ -55,6 +57,7 @@ public class DomEditor {
             nameExpr = xpath.compile("/widget/name");
             pgExpr = xpath.compile("/widget/preference/@value");
             featureExpr = xpath.compile("/widget/feature/@name");
+            iconExpr = xpath.compile("/widget/icon");
         } catch (XPathExpressionException ex) {
             LOGGER.info("could not parse config.xml", ex);
             throw new ApplicationConfigurationException(ex);
@@ -102,6 +105,18 @@ public class DomEditor {
         return nameExpr.evaluate(doc);
     }
 
+    public IconConfig getIconConfig() throws XPathExpressionException {
+        Node icon = (Node) iconExpr.evaluate(doc, XPathConstants.NODE);
+        if (icon == null)
+            return null;
+        String src = icon.getAttributes().getNamedItem("src") == null ? null : icon.getAttributes().getNamedItem("src").getNodeValue();
+        if (src == null)
+            return null;
+        Integer width = icon.getAttributes().getNamedItem("width") == null ? null : Ints.tryParse(icon.getAttributes().getNamedItem("width").getNodeValue());
+        Integer height = icon.getAttributes().getNamedItem("height") == null ? null : Ints.tryParse(icon.getAttributes().getNamedItem("height").getNodeValue());
+        return new IconConfig(src, width, height);
+    }
+
     public void setName(String name) throws XPathExpressionException {
         Node node = (Node) nameExpr.evaluate(doc, XPathConstants.NODE);
         node.setTextContent(name);
@@ -109,18 +124,42 @@ public class DomEditor {
 
     public Set<ApplicationFeature> getFeatures() throws XPathExpressionException {
         NodeList features = (NodeList) featureExpr.evaluate(doc, XPathConstants.NODESET);
-        if(features.getLength()<1)
+        if (features.getLength() < 1)
             return Collections.emptySet();
-        List<String> values=new ArrayList<>(features.getLength());
-        for(int i=0;i<features.getLength();i++)
+        List<String> values = new ArrayList<>(features.getLength());
+        for (int i = 0; i < features.getLength(); i++)
             values.add(features.item(i).getNodeValue());
-        Set<ApplicationFeature> applicationFeatures=new HashSet<>();
+        Set<ApplicationFeature> applicationFeatures = new HashSet<>();
         for (String featureValue : values)
             try {
                 applicationFeatures.add(ApplicationFeature.fromValue(featureValue));
             } catch (IllegalArgumentException e) {
-                LOGGER.info("ignore unknown feature {}",featureValue);
+                LOGGER.info("ignore unknown feature {}", featureValue);
             }
         return applicationFeatures;
+    }
+
+    class IconConfig {
+        final private String src;
+        final private Integer height;
+        final private Integer width;
+
+        private IconConfig(String src, Integer height, Integer width) {
+            this.src = src;
+            this.height = height;
+            this.width = width;
+        }
+
+        public String getSrc() {
+            return src;
+        }
+
+        public Integer getHeight() {
+            return height;
+        }
+
+        public Integer getWidth() {
+            return width;
+        }
     }
 }

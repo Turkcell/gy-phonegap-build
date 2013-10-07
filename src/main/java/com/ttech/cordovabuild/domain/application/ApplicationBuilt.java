@@ -46,6 +46,7 @@ public class ApplicationBuilt implements Serializable {
     @Embedded
     private AssetRef builtAssetRef;
     @ElementCollection(fetch = FetchType.EAGER)
+    @Access(AccessType.PROPERTY)
     private List<BuiltTarget> builtTargets = new ArrayList<>();
     @JsonIgnore
     @Version
@@ -91,6 +92,9 @@ public class ApplicationBuilt implements Serializable {
 
     public void setBuiltTargets(List<BuiltTarget> builtTargets) {
         this.builtTargets = builtTargets;
+        for(BuiltTarget target:this.builtTargets){
+            target.setApplicationBuilt(this);
+        }
     }
 
     public ApplicationConfig getBuiltConfig() {
