@@ -66,7 +66,14 @@ public class ApplicationBuilt implements Serializable {
         this.builtConfig = new ApplicationConfig(application.getApplicationConfig());
         this.application = application;
         for (BuiltType builtType : BuiltType.values()) {
-            this.builtTargets.add(new BuiltTarget(builtType));
+            this.builtTargets.add(new BuiltTarget(builtType,this));
+        }
+    }
+
+    @PostLoad
+    public void init() {
+        for (BuiltTarget target : this.builtTargets) {
+            target.setApplicationBuilt(this);
         }
     }
 
@@ -92,9 +99,6 @@ public class ApplicationBuilt implements Serializable {
 
     public void setBuiltTargets(List<BuiltTarget> builtTargets) {
         this.builtTargets = builtTargets;
-        for(BuiltTarget target:this.builtTargets){
-            target.setApplicationBuilt(this);
-        }
     }
 
     public ApplicationConfig getBuiltConfig() {

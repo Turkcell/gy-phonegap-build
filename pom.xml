@@ -17,7 +17,7 @@
         <hazelcast.version>3.0.1</hazelcast.version>
         <jetty.version>9.0.4.v20130625</jetty.version>
         <slf4j.version>1.7.2</slf4j.version>
-        <hibernate.version>4.2.5.Final</hibernate.version>
+        <hibernate.version>4.2.6.Final</hibernate.version>
     </properties>
 
     <repositories>

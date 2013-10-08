@@ -143,6 +143,7 @@ public class ApplicationServiceTest {
         AssetRef asset = createAsset();
         Application application = applicationService.createApplication(createUser(), asset);
         ApplicationBuilt applicationBuilt = applicationService.prepareApplicationBuilt(application);
+        assertNotNull(applicationBuilt.getBuiltTargets().get(0).getApplicationBuilt());
         assertNotNull(applicationBuilt.getId());
         assertEquals(applicationBuilt.getApplication(), application);
         assertNotNull(applicationBuilt.getStartDate());
@@ -186,7 +187,10 @@ public class ApplicationServiceTest {
         Application application = applicationService.createApplication(createUser(), GIT_REPO);
         applicationService.prepareApplicationBuilt(application);
         ApplicationBuilt lastBuilt = applicationService.prepareApplicationBuilt(application);
-        assertEquals(lastBuilt.getId(), applicationService.getLatestBuilt(application).getId());
+        ApplicationBuilt latestBuilt = applicationService.getLatestBuilt(application);
+        for (BuiltTarget target : latestBuilt.getBuiltTargets())
+            assertNotNull(target.getApplicationBuilt());
+        assertEquals(lastBuilt.getId(), latestBuilt.getId());
     }
 
     @Test

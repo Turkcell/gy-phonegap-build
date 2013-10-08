@@ -44,8 +44,8 @@ public class DomEditorTest {
         assertEquals("2.5.0", domEditor.getPhoneGapVersion());
         assertEquals(0, domEditor.getFeatures().size());
         assertEquals("icons/rest_icon_57.png", domEditor.getIconConfig().getSrc());
-        assertEquals(57, domEditor.getIconConfig().getWidth());
-        assertEquals(57, domEditor.getIconConfig().getHeight());
+        assertEquals(new Integer(57), domEditor.getIconConfig().getWidth());
+        assertEquals(new Integer(57), domEditor.getIconConfig().getHeight());
 
         domEditor.setName("name");
         domEditor.setPackage("package");

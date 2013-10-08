@@ -53,6 +53,11 @@ public class BuiltTarget implements Serializable {
     @JsonIgnore
     private ApplicationBuilt applicationBuilt;
 
+    public BuiltTarget(BuiltType builtType, ApplicationBuilt applicationBuilt) {
+        this.type = builtType;
+        this.status = Status.WAITING;
+        this.applicationBuilt = applicationBuilt;
+    }
 
     public BuiltType getType() {
         return type;
@@ -71,19 +76,6 @@ public class BuiltTarget implements Serializable {
     }
 
     public BuiltTarget() {
-    }
-
-    public BuiltTarget(BuiltType builtType) {
-        this.type = builtType;
-        this.status = Status.WAITING;
-    }
-
-    public BuiltTarget(BuiltInfo builtInfo) {
-        this.type = builtInfo.getBuiltType();
-        this.assetRef = builtInfo.getAssetRef();
-        this.startDate = builtInfo.getStartDate();
-        this.duration = builtInfo.getDuration();
-        this.status = builtInfo.getStatus();
     }
 
     public Long getDuration() {
@@ -120,6 +112,10 @@ public class BuiltTarget implements Serializable {
 
     public void setApplicationBuilt(ApplicationBuilt applicationBuilt) {
         this.applicationBuilt = applicationBuilt;
+    }
+
+    public ApplicationBuilt getApplicationBuilt() {
+        return this.applicationBuilt;
     }
 
     public static enum Status {

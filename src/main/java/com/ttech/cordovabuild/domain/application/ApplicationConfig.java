@@ -38,6 +38,7 @@ public class ApplicationConfig {
     private Integer iconHeight;
 
     @Embedded
+    @AttributeOverrides({@AttributeOverride(name = "uuid", column = @Column(name = "icon_uuid")), @AttributeOverride(name = "mimeType", column = @Column(name = "icon_mimetype"))})
     @JsonIgnore
     @Column(nullable = true)
     private AssetRef iconAssetRef;
