@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -96,8 +97,21 @@ public class ApplicationResource {
     @GET
     @Path("/{id}/icon")
     @Produces("image/png")
-    public StreamingImageOutput getIcon(@PathParam("id") Long id){
-        return null;
+    public Response getIcon(@PathParam("id") Long id) {
+        ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
+        AssetRef iconAssetRef = latestBuilt.getApplication().getApplicationConfig().getIconAssetRef();
+        if (iconAssetRef == null) {
+            return Response.status(404).build();
+        } else {
+            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            assetService.handleInputStream(iconAssetRef, new InputStreamHandler() {
+                @Override
+                public void handleInputStream(InputStream inputStream) throws IOException {
+                    ByteStreams.copy(inputStream, outputStream);
+                }
+            });
+            return Response.ok(outputStream.toByteArray(), "image/png").build();
+        }
     }
 
     @GET
