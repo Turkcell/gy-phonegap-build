@@ -117,27 +117,33 @@ public class ApplicationResource {
     @GET
     @Path("/{id}/download/{type}")
     @Produces({BuiltType.Constants.ANDROID_MIME_TYPE, BuiltType.Constants.IOS_MIME_TYPE})
-    public Response getBuiltAsset(@PathParam("id") Long id, @PathParam("type") BuiltType type, @Context HttpServletResponse httpServletResponse) throws IOException {
-        LOGGER.info("application asset download for id:{} and type:{} requested", id, type);
-        ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
-        LOGGER.info("application built with id:{} found", latestBuilt.getId());
-        for (BuiltTarget builtTarget : latestBuilt.getBuiltTargets()) {
-            if (builtTarget.getType().equals(type)) {
-                LOGGER.info("built target for {} found with status {}", builtTarget.getType(), builtTarget.getStatus());
-                if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS)) {
-                    httpServletResponse.setHeader("Content-Type", type.getMimeType());
-                    httpServletResponse.setHeader("content-disposition", MessageFormat.format("attachment; filename = {0}.{1}",
-                            latestBuilt.getBuiltConfig().getApplicationName(), type.getPlatformSuffix()));
-                    write(httpServletResponse.getOutputStream(), builtTarget.getAssetRef());
-                    return Response.ok().build();
-                } else {
-                    httpServletResponse.setStatus(Response.Status.NOT_FOUND.getStatusCode());
-                    return Response.status(Response.Status.NOT_FOUND).build();
+    public Response getBuiltAsset(@PathParam("id") Long id, @PathParam("type") String typeValue, @Context HttpServletResponse httpServletResponse) throws IOException {
+        try {
+            BuiltType type = BuiltType.getValueOfIgnoreCase(typeValue);
+            LOGGER.info("application asset download for id:{} and type:{} requested", id, type);
+            ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
+            LOGGER.info("application built with id:{} found", latestBuilt.getId());
+            for (BuiltTarget builtTarget : latestBuilt.getBuiltTargets()) {
+                if (builtTarget.getType().equals(type)) {
+                    LOGGER.info("built target for {} found with status {}", builtTarget.getType(), builtTarget.getStatus());
+                    if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS)) {
+                        httpServletResponse.setHeader("Content-Type", type.getMimeType());
+                        httpServletResponse.setHeader("content-disposition", MessageFormat.format("attachment; filename = {0}.{1}",
+                                latestBuilt.getBuiltConfig().getApplicationName(), type.getPlatformSuffix()));
+                        write(httpServletResponse.getOutputStream(), builtTarget.getAssetRef());
+                        return Response.ok().build();
+                    } else {
+                        httpServletResponse.setStatus(Response.Status.NOT_FOUND.getStatusCode());
+                        return Response.status(Response.Status.NOT_FOUND).build();
+                    }
                 }
             }
+            LOGGER.info("no build target found for {}", type);
+            return Response.status(Response.Status.NOT_FOUND).build();
+        } catch (IllegalArgumentException e) {
+            return Response.status(404).build();
         }
-        LOGGER.info("no build target found for {}", type);
-        return Response.status(Response.Status.NOT_FOUND).build();
+
     }
 
     @POST

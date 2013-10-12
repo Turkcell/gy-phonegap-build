@@ -48,6 +48,7 @@ public class UserResource {
 
     @POST
     public User createUser(@Valid User user) {
+        //TODO replace with set roles
         user.addRole(Role.ROLE_USER);
         User result = userRepository.saveOrUpdateUser(user);
         result.setPassword(null);

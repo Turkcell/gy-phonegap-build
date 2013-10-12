@@ -51,4 +51,12 @@ public enum BuiltType {
         public static final String ANDROID_MIME_TYPE = "application/vnd.android.package-archive";
         public static final String IOS_MIME_TYPE = "application/octet-stream";
     }
+
+    public static BuiltType getValueOfIgnoreCase(String value) {
+        for (BuiltType type : BuiltType.values()) {
+            if (type.toString().equalsIgnoreCase(value))
+                return type;
+        }
+        throw new IllegalArgumentException("No enum constant " + BuiltType.class.getName() + ".value");
+    }
 }

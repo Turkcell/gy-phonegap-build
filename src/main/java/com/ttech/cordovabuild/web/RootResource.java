@@ -1,8 +1,8 @@
 package com.ttech.cordovabuild.web;
 
 import com.ttech.cordovabuild.domain.application.ApplicationService;
-import com.ttech.cordovabuild.domain.user.User;
 import com.ttech.cordovabuild.domain.user.UserRepository;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -17,6 +17,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -32,6 +33,29 @@ import javax.ws.rs.core.UriInfo;
 @Scope(WebApplicationContext.SCOPE_REQUEST)
 @Produces({MediaType.APPLICATION_JSON})
 public class RootResource {
+    public static class Credentials {
+
+        @NotEmpty
+        private String username;
+        @NotEmpty
+        private String password;
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+    }
 
     @Autowired
     ApplicationService applicationService;
@@ -62,13 +86,13 @@ public class RootResource {
 
     @POST
     @Path("login")
-    public Response authenticate(User user, @Context HttpServletRequest request, @Context HttpServletResponse response) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+    public Response authenticate(@Valid Credentials credentials, @Context HttpServletRequest request, @Context HttpServletResponse response) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword());
         try {
             Authentication authentication = authenticationManager.authenticate(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
-            return Response.accepted().entity(userRepository.findUserByUserName(user.getUsername())).build();
+            return Response.accepted().entity(userRepository.findUserByUserName(credentials.getUsername())).build();
         } catch (AuthenticationException e) {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
