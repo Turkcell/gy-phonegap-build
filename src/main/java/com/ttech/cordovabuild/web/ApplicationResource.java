@@ -16,10 +16,18 @@ import com.ttech.cordovabuild.domain.asset.AssetRef;
 import com.ttech.cordovabuild.domain.asset.AssetService;
 import com.ttech.cordovabuild.domain.asset.InputStreamHandler;
 import com.ttech.cordovabuild.infrastructure.queue.BuiltQueuePublisher;
+import net.sf.uadetector.OperatingSystemFamily;
+import net.sf.uadetector.UserAgent;
+import net.sf.uadetector.UserAgentStringParser;
+import net.sf.uadetector.service.UADetectorServiceFactory;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.mobile.device.Device;
+import org.springframework.mobile.device.DeviceResolver;
+import org.springframework.mobile.device.LiteDeviceResolver;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -30,6 +38,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -52,6 +61,8 @@ public class ApplicationResource {
     BuiltQueuePublisher queuePublisher;
     @Autowired
     AssetService assetService;
+
+    DeviceResolver deviceResolver = new LiteDeviceResolver();
 
     @GET
     public List<ApplicationBuilt> getApplications() {
@@ -122,28 +133,61 @@ public class ApplicationResource {
             BuiltType type = BuiltType.getValueOfIgnoreCase(typeValue);
             LOGGER.info("application asset download for id:{} and type:{} requested", id, type);
             ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
-            LOGGER.info("application built with id:{} found", latestBuilt.getId());
-            for (BuiltTarget builtTarget : latestBuilt.getBuiltTargets()) {
-                if (builtTarget.getType().equals(type)) {
-                    LOGGER.info("built target for {} found with status {}", builtTarget.getType(), builtTarget.getStatus());
-                    if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS)) {
-                        httpServletResponse.setHeader("Content-Type", type.getMimeType());
-                        httpServletResponse.setHeader("content-disposition", MessageFormat.format("attachment; filename = {0}.{1}",
-                                latestBuilt.getBuiltConfig().getApplicationName(), type.getPlatformSuffix()));
-                        write(httpServletResponse.getOutputStream(), builtTarget.getAssetRef());
-                        return Response.ok().build();
-                    } else {
-                        httpServletResponse.setStatus(Response.Status.NOT_FOUND.getStatusCode());
-                        return Response.status(Response.Status.NOT_FOUND).build();
-                    }
-                }
-            }
-            LOGGER.info("no build target found for {}", type);
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return getBuiltAssetInternal(httpServletResponse, type, latestBuilt);
         } catch (IllegalArgumentException e) {
             return Response.status(404).build();
         }
+    }
 
+    private Response getBuiltAssetInternal(HttpServletResponse httpServletResponse, BuiltType type, ApplicationBuilt latestBuilt) throws IOException {
+        LOGGER.info("application built with id:{} found", latestBuilt.getId());
+        for (BuiltTarget builtTarget : latestBuilt.getBuiltTargets()) {
+            if (builtTarget.getType().equals(type)) {
+                LOGGER.info("built target for {} found with status {}", builtTarget.getType(), builtTarget.getStatus());
+                if (builtTarget.getStatus().equals(BuiltTarget.Status.SUCCESS)) {
+                    httpServletResponse.setHeader("Content-Type", type.getMimeType());
+                    httpServletResponse.setHeader("content-disposition", MessageFormat.format("attachment; filename = {0}.{1}",
+                            latestBuilt.getBuiltConfig().getApplicationName(), type.getPlatformSuffix()));
+                    write(httpServletResponse.getOutputStream(), builtTarget.getAssetRef());
+                    return Response.ok().build();
+                } else {
+                    httpServletResponse.setStatus(Response.Status.NOT_FOUND.getStatusCode());
+                    return Response.status(Response.Status.NOT_FOUND).build();
+                }
+            }
+        }
+        LOGGER.info("no build target found for {}", type);
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @GET
+    @Path("/{id}/install")
+    @Produces({BuiltType.Constants.ANDROID_MIME_TYPE, BuiltType.Constants.IOS_MIME_TYPE})
+    public Response getWithQrKey(@PathParam("id") Long id, @NotEmpty @QueryParam("qrkey") String qrKey, @Context HttpServletRequest httpServletRequest, @Context HttpServletResponse httpServletResponse) throws IOException {
+        ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
+        UserAgent userAgent = getUserAgent(httpServletRequest);
+        Device currentDevice = deviceResolver.resolveDevice(httpServletRequest);
+        boolean knownFamily = userAgent != null && userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.ANDROID) && userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.IOS);
+        knownFamily = knownFamily && currentDevice != null && (currentDevice.isMobile() || currentDevice.isTablet());
+        if (latestBuilt.getApplication().getQrKey().equalsIgnoreCase(qrKey) && knownFamily) {
+            try {
+                return getBuiltAssetInternal(httpServletResponse, BuiltType.getValueOfIgnoreCase(userAgent.getOperatingSystem().getFamily().getName()), latestBuilt);
+            } catch (IllegalArgumentException e) {
+                return Response.status(404).build();
+            }
+        } else {
+            return Response.status(404).build();
+        }
+    }
+
+    private UserAgent getUserAgent(HttpServletRequest httpServletRequest) {
+        try {
+            UserAgentStringParser parser = UADetectorServiceFactory.getResourceModuleParser();
+            return parser.parse(httpServletRequest.getHeader("User-Agent"));
+        } catch (Exception e) {
+            LOGGER.error("could not determine agent", e);
+        }
+        return null;
     }
 
     @POST

@@ -131,6 +131,14 @@ public class Application implements Serializable {
 
     @Transient
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    public String getQrCodeURL() {
+        if (applicationConfig.getIconAssetRef() != null)
+            return "/application/" + id + "/qrimage";
+        return null;
+    }
+
+    @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public Integer getIconHeight() {
         return applicationConfig.getIconHeight();
     }
