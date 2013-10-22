@@ -34,7 +34,6 @@ package { 'cordova':
   provider => npm
 }
 
-#cordova package dependencies
-package { ['curl', 'unzip']:
+package { ['curl', 'unzip', 'maven']:
   ensure => latest
 }
