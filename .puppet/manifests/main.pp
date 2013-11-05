@@ -28,13 +28,12 @@ apt::ppa { 'ppa:chris-lea/node.js': }
 package { 'nodejs':
   ensure => latest
 }
-
+->
 package { 'cordova':
   ensure => installed,
   provider => npm
 }
 
-#cordova package dependencies
-package { ['curl', 'unzip']:
+package { ['curl', 'unzip', 'maven']:
   ensure => latest
 }
