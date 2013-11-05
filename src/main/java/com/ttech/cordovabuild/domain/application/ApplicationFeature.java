@@ -24,21 +24,21 @@ package com.ttech.cordovabuild.domain.application;
  * To change this built use File | Settings | File Templates.
  */
 public enum ApplicationFeature {
-    ACCELEROMETER(new String[]{"org.apache.cordova.core.device-motion"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git"}),
-    CAMERA(new String[]{"org.apache.cordova.core.camera"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-camera.git"}),
-    CAPTURE(new String[]{"org.apache.cordova.core.media-capture"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-media-capture.git"}),
-    COMPASS(new String[]{"org.apache.cordova.core.device-orientation"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-device-orientation.git"}),
-    CONNECTION(new String[]{"org.apache.cordova.core.network-information"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-network-information.git"}),
-    CONTACTS(new String[]{"org.apache.cordova.core.contacts"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-contacts.git"}),
-    DEVICE(new String[]{"org.apache.cordova.core.device"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git"}),
-    EVENTS(new String[]{"org.apache.cordova.core.battery-status"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-battery-status.git"}),
-    FILE(new String[]{"org.apache.cordova.core.file", "org.apache.cordova.core.file-transfer"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-file.git", "https://git-wip-us.apache.org/repos/asf/cordova-plugin-file-transfer.git"}),
-    GEOLOCATION(new String[]{"org.apache.cordova.core.geolocation"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-geolocation.git"}),
-    GLOBALIZATION(new String[]{"org.apache.cordova.core.globalization"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-globalization.git"}),
-    INAPPBROWSER(new String[]{"org.apache.cordova.core.inappbrowser"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-inappbrowser.git"}),
-    MEDIA(new String[]{}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-media.git"}),
-    NOTIFICATION(new String[]{"org.apache.cordova.core.dialogs", "org.apache.cordova.core.vibration"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-vibration.git", "https://git-wip-us.apache.org/repos/asf/cordova-plugin-dialogs.git"}),
-    SPLASHSCREEN(new String[]{"org.apache.cordova.core.splashscreen"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-splashscreen.git"});
+    ACCELEROMETER(new String[]{"org.apache.cordova.device-motion"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-device-motion.git"}),
+    CAMERA(new String[]{"org.apache.cordova.camera"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-camera.git"}),
+    CAPTURE(new String[]{"org.apache.cordova.media-capture"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-media-capture.git"}),
+    COMPASS(new String[]{"org.apache.cordova.device-orientation"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-device-orientation.git"}),
+    CONNECTION(new String[]{"org.apache.cordova.network-information"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-network-information.git"}),
+    CONTACTS(new String[]{"org.apache.cordova.contacts"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-contacts.git"}),
+    DEVICE(new String[]{"org.apache.cordova.device"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git"}),
+    EVENTS(new String[]{"org.apache.cordova.battery-status"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-battery-status.git"}),
+    FILE(new String[]{"org.apache.cordova.file", "org.apache.cordova.core.file-transfer"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-file.git", "https://git-wip-us.apache.org/repos/asf/cordova-plugin-file-transfer.git"}),
+    GEOLOCATION(new String[]{"org.apache.cordova.geolocation"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-geolocation.git"}),
+    GLOBALIZATION(new String[]{"org.apache.cordova.globalization"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-globalization.git"}),
+    INAPPBROWSER(new String[]{"org.apache.cordova.inappbrowser"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-inappbrowser.git"}),
+    MEDIA(new String[]{"org.apache.cordova.media"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-media.git"}),
+    NOTIFICATION(new String[]{"org.apache.cordova.dialogs", "org.apache.cordova.vibration"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-vibration.git", "https://git-wip-us.apache.org/repos/asf/cordova-plugin-dialogs.git"}),
+    SPLASHSCREEN(new String[]{"org.apache.cordova.splashscreen"}, new String[]{"https://git-wip-us.apache.org/repos/asf/cordova-plugin-splashscreen.git"});
 
     private final String[] cordovaPlugins;
     private final String[] cordovaURIs;

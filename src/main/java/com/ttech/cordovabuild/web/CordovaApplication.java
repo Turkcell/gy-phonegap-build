@@ -17,6 +17,7 @@
 package com.ttech.cordovabuild.web;
 
 import com.ttech.cordovabuild.web.exception.NotFoundExceptionMapper;
+import com.ttech.cordovabuild.web.exception.UnauthenticatedExceptionMapper;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.spring.scope.RequestContextFilter;
@@ -36,5 +37,6 @@ public class CordovaApplication extends ResourceConfig {
         register(RootResource.class);
         register(UserResource.class);
         register(NotFoundExceptionMapper.class);
+        register(UnauthenticatedExceptionMapper.class);
     }
 }
