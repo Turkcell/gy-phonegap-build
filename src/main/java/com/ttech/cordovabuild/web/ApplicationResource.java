@@ -95,7 +95,7 @@ public class ApplicationResource {
     @Produces("image/jpeg")
     public StreamingImageOutput getQrImage(@PathParam("id") Long id, @QueryParam("width") @DefaultValue("150") int width, @QueryParam("height") @DefaultValue("150") int height, @Context UriInfo uriInfo) {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
-        String url = uriInfo.getRequestUriBuilder().path("..").path("install").queryParam("qrKey", service.findApplication(id).getQrKey()).build().normalize().toString();
+        String url = uriInfo.getRequestUriBuilder().path("..").path("install").queryParam("qrkey", service.findApplication(id).getQrKey()).build().normalize().toString();
         try {
             BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, width, height);
             BufferedImage image = MatrixToImageWriter.toBufferedImage(bitMatrix);
@@ -167,6 +167,7 @@ public class ApplicationResource {
         ApplicationBuilt latestBuilt = service.getLatestBuilt(id);
         UserAgent userAgent = getUserAgent(httpServletRequest);
         Device currentDevice = deviceResolver.resolveDevice(httpServletRequest);
+        LOGGER.info("userAgent:{} and device:{}",userAgent,currentDevice);
         boolean knownFamily = userAgent != null && userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.ANDROID) && userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.IOS);
         knownFamily = knownFamily && currentDevice != null && (currentDevice.isMobile() || currentDevice.isTablet());
         if (latestBuilt.getApplication().getQrKey().equalsIgnoreCase(qrKey) && knownFamily) {
