@@ -168,7 +168,7 @@ public class ApplicationResource {
         UserAgent userAgent = getUserAgent(httpServletRequest);
         Device currentDevice = deviceResolver.resolveDevice(httpServletRequest);
         LOGGER.info("userAgent:{} and device:{}",userAgent,currentDevice);
-        boolean knownFamily = userAgent != null && userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.ANDROID) && userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.IOS);
+        boolean knownFamily = userAgent != null && (userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.ANDROID) || userAgent.getOperatingSystem().getFamily().equals(OperatingSystemFamily.IOS));
         knownFamily = knownFamily && currentDevice != null && (currentDevice.isMobile() || currentDevice.isTablet());
         if (latestBuilt.getApplication().getQrKey().equalsIgnoreCase(qrKey) && knownFamily) {
             try {
